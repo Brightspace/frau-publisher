@@ -16,6 +16,7 @@
     "chai": "^1.9.2",
     "coveralls": "^2.11.2",
     "gulp-s3": "^0.3.0",
+    "mocha": "^2.0.1",
     "istanbul": "^0.3.2",
     "sandboxed-module": "^1.0.2",
     "sinon": "^1.11.1",
