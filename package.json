@@ -10,6 +10,10 @@
     "type": "git",
     "url": "https://github.com/Desire2Learn-Valence/gulp-frau-publisher.git"
   },
+  "keywords": [
+    "d2l",
+    "free-range"
+  ],
   "author": "D2L Corporation",
   "license": "Apache 2.0",
   "devDependencies": {
