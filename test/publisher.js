@@ -38,4 +38,16 @@ describe('publisher', function() {
   			publisher(options)
   		}).to.throw( 'Invalid creds location' );
   	})
-})
+
+  	it('should throw with no appID', function() {
+      var options = {
+        creds: {
+          key: 'some-key',
+          secret: 'some-secret'
+        }
+      };
+      expect(function() {
+        publisher(options)
+      }).to.throw( 'Invalid arguments' );
+    })
+});

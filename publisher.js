@@ -18,11 +18,14 @@ module.exports = function( opts ) {
 		aws = opts.creds;
 	}
 
+	if ( !opts.appID )
+		throw new Error('Invalid arguments');
+
 	aws.bucket = 'gaudi-cdn-test';
 
 	var options = {
 			// Need the trailing slash, otherwise the SHA is prepended to the filename.
-			uploadPath: 'apps/simpleumdapp/dev/' + opts.devTag + '/'
+			uploadPath: 'apps/' + opts.appID + '/dev/' + opts.devTag + '/'
 		};
 
 	return s3( aws, options );
