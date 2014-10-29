@@ -29,4 +29,13 @@ describe('publisher', function() {
 			publisher(options)
 		}).to.throw( 'Invalid arguments' );
   	})
+
+  	it('should throw with invalid location of creds', function() {
+  		var options = {
+  			creds: './creds.json'
+  		}
+  		expect(function() {
+  			publisher(options)
+  		}).to.throw( 'Invalid creds location' );
+  	})
 })
