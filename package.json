@@ -15,7 +15,10 @@
   "devDependencies": {
     "chai": "^1.9.2",
     "gulp-s3": "^0.3.0",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "sandboxed-module": "^1.0.2",
+    "sinon": "^1.11.1",
+    "sinon-chai": "^2.6.0"
   },
   "dependencies": {
     "gulp-s3": "^0.3.0"
