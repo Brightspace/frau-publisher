@@ -1,5 +1,3 @@
-var SandboxedModule = require('sandboxed-module');
-
 var gulpS3 = sinon.spy();
 
 var publisher = SandboxedModule.require('../publisher', {
