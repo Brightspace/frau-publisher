@@ -16,28 +16,17 @@ module.exports = function( opts ) {
 	return s3( aws, options );
 };
 
+// check if the object that was passed in is valid or not
 var checkValidity = function ( opts ) {
 	var aws;
 
 	if (!opts || !opts.creds ) {
 		throw new Error('Invalid arguments');
-	} else if (typeof opts.creds == 'string') {
-		try {
-			var tempAws = require(opts.creds);
-			aws = {
-				key: tempAws.key,
-				secret: tempAws.secret
-			}
-		} catch (err) {
-			throw new Error( 'Invalid creds location' );
-		}
-	} else if ( !opts.creds.key || !opts.creds.secret ) {
+	} 
+	else if ( !opts.creds.key || !opts.creds.secret ) {
 		throw new Error('Invalid arguments');
 	} else {
-		aws = {
-			key: opts.creds.key,
-			secret: opts.creds.secret
-		};
+		aws = setAws( opts.creds.key, opts.creds.secret );
 	}
 
 	if ( !opts.appID )
@@ -45,4 +34,12 @@ var checkValidity = function ( opts ) {
 
 	return aws;
 	
+};
+
+// set the aws with only the key and secret
+var setAws = function ( key, secret ) {
+	return {
+		key: key,
+		secret: secret
+	};
 } 
