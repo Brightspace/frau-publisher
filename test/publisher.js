@@ -23,6 +23,7 @@ describe('publisher', function() {
 
   	it('should throw with no secret', function() {
   		var options = {
+        appID: 'some-ID',
   			creds: {
   				key: 'some-key'
   			}
@@ -76,7 +77,7 @@ describe('publisher', function() {
       };
 
       var s3Options = {
-        uploadPath: 'apps/simpleumdapp/dev/some-tag/'
+        uploadPath: 'apps/some-ID/dev/some-tag/'
       };
 
       gulpS3.should.have.been.calledWith( aws, s3Options );

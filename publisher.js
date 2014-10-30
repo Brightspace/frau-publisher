@@ -16,28 +16,24 @@ module.exports = function( opts ) {
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
 var sanitize_opts = function ( opts ) {
-	var aws;
 
 	if ( !opts || !opts.appID || !opts.creds ) {
 		throw new Error('Invalid arguments');
 	}
 
-	aws = credsValidity(opts.creds);
+	var aws = getCreds(opts.creds);
 
 	return setOptions ( opts.appID, aws, opts.devTag );
 };
 
 // check if the credentials are valid and return it with only the valid properties.
-var credsValidity = function ( creds ) {
-	var aws;
+var getCreds = function ( creds ) {
 
 	if ( !creds.key || !creds.secret ) {
 		throw new Error('Invalid arguments');
 	} else {
-		aws = setAws( creds.key, creds.secret );
+		return setAws( creds.key, creds.secret );
 	}
-
-	return aws;
 };
 
 // return a valid aws object
