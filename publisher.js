@@ -4,42 +4,59 @@ var s3 = require('gulp-s3');
 
 module.exports = function( opts ) {
 	
-	var aws = checkValidity( opts );
-
-	aws.bucket = 'gaudi-cdn-test';
+	var newOpts = sanitize_opts( opts );
 
 	var options = {
 			// Need the trailing slash, otherwise the SHA is prepended to the filename.
-			uploadPath: 'apps/' + opts.appID + '/dev/' + opts.devTag + '/'
+			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
-	return s3( aws, options );
+	return s3( newOpts.creds , options );
 };
 
-// check if the object that was passed in is valid or not
-var checkValidity = function ( opts ) {
+// sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
+var sanitize_opts = function ( opts ) {
 	var aws;
 
-	if (!opts || !opts.creds ) {
-		throw new Error('Invalid arguments');
-	} 
-	else if ( !opts.creds.key || !opts.creds.secret ) {
-		throw new Error('Invalid arguments');
-	} else {
-		aws = setAws( opts.creds.key, opts.creds.secret );
-	}
-
-	if ( !opts.appID )
+	if ( !opts || !opts.appID || !opts.creds )
 		throw new Error('Invalid arguments');
 
-	return aws;
-	
+	aws = credsValidity(opts.creds);
+
+	return setOptions ( opts.appID, aws, opts.devTag );
 };
 
-// set the aws with only the key and secret
+// check if the credentials are valid and return it with only the valid properties.
+var credsValidity = function ( creds ) {
+	var aws;
+
+	if ( !creds.key || !creds.secret ) {
+		throw new Error('Invalid arguments');
+	} else {
+		aws = setAws( creds.key, creds.secret );
+	}
+
+	return aws;
+};
+
+// return a valid aws object
 var setAws = function ( key, secret ) {
 	return {
 		key: key,
-		secret: secret
+		secret: secret,
+		bucket: 'gaudi-cdn-test'
 	};
-} 
+};
+
+// return a valid options object
+var setOptions = function ( appID, creds, devTag ) {
+	return {
+		appID: appID,
+		creds: creds,
+		devTag: devTag
+	};
+};
+
+module.exports.location = function( appConfig ) {
+	
+}
