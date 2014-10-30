@@ -62,6 +62,7 @@ describe('publisher', function() {
 
     it('should call gulp-s3', function() {
       var options = {
+        appID: 'some-ID',
         creds: { key: 'some-key', secret: 'some-secret' },
         devTag: 'some-tag'
       };

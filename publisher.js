@@ -18,8 +18,9 @@ module.exports = function( opts ) {
 var sanitize_opts = function ( opts ) {
 	var aws;
 
-	if ( !opts || !opts.appID || !opts.creds )
+	if ( !opts || !opts.appID || !opts.creds ) {
 		throw new Error('Invalid arguments');
+	}
 
 	aws = credsValidity(opts.creds);
 
@@ -56,7 +57,3 @@ var setOptions = function ( appID, creds, devTag ) {
 		devTag: devTag
 	};
 };
-
-module.exports.location = function( appConfig ) {
-	
-}

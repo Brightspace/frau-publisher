@@ -12,14 +12,6 @@ Install `gulp-frau-publisher` as a dependency from your cmd:
 npm install --save-dev gulp-frau-publisher
 ```
 
-The publisher function takes in one object that has three properties:
-
-| Property Name | Description |
-| ------------- | ----------- |
-| appID         | Should be the name of your current module. |
-| creds         | The credentials to log into the amazon-s3 server. |
-| devTag        | The development version of the module. |
-
 Set your creds in a file at `./creds/keys.json` like this:
 
 ```javascript
@@ -42,6 +34,14 @@ var options = {
 gulp.src('./dist/**')
 	.pipe(publisher( options ));
 ```
+
+The publisher function takes in one object that has three properties:
+
+| Property Name | Description |
+| ------------- | ----------- |
+| appID         | Should be the name of your current module. |
+| creds         | The credentials to log into the amazon-s3 server. |
+| devTag        | The development version of the module. |
 
 ## FAQ
 
