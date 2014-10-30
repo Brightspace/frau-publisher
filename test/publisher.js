@@ -22,19 +22,48 @@ describe('publisher', function() {
   	});
 
   	it('should throw with no secret', function() {
-		var options = {
-			creds: {
-				key: 'some-key'
-			}
-		};
+  		var options = {
+        appID: 'some-ID',
+  			creds: {
+  				key: 'some-key'
+  			}
+  		};
 
-		expect(function() {
-			publisher(options);
-		}).to.throw( 'Invalid arguments' );
-  });
+  		expect(function() {
+  			publisher(options);
+  		}).to.throw( 'Invalid arguments' );
+    });
+
+  	it('should throw with no appID', function() {
+      var options = {
+        creds: {
+          key: 'some-key',
+          secret: 'some-secret'
+        }
+      };
+      expect(function() {
+        publisher(options);
+      }).to.throw( 'Invalid arguments' );
+    });
+
+    it ('should not throw even if there is extra info in the creds', function() {
+      var options = {
+        appID: 'some-ID',
+        creds: {
+          key: 'some-key',
+          secret: 'some-secret',
+          useless: 'testetetse'
+        }
+      };
+
+      expect(function() {
+        publisher(options);
+      }).to.not.throw();
+    });
 
     it('should call gulp-s3', function() {
       var options = {
+        appID: 'some-ID',
         creds: { key: 'some-key', secret: 'some-secret' },
         devTag: 'some-tag'
       };
@@ -48,7 +77,7 @@ describe('publisher', function() {
       };
 
       var s3Options = {
-        uploadPath: 'apps/simpleumdapp/dev/some-tag/'
+        uploadPath: 'apps/some-ID/dev/some-tag/'
       };
 
       gulpS3.should.have.been.calledWith( aws, s3Options );
