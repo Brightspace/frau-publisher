@@ -53,3 +53,7 @@ var setOptions = function ( appID, creds, devTag ) {
 		devTag: devTag
 	};
 };
+
+module.exports.location = function( devTag ) {
+	return "https://gaudi-cdn-test.s3.amazonaws.com/apps/simpleumdapp/" + devTag;
+}

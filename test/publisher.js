@@ -82,4 +82,9 @@ describe('publisher', function() {
 
       gulpS3.should.have.been.calledWith( aws, s3Options );
     });
+
+    it('should return proper address', function() {
+
+      expect(publisher.location( undefined )).to.equal('https://gaudi-cdn-test.s3.amazonaws.com/apps/simpleumdapp/undefined');
+    });
 });
