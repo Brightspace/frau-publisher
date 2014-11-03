@@ -1,4 +1,4 @@
-var gulpS3 = sinon.spy();
+var gulpS3 = sinon.stub().returns({});
 
 var publisher = SandboxedModule.require('../publisher', {
     requires: { 'gulp-s3': gulpS3 }
@@ -84,7 +84,12 @@ describe('publisher', function() {
     });
 
     it('should return proper address', function() {
-
-      expect(publisher.location( undefined )).to.equal('https://gaudi-cdn-test.s3.amazonaws.com/apps/simpleumdapp/undefined');
+      var options = {
+        appID: 'some-ID',
+        creds: { key: 'some-key', secret: 'some-secret' },
+        devTag: 'some-tag'
+      };
+      var publisher_test = publisher( options );
+      expect(publisher_test.location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
     });
 });
