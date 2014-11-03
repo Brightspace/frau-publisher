@@ -1,4 +1,4 @@
-var gulpS3 = sinon.spy();
+var gulpS3 = sinon.stub().returns({});
 
 var publisher = SandboxedModule.require('../publisher', {
     requires: { 'gulp-s3': gulpS3 }
@@ -81,5 +81,15 @@ describe('publisher', function() {
       };
 
       gulpS3.should.have.been.calledWith( aws, s3Options );
+    });
+
+    it('should return proper address', function() {
+      var options = {
+        appID: 'some-ID',
+        creds: { key: 'some-key', secret: 'some-secret' },
+        devTag: 'some-tag'
+      };
+      var publisher_test = publisher( options );
+      expect(publisher_test.location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
     });
 });

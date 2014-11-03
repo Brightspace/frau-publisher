@@ -11,7 +11,10 @@ module.exports = function( opts ) {
 			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
-	return s3( newOpts.creds , options );
+ 	var object = s3( newOpts.creds , options );
+	object.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
+
+	return object;
 };
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
