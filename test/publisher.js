@@ -73,7 +73,7 @@ describe('publisher', function() {
       var aws = {
         key: 'some-key',
         secret: 'some-secret',
-        bucket: 'gaudi-cdn-test'
+        bucket: 'd2lprodcdn'
       };
 
       var s3Options = {

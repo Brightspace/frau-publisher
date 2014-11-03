@@ -3,7 +3,7 @@
 var s3 = require('gulp-s3');
 
 module.exports = function( opts ) {
-	
+
 	var newOpts = sanitize_opts( opts );
 
 	var options = {
@@ -44,7 +44,7 @@ var setAws = function ( key, secret ) {
 	return {
 		key: key,
 		secret: secret,
-		bucket: 'gaudi-cdn-test'
+		bucket: 'd2lprodcdn'
 	};
 };
 
