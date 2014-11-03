@@ -43,6 +43,25 @@ The publisher function takes in one object that has three properties:
 | creds         | The credentials to log into the amazon-s3 server. |
 | devTag        | The development version of the module. |
 
+To get the location of your files, simple call
+
+```javascript
+var publisher = require('gulp-frau-publisher')(options);
+// This is where file.txt was published.
+publisher.location;
+```
+
+Here is how you would use this feature.
+
+```javascript
+var publisher = require('gulp-frau-publisher')(options);
+
+gulp.src('file.txt')
+	.pipe( publisher );
+
+var fileTxtLocation = publisher.location + 'file.txt';
+```
+
 ## FAQ
 
  How do I specify which file I want upload?

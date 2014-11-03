@@ -12,7 +12,7 @@ module.exports = function( opts ) {
 		};
 
  	var object = s3( newOpts.creds , options );
-	object.location = 'https://d2660orkic02xl.cloudfront.net/apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/';
+	object.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
 
 	return object;
 };
