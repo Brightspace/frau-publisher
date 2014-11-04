@@ -122,5 +122,5 @@ describe('publisher', function() {
       };
       var publisher_test = publisher( options );
       expect(publisher_test.location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
-  });''
+  });
 });
