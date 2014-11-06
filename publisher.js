@@ -13,10 +13,15 @@ module.exports = function( opts ) {
 			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
- 	var gulpS3 = s3( newOpts.creds , options );
-	var checkRep = checkS3Repo( newOpts.creds, options);
+	return wrapStreamIntoCheckS3Repo( newOpts.creds, options );
+};
 
-	var duplexStream = es.duplex(checkRep, gulpS3);
+// warp 'stream' into CheckS3Repo
+var wrapStreamIntoCheckS3Repo = function ( aws, options, stream ) {
+
+	var gulpS3 = s3( aws, options );
+	var checkRep = checkS3Repo( aws, options);
+	var duplexStream = es.duplex( checkRep, gulpS3 );
 	checkRep.pipe(gulpS3);
 	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
 
