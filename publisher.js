@@ -13,56 +13,33 @@ module.exports = function( opts ) {
 			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
-	 	var object = s3( newOpts.creds , options );
+ 	var gulpS3 = s3( newOpts.creds , options );
+	var checkRep = checkS3Repo( newOpts.creds, options);
 
-		object.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
+	var duplexStream = es.duplex(checkRep, gulpS3);
+	checkRep.pipe(gulpS3);
+	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
 
-		var xab = fileExistCheckStream( newOpts.creds, options);
-
-		var output = es.duplex( xab, object );
-		xab.pipe(object);
-		return output;
+	return duplexStream;
 };
 
-var fileExistCheckStream = function ( aws, options ) {
+var checkS3Repo = function ( aws, options ) {
 
 	var client = knox.createClient(aws);
-	console.log('calling fileExistCheckStream');
-	
-	// return es.map(function (file) {
-	return es.map(function (file, cb) {
 
-		if (!file.isBuffer()) {
-			cb();
-			return;
-		}
+	return es.map( function (file, cb) {
+		client.list({ prefix: options.uploadPath }, function(err, data) {
 
-		var uploadPath = file.path.replace(file.base, options.uploadPath || '');
-		uploadPath = uploadPath.replace(new RegExp('\\\\', 'g'), '/');
-		
-		client.get(uploadPath).on('response', function(res) {
-			var fileExist = false;
-			if (res.statusCode == 200) {
-				fileExist = true;
-			} else {
-				fileExist = false;
-			}
-			console.log(file.path + ': ' + fileExist);
-			if (fileExist) {
-				try {
-					cb(null, null);
-				} catch(e) {
-					console.log('error!');
-				}
+			if (data.Contents.length != 0) {
+				//console.log('file already exist in folder');
+				cb();
 			} else {
 				cb(null, file);
 			}
-
-		}).end();
+		});
 	});
+	
 };
-
-
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
 var sanitize_opts = function ( opts ) {

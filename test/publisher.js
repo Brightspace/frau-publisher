@@ -1,8 +1,10 @@
-var gulpS3 = sinon.stub().returns({});
+var stream = require('stream');
+var gulpS3 = sinon.stub().returns( new stream.Readable());
 
 var publisher = SandboxedModule.require('../publisher', {
     requires: { 'gulp-s3': gulpS3 }
 });
+// var publisher = require('../publisher');
 
 describe('publisher', function() {
     it('should throw with null options', function() {
@@ -53,12 +55,12 @@ describe('publisher', function() {
           key: 'some-key',
           secret: 'some-secret',
           useless: 'testetetse'
-        }
+        },
       };
 
-      expect(function() {
+       expect(function() {
         publisher(options);
-      }).to.not.throw();
+      }).to.not.throw( 'Invalid arguments' );
     });
 
     it('should call gulp-s3', function() {
