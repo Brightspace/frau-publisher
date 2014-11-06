@@ -13,11 +13,12 @@ module.exports = function( opts ) {
 			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
-	return wrapStreamIntoCheckS3Repo( newOpts.creds, options );
+	return createDuplexStream( newOpts.creds, options );
 };
 
-// warp 'stream' into CheckS3Repo
-var wrapStreamIntoCheckS3Repo = function ( aws, options, stream ) {
+// create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
+// Also sets the location for the stream to where the file is located.
+var createDuplexStream = function ( aws, options ) {
 
 	var gulpS3 = s3( aws, options );
 	var checkRep = checkS3Repo( aws, options);
@@ -35,8 +36,12 @@ var checkS3Repo = function ( aws, options ) {
 	return es.map( function (file, cb) {
 		client.list({ prefix: options.uploadPath }, function(err, data) {
 
+			if(err) {
+				throw new Error( 'Error accessing Amazon-S3' );
+			}
+
 			if (data.Contents.length != 0) {
-				//console.log('file already exist in folder');
+				// file exist in s3 buckets
 				cb();
 			} else {
 				cb(null, file);
@@ -48,9 +53,14 @@ var checkS3Repo = function ( aws, options ) {
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
 var sanitize_opts = function ( opts ) {
-
-	if ( !opts || !opts.appID || !opts.creds ) {
-		throw new Error('Invalid arguments');
+	if ( !opts ) {
+		throw new Error('Missing options');
+	}
+	if ( !opts.appID ) {
+		throw new Error('Missing app id');
+	}
+	if ( !opts.devTag ) {
+		throw new Error('Missing devTag');
 	}
 
 	var aws = getCreds(opts.creds);
@@ -60,12 +70,17 @@ var sanitize_opts = function ( opts ) {
 
 // check if the credentials are valid and return it with only the valid properties.
 var getCreds = function ( creds ) {
-
-	if ( !creds.key || !creds.secret ) {
-		throw new Error('Invalid arguments');
-	} else {
-		return setAws( creds.key, creds.secret );
+	if ( !creds ) {
+		throw new Error('Missing credentials');
 	}
+	if ( !creds.key ) {
+		throw new Error('Missing credential key');
+	}
+	if( !creds.secret ) {
+		throw new Error('Missing credential secret');
+	}
+	
+	return setAws( creds.key, creds.secret );
 };
 
 // return a valid aws object
@@ -73,7 +88,7 @@ var setAws = function ( key, secret ) {
 	return {
 		key: key,
 		secret: secret,
-		bucket: 'gaudi-cdn-test'
+		bucket: 'd2lprodcdn'
 	};
 };
 

@@ -1,26 +1,41 @@
-var stream = require('stream');
-var gulpS3 = sinon.stub().returns( new stream.Readable());
+var es = require('event-stream');
+var ReadableStream = es.map();
+var gulpS3 = sinon.stub().returns( ReadableStream );
 
 var publisher = SandboxedModule.require('../publisher', {
     requires: { 'gulp-s3': gulpS3 }
 });
-// var publisher = require('../publisher');
 
 describe('publisher', function() {
     it('should throw with null options', function() {
-		    expect(publisher).to.throw( 'Invalid arguments' );
+		    expect(publisher).to.throw( 'Missing options' );
   	});
 
-  	it('should throw with no creds', function() {
+  	it('should throw with empty options', function() {
 		    expect(function() {
 			       publisher({});
-		    }).to.throw( 'Invalid arguments' );
+		    }).to.throw( 'Missing app id' );
   	});
 
+    it('should throw with no credentials', function() {
+      var options = { 
+        appID: 'some-ID',            
+        devTag: 'some-tag'
+      }
+        expect(function() {
+             publisher(options);
+        }).to.throw( 'Missing credentials' );
+    });
+
   	it('should throw with no key', function() {
+      var options = { 
+        appID: 'some-ID',            
+        creds: {},
+        devTag: 'some-tag'
+      }
 		    expect(function() {
-			       publisher({ creds: {} });
-        }).to.throw( 'Invalid arguments' );
+			       publisher(options);
+        }).to.throw( 'Missing credential key' );
   	});
 
   	it('should throw with no secret', function() {
@@ -28,12 +43,27 @@ describe('publisher', function() {
         appID: 'some-ID',
   			creds: {
   				key: 'some-key'
-  			}
+  			},
+        devTag: 'some-tag'
   		};
 
   		expect(function() {
   			publisher(options);
-  		}).to.throw( 'Invalid arguments' );
+  		}).to.throw( 'Missing credential secret' );
+    });
+
+    it('should throw with no devTag', function() {
+      var options = {
+        appID: 'some-ID',
+        creds: {
+          key: 'some-key',
+          secret: 'some-secret'
+        }
+      };
+
+      expect(function() {
+        publisher(options);
+      }).to.throw( 'Missing devTag' );
     });
 
   	it('should throw with no appID', function() {
@@ -41,11 +71,12 @@ describe('publisher', function() {
         creds: {
           key: 'some-key',
           secret: 'some-secret'
-        }
+        },
+        devTag: 'some-tag'
       };
       expect(function() {
         publisher(options);
-      }).to.throw( 'Invalid arguments' );
+      }).to.throw( 'Missing app id' );
     });
 
     it ('should not throw even if there is extra info in the creds', function() {
@@ -56,11 +87,12 @@ describe('publisher', function() {
           secret: 'some-secret',
           useless: 'testetetse'
         },
+        devTag: 'some-tag'
       };
 
        expect(function() {
         publisher(options);
-      }).to.not.throw( 'Invalid arguments' );
+      }).to.not.throw();
     });
 
     it('should call gulp-s3', function() {
@@ -75,7 +107,7 @@ describe('publisher', function() {
       var aws = {
         key: 'some-key',
         secret: 'some-secret',
-        bucket: 'gaudi-cdn-test'
+        bucket: 'd2lprodcdn'
       };
 
       var s3Options = {
