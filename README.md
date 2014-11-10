@@ -66,11 +66,11 @@ var fileTxtLocation = publisher.location + 'file.txt';
 
  How do I specify which file I want upload?
 
->`gulp.src()` takes in a glob that you can specify which folder and which type of file you want to upload. 
+>`gulp.src()` takes in a glob that you can specify which folder and which type of file you want to upload.
 Usually you want the files to be in the `dist` folder so our glob `./dist/**` will upload everything in that folder.
 
 
-[ci-image]: https://travis-ci.org/Desire2Learn-Valence/gulp-frau-publisher.svg?branch=master
-[ci-url]: https://travis-ci.org/Desire2Learn-Valence/gulp-frau-publisher
-[coverage-image]: https://img.shields.io/coveralls/Desire2Learn-Valence/gulp-frau-publisher.svg
-[coverage-url]: https://coveralls.io/r/Desire2Learn-Valence/gulp-frau-publisher?branch=master
+[ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
+[ci-url]: https://travis-ci.org/Brightspace/gulp-frau-publisher
+[coverage-image]: https://img.shields.io/coveralls/Brightspace/gulp-frau-publisher.svg
+[coverage-url]: https://coveralls.io/r/Brightspace/gulp-frau-publisher?branch=master
