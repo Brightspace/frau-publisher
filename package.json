@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Desire2Learn-Valence/gulp-frau-publisher.git"
+    "url": "https://github.com/Brightspace/gulp-frau-publisher.git"
   },
   "keywords": [
     "d2l",
     "free-range"
   ],
   "author": "D2L Corporation",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "devDependencies": {
     "chai": "^1.9.2",
     "coveralls": "^2.11.2",
