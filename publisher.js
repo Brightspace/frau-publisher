@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var s3 = require('gulp-s3');
 var es = require('event-stream');
@@ -25,6 +25,7 @@ var createDuplexStream = function ( aws, options ) {
 	var duplexStream = es.duplex( checkRep, gulpS3 );
 	checkRep.pipe(gulpS3);
 	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
+	// gulpS3.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
 
 	return duplexStream;
 };
@@ -33,11 +34,24 @@ var checkS3Repo = function ( aws, options ) {
 
 	var client = knox.createClient(aws);
 
-	return es.map( function (file, cb) {
-		client.list({ prefix: options.uploadPath }, function(err, data) {
+	var initialError = false;
 
-			if(err) {
-				throw new Error( 'Error accessing Amazon-S3' );
+	return es.map( function (file, cb) {
+		
+		client.list({ prefix: options.uploadPath }, function(err, data) {
+			console.log(file);
+			console.log('y');
+			console.log("error: ", err);
+			console.log("data: ", data);
+			debugger;
+			// for some reason, when you have an invalid key or secret
+			// it is not registered in err but in data
+			if(err || data.Code) {
+				if (initialError) {
+					return cb();
+				}
+				initialError = true;
+				return cb(new Error( 'Error accessing Amazon-S3' ));
 			}
 
 			if (data.Contents.length != 0) {
@@ -88,7 +102,7 @@ var setAws = function ( key, secret ) {
 	return {
 		key: key,
 		secret: secret,
-		bucket: 'd2lprodcdn'
+		bucket: 'gaudi-cdn-test'
 	};
 };
 
