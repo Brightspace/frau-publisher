@@ -25,7 +25,6 @@ var createDuplexStream = function ( aws, options ) {
 	var duplexStream = es.duplex( checkRep, gulpS3 );
 	checkRep.pipe(gulpS3);
 	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
-	// gulpS3.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
 
 	return duplexStream;
 };
@@ -34,31 +33,24 @@ var checkS3Repo = function ( aws, options ) {
 
 	var client = knox.createClient(aws);
 
-	var initialError = false;
-
 	return es.map( function (file, cb) {
+
+		if (!file.isBuffer()) {
+			return cb();
+		}
 		
 		client.list({ prefix: options.uploadPath }, function(err, data) {
-			console.log(file);
-			console.log('y');
-			console.log("error: ", err);
-			console.log("data: ", data);
-			debugger;
 			// for some reason, when you have an invalid key or secret
 			// it is not registered in err but in data
 			if(err || data.Code) {
-				if (initialError) {
-					return cb();
-				}
-				initialError = true;
 				return cb(new Error( 'Error accessing Amazon-S3' ));
 			}
 
 			if (data.Contents.length != 0) {
 				// file exist in s3 buckets
-				cb();
+				return cb();
 			} else {
-				cb(null, file);
+				return cb(null, file);
 			}
 		});
 	});

@@ -1,15 +1,13 @@
 var es = require('event-stream');
-var ReadableStream = es.map( function ( file, cb) {console.log(file);cb()});
+var ReadableStream = es.mapSync( function (file) {console.log('test');return file;});
 var gulpS3 = sinon.stub().returns( ReadableStream );
 
 var gulp = require('gulp');
-var mocha = require('gulp-mocha');
-
 var rmdir = require('rmdir');
-
 var mox = require('./mock-knox');
 
-// var publisher = require('../publisher');
+// replace all the required module with either mocked module or 
+// the exact same module so that istanbul would not include them in the coverage
 var publisher = SandboxedModule.require('../publisher', {
 	requires: { 
 		'gulp-s3': gulpS3,
@@ -135,11 +133,11 @@ describe('publisher', function () {
 				.pipe( publisher(options) )
 				.on('end', function() {
 					
-					console.log('done end');
+					gulpS3.should.have.been.called;
 					done();
 				});
 
-			gulpS3.should.have.been.called;
+			
 		});
 
 		it('should expect an error when give a wrong key', function (done) {
@@ -165,21 +163,17 @@ describe('publisher', function () {
 				devTag: 'some-empty-tag'
 			}; 
 			
+			// TODO: fix gulp.src so it calls on('end')
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('end', function() {				
-
-					console.log('done end');
-					done();					
-			});
-
-
-			gulpS3.should.have.been.called;
+				.on('end', function() {		
+					gulpS3.should.have.been.called;		
+					done();
+			});		
 
 		});
 
 		after(function (done) {
-			console.log('after');
 			rmdir('./test/amazon/apps/some-ID/dev/some-empty-tag', function() {
 				done();
 			})
