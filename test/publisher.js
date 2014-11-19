@@ -1,5 +1,5 @@
 var es = require('event-stream');
-var ReadableStream = es.mapSync( function (file) {return file;});
+var ReadableStream = es.mapSync( function (file) {console.log('test stream');return file;});
 var gulpS3 = sinon.stub().returns( ReadableStream );
 
 var gulp = require('gulp');
@@ -122,27 +122,24 @@ describe('publisher', function () {
 	});
 
 	describe('stream', function () {
-		var gulpStream;
+		var publisher,
+			gulpS3,
+			ReadableStream;
+
+		// redefine gulpS3 and publisher here so that we can pipe ReadableStream twice
 		beforeEach(function() {
-			gulpStream = gulp.src('./test/dist/..');
+			ReadableStream = es.mapSync( function (file) { return file;});
+			gulpS3 = sinon.stub().returns( ReadableStream );
+			publisher = SandboxedModule.require('../publisher', {
+				requires: { 
+					'gulp-s3': gulpS3,
+					'event-stream': es,
+					'knox': mox
+				}
+			});
 		});
 
-		it.skip('should pipe stream into s3 but not change the file content', function (done) {
-			var options = {
-				appID: 'some-ID',
-				creds: { key: 'some-key', secret: 'some-secret' },
-				devTag: 'some-tag'
-			};
-
-			gulpStream
-				.pipe( publisher(options) )
-				.on('end', function() {
-					gulpS3.should.have.been.called;
-					done();
-				});
-		});
-
-		it('should pipe stream into s3 but not change the file content', function (done) {
+		it('should pipe stream into a s3 bucket with content but not change the file content', function (done) {
 			var options = {
 				appID: 'some-ID',
 				creds: { key: 'key-a', secret: 'some-secret' },
@@ -152,7 +149,23 @@ describe('publisher', function () {
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
 				.on('end', function() {
-					
+
+					gulpS3.should.have.been.called;
+					done();
+				});
+		});
+
+		it('should pipe stream into an empty s3 bucket and change the file content', function (done) {
+			var options = {
+				appID: 'some-ID',
+				creds: { key: 'some-key', secret: 'some-secret' },
+				devTag: 'some-tag'
+			};
+
+			gulp.src('./test/dist/**')
+				.pipe( publisher(options) )
+				.on('end', function() {
+
 					gulpS3.should.have.been.called;
 					done();
 				});

@@ -29,6 +29,7 @@ var createDuplexStream = function ( aws, options ) {
 	return duplexStream;
 };
 
+// check if the amazon-s3 already have files on it
 var checkS3Repo = function ( aws, options ) {
 
 	var client = knox.createClient(aws);
