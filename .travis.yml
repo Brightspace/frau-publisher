@@ -11,3 +11,6 @@ deploy:
     tags: true
     repo: Desire2Learn-Valence/gulp-frau-publisher
     all_branches: true
+env:
+  global:
+  - secure: NbJJ3Csu5rJcFLdTsfW2hUELqQbrEcJHaDHHiG/W5/o2lZTlc30hrKTKh0S4yKaAEq0BIQ3zWNV6tPyZDD2R11lcDSeWZ7BHRyve8UFNgAgvDjKBjdxFRASp5v11qa8pffN0VWdil+kWARItpF60+ucZiKyydkqjYpLwnj0s+lc=
