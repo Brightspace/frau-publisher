@@ -4,18 +4,27 @@ var Client = module.exports = function (config) {
 };
 
 Client.prototype.list = function (options, cb) {
+	
+	// simulate wrong key
 	if (this.config.key == 'wrong-key') {
-		return cb( null, { Code:'InvalidAccessKeyId', Contents : []});
-	} else if ( this.config.secret == 'wrong-secret') {
-		return cb( null, { Code:'SignatureDoesNotMatch', Contents : []});		
+		cb( null, { Code:'InvalidAccessKeyId', Contents : []});
+		return;
+	} 
+
+	// simulate wrong secret
+	if ( this.config.secret == 'wrong-secret') {
+		cb( null, { Code:'SignatureDoesNotMatch', Contents : []});
+		return;
 	}
 
-	// return different content value depending on the config.key
+	// simulate s3 with existing files
 	if (this.config.key == 'key-a') {
-		return cb( null, { Contents: [ 'a.js', 'b.json']});
-	} else {
-		return cb( null, {  test: 'deep', Contents: []});
-	}
+		cb( null, { Contents: [ 'a.js', 'b.json']});
+		return;
+	} 
+	
+	// default: empty s3 server
+	cb( null, {  test: 'deep', Contents: []});
 };
 
 module.exports.createClient = function (config) {

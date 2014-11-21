@@ -21,9 +21,9 @@ module.exports = function( opts ) {
 var createDuplexStream = function ( aws, options ) {
 
 	var gulpS3 = s3( aws, options );
-	var checkRep = checkS3Repo( aws, options);
-	var duplexStream = es.duplex( checkRep, gulpS3 );
-	checkRep.pipe(gulpS3);
+	var checkS3 = checkS3Repo( aws, options);
+	var duplexStream = es.duplex( checkS3, gulpS3 );
+	checkS3.pipe(gulpS3);
 	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
 
 	return duplexStream;
@@ -37,22 +37,26 @@ var checkS3Repo = function ( aws, options ) {
 	return es.map( function (file, cb) {
 
 		if (!file.isBuffer()) {
-			return cb();
+			cb();
+			return;
 		}
 		
 		client.list({ prefix: options.uploadPath }, function(err, data) {
 			// for some reason, when you have an invalid key or secret
 			// it is not registered in err but in data
 			if(err || data.Code) {
-				return cb(new Error( 'Error accessing Amazon-S3' ));
+				cb(new Error( 'Error accessing Amazon-S3' ));
+				return;
 			}
 
 			if (data.Contents.length != 0) {
 				// file exist in s3 buckets
-				return cb();
-			} else {
-				return cb(null, file);
-			}
+				cb();
+				return;
+			} 
+			
+			// no error, and the contents of data is empty
+			cb(null, file);
 		});
 	});
 	
@@ -95,7 +99,7 @@ var setAws = function ( key, secret ) {
 	return {
 		key: key,
 		secret: secret,
-		bucket: 'gaudi-cdn-test'
+		bucket: 'd2lprodcdn'
 	};
 };
 

@@ -1,22 +1,25 @@
 var es = require('event-stream');
-var ReadableStream = es.mapSync( function (file) {console.log('test stream');return file;});
-var gulpS3 = sinon.stub().returns( ReadableStream );
-
 var gulp = require('gulp');
-var rmdir = require('rmdir');
 var mox = require('./mock-knox');
 
-// replace all the required module with either mocked module or 
-// the exact same module so that istanbul would not include them in the coverage
-var publisher = SandboxedModule.require('../publisher', {
-	requires: { 
-		'gulp-s3': gulpS3,
-		'event-stream': es,
-		'knox': mox
-	}
-});
-
 describe('publisher', function () {
+	var publisher,
+		gulpS3,
+		mockedStream;
+
+	// replace all the required module with either mocked module or 
+	// the exact same module so that istanbul would not include them in the coverage
+	beforeEach(function() {
+		mockedStream = es.mapSync( function (file) { return file;});
+		gulpS3 = sinon.stub().returns( mockedStream );
+		publisher = SandboxedModule.require('../publisher', {
+			requires: { 
+				'gulp-s3': gulpS3,
+				'event-stream': es,
+				'knox': mox
+			}
+		});
+	});
 
 	describe ('Parameter', function () {
 		it('should throw with null options', function() {
@@ -116,28 +119,12 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var publisher_test = publisher( options );
-			expect(publisher_test.location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
+			expect(publisher( options ).location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
 		});
 	});
 
 	describe('stream', function () {
-		var publisher,
-			gulpS3,
-			ReadableStream;
-
-		// redefine gulpS3 and publisher here so that we can pipe ReadableStream twice
-		beforeEach(function() {
-			ReadableStream = es.mapSync( function (file) { return file;});
-			gulpS3 = sinon.stub().returns( ReadableStream );
-			publisher = SandboxedModule.require('../publisher', {
-				requires: { 
-					'gulp-s3': gulpS3,
-					'event-stream': es,
-					'knox': mox
-				}
-			});
-		});
+		
 
 		it('should pipe stream into a s3 bucket with content but not change the file content', function (done) {
 			var options = {
@@ -146,12 +133,19 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
+			var hasError;
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('end', function() {
-
-					gulpS3.should.have.been.called;
+				.on('error', function (err) {			
+					hasError = true;
 					done();
+					expect(hasError).to.be.false;
+										
+				})
+				.on('end', function (err) {
+					hasError = false;
+					done();
+					expect(hasError).to.be.false;
 				});
 		});
 
@@ -162,12 +156,19 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
+			var hasError;
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('end', function() {
-
-					gulpS3.should.have.been.called;
+				.on('error', function (err) {			
+					hasError = true;
 					done();
+					expect(hasError).to.be.false;
+										
+				})
+				.on('end', function (err) {
+					hasError = false;
+					done();
+					expect(hasError).to.be.false;
 				});
 		});
 
@@ -178,19 +179,21 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			}; 
 			
+			var hasError;
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('error', function(err) {				
+				.on('error', function (err) {			
+					hasError = true;
 					done();
-					expect(err).to.be.not.undefined;					
-			});
+					expect(hasError).to.be.true;
+										
+				})
+				.on('end', function (err) {
+					hasError = false;
+					done();
+					expect(hasError).to.be.true;
+				});
 
-		});
-
-		after(function (done) {
-			rmdir('./test/amazon/apps/some-ID/dev/some-empty-tag', function() {
-				done();
-			})
 		});
 	});
 
