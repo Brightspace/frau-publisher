@@ -133,19 +133,18 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var hasError;
+			var passedData = false;
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('error', function (err) {			
-					hasError = true;
-					done();
-					expect(hasError).to.be.false;
+				.on('data', function (data) {	
+					
+					passedData = true;
 										
 				})
 				.on('end', function (err) {
-					hasError = false;
+
+					expect(passedData).to.be.false;
 					done();
-					expect(hasError).to.be.false;
 				});
 		});
 
@@ -156,19 +155,17 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var hasError;
+			var passedData = false;
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('error', function (err) {			
-					hasError = true;
-					done();
-					expect(hasError).to.be.false;
+				.on('data', function (data) {			
+					
+					passedData = true;
 										
 				})
 				.on('end', function (err) {
-					hasError = false;
+					expect(passedData).to.be.true;
 					done();
-					expect(hasError).to.be.false;
 				});
 		});
 
@@ -183,15 +180,11 @@ describe('publisher', function () {
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
 				.on('error', function (err) {			
+
 					hasError = true;
-					done();
 					expect(hasError).to.be.true;
+					done();
 										
-				})
-				.on('end', function (err) {
-					hasError = false;
-					done();
-					expect(hasError).to.be.true;
 				});
 
 		});
