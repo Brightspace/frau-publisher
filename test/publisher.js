@@ -124,9 +124,8 @@ describe('publisher', function () {
 	});
 
 	describe('stream', function () {
-		
 
-		it('should pipe stream into a s3 bucket with content but not change the file content', function (done) {
+		it('should pipe files into a s3-amazon bucket with existing contents but not overwrite contents', function (done) {
 			var options = {
 				appID: 'some-ID',
 				creds: { key: 'key-a', secret: 'some-secret' },
@@ -148,7 +147,7 @@ describe('publisher', function () {
 				});
 		});
 
-		it('should pipe stream into an empty s3 bucket and change the file content', function (done) {
+		it('should pipe files into an empty s3-amazon bucket successfully', function (done) {
 			var options = {
 				appID: 'some-ID',
 				creds: { key: 'some-key', secret: 'some-secret' },
