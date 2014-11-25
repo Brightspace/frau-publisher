@@ -24,7 +24,7 @@ var createDuplexStream = function ( aws, options ) {
 	var checkS3 = checkS3Repo( aws, options);
 	var duplexStream = es.duplex( checkS3, gulpS3 );
 	checkS3.pipe(gulpS3);
-	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
+	duplexStream.location = 'https://s.brightspace.com/' + options.uploadPath;
 
 	return duplexStream;
 };
