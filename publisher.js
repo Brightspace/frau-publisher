@@ -12,7 +12,7 @@ module.exports = function( opts ) {
 		};
 
  	var object = s3( newOpts.creds , options );
-	object.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
+	object.location = 'https://s.brightspace.com/' + options.uploadPath;
 
 	return object;
 };
