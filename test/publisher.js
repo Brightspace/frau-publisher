@@ -167,15 +167,11 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			}; 
 			
-			var hasError;
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
 				.on('error', function (err) {			
 
-					hasError = true;
-					expect(hasError).to.be.true;
-					done();
-										
+					done();							
 				});
 
 		});
