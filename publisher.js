@@ -1,9 +1,11 @@
-"use strict";
+'use strict';
 
 var s3 = require('gulp-s3');
+var es = require('event-stream');
+var knox = require('knox');
 
 module.exports = function( opts ) {
-
+	
 	var newOpts = sanitize_opts( opts );
 
 	var options = {
@@ -11,10 +13,53 @@ module.exports = function( opts ) {
 			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
- 	var object = s3( newOpts.creds , options );
-	object.location = 'https://s.brightspace.com/' + options.uploadPath;
+	return createDuplexStream( newOpts.creds, options );
+};
 
-	return object;
+// create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
+// Also sets the location for the stream to where the file is located.
+var createDuplexStream = function ( aws, options ) {
+
+	var gulpS3 = s3( aws, options );
+	var checkS3 = checkS3Repo( aws, options);
+	var duplexStream = es.duplex( checkS3, gulpS3 );
+	checkS3.pipe(gulpS3);
+	duplexStream.location = 'https://s.brightspace.com/' + options.uploadPath;
+
+	return duplexStream;
+};
+
+// check if the amazon-s3 already have files on it
+var checkS3Repo = function ( aws, options ) {
+
+	var client = knox.createClient(aws);
+
+	return es.map( function (file, cb) {
+
+		if (!file.isBuffer()) {
+			cb();
+			return;
+		}
+		
+		client.list({ prefix: options.uploadPath }, function(err, data) {
+			// for some reason, when you have an invalid key or secret
+			// it is not registered in err but in data
+			if(err || data.Code) {
+				cb(new Error( 'Error accessing Amazon-S3' ));
+				return;
+			}
+
+			if (data.Contents.length != 0) {
+				// file exist in s3 buckets
+				cb();
+				return;
+			} 
+			
+			// no error, and the contents of data is empty
+			cb(null, file);
+		});
+	});
+	
 };
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
@@ -45,7 +90,7 @@ var getCreds = function ( creds ) {
 	if( !creds.secret ) {
 		throw new Error('Missing credential secret');
 	}
-
+	
 	return setAws( creds.key, creds.secret );
 };
 
