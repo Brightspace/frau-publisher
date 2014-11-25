@@ -121,6 +121,6 @@ describe('publisher', function() {
         devTag: 'some-tag'
       };
       var publisher_test = publisher( options );
-      expect(publisher_test.location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
+      expect(publisher_test.location).to.equal('https://s.brightspace.com/apps/some-ID/dev/some-tag/');
   });
 });
