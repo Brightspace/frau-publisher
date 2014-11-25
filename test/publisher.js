@@ -132,17 +132,13 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var passedData = false;
+			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('data', function (data) {	
-					
-					passedData = true;
-										
-				})
+				.on('data', dataHandler)
 				.on('end', function (err) {
 
-					expect(passedData).to.be.false;
+					expect(dataHandler).to.not.be.called;
 					done();
 				});
 		});
@@ -154,16 +150,12 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var passedData = false;
+			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('data', function (data) {			
-					
-					passedData = true;
-										
-				})
+				.on('data', dataHandler)
 				.on('end', function (err) {
-					expect(passedData).to.be.true;
+					expect(dataHandler).to.be.called;
 					done();
 				});
 		});
