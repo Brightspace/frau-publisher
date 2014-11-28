@@ -5,7 +5,7 @@ var es = require('event-stream');
 var knox = require('knox');
 
 module.exports = function( opts ) {
-	
+
 	var newOpts = sanitize_opts( opts );
 
 	var options = {
@@ -40,7 +40,7 @@ var checkS3Repo = function ( aws, options ) {
 			cb();
 			return;
 		}
-		
+
 		client.list({ prefix: options.uploadPath }, function(err, data) {
 			// for some reason, when you have an invalid key or secret
 			// it is not registered in err but in data
@@ -49,17 +49,17 @@ var checkS3Repo = function ( aws, options ) {
 				return;
 			}
 
-			if (data.Contents.length != 0) {
+			if (data.Contents.length !== 0) {
 				// file exist in s3 buckets
 				cb();
 				return;
-			} 
-			
+			}
+
 			// no error, and the contents of data is empty
 			cb(null, file);
 		});
 	});
-	
+
 };
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
@@ -90,7 +90,7 @@ var getCreds = function ( creds ) {
 	if( !creds.secret ) {
 		throw new Error('Missing credential secret');
 	}
-	
+
 	return setAws( creds.key, creds.secret );
 };
 
