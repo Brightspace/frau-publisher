@@ -9,15 +9,17 @@ module.exports = function( opts ) {
 	var newOpts = sanitize_opts( opts );
 
 	var options = {
-			// Need the trailing slash, otherwise the SHA is prepended to the filename.
+			// Need the trailing slash, otherwise the SHA is prepended to
+			// the filename.
 			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
 		};
 
 	return createDuplexStream( newOpts.creds, options );
 };
 
-// create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
-// Also sets the location for the stream to where the file is located.
+// create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo
+// into gulp-s3. Also sets the location for the stream to where the file is
+// located.
 var createDuplexStream = function ( aws, options ) {
 
 	var gulpS3 = s3( aws, options );
@@ -62,7 +64,8 @@ var checkS3Repo = function ( aws, options ) {
 
 };
 
-// sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
+// sanitize the parameter so that it has only the valid variables.
+// Throw error if parameter is invalid.
 var sanitize_opts = function ( opts ) {
 	if ( !opts ) {
 		throw new Error('Missing options');
@@ -79,7 +82,8 @@ var sanitize_opts = function ( opts ) {
 	return setOptions ( opts.appID, aws, opts.devTag );
 };
 
-// check if the credentials are valid and return it with only the valid properties.
+// check if the credentials are valid and return it with only the valid
+// properties.
 var getCreds = function ( creds ) {
 	if ( !creds ) {
 		throw new Error('Missing credentials');
