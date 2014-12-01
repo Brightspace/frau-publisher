@@ -5,6 +5,7 @@
 Utility for publishing free-range apps to our CDN.
 
 ## Usage
+**Before you start**: Make sure you have [NodeJS] (http://nodejs.org/ NodeJS) installed.
 
 Install `gulp-frau-publisher` as a dependency from your cmd:
 
