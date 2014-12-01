@@ -17,8 +17,8 @@ Set your creds in a file at `./creds/keys.json` like this:
 
 ```javascript
 {
-	key: 'AKITHISISSOMEKEYASDF',
-	secret: 'aCD233rDF232RANDOMSECRET12+32g'
+	"key": "AKITHISISSOMEKEYASDF",
+	"secret": "aCD233rDF232RANDOMSECRET12+32g"
 }
 ```
 Then in your `gulpfile.js`:
