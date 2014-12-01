@@ -24,7 +24,7 @@ Set your creds in a file at `./creds/keys.json` like this:
 Then in your `gulpfile.js`:
 
 ```javascript
-var s3 = require('gulp-frau-publisher');
+var publisher = require('gulp-frau-publisher');
 
 var options = {
 	appID: 'someID',
