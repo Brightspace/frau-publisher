@@ -74,12 +74,6 @@ Follow the Usage instructions, however, instead of calling `publisher.apps( opti
 >`gulp.src()` takes in a glob that you can specify which folder and which type of file you want to upload.
 Usually you want the files to be in the `dist` folder so our glob `./dist/**` will upload everything in that folder.
 
- What are the changes from version 1.0.1 to version 1.0.2?
-
->We added feature to upload libraries to our CDN while not distrupting the previous workflow. Now you can call `publisher.libs( options )` for library files, and similar manner for apps you can now call `publisher.apps( options )`.
-Another Change `appID` is now `id`. However, you can still use `appID` in your code but you will recieve a `[DEPRECATED]` message letting you know future version will not support `appID`.
-
-
 [ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
 [ci-url]: https://travis-ci.org/Brightspace/gulp-frau-publisher
 [coverage-image]: https://img.shields.io/coveralls/Brightspace/gulp-frau-publisher.svg
