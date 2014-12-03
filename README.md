@@ -5,6 +5,7 @@
 Utility for publishing free-range apps to our CDN.
 
 ## Usage
+**Before you start**: Make sure you have [NodeJS] (http://nodejs.org/ NodeJS) installed.
 
 Install `gulp-frau-publisher` as a dependency from your cmd:
 
@@ -16,14 +17,14 @@ Set your creds in a file at `./creds/keys.json` like this:
 
 ```javascript
 {
-	key: 'AKITHISISSOMEKEYASDF',
-	secret: 'aCD233rDF232RANDOMSECRET12+32g'
+	"key": "AKITHISISSOMEKEYASDF",
+	"secret": "aCD233rDF232RANDOMSECRET12+32g"
 }
 ```
 Then in your `gulpfile.js`:
 
 ```javascript
-var s3 = require('gulp-frau-publisher');
+var publisher = require('gulp-frau-publisher');
 
 var options = {
 	appID: 'someID',
