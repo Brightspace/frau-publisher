@@ -1,5 +1,5 @@
-var es    = require('event-stream'),
-	gulp  = require('gulp'),
+var gulp  = require('gulp'),
+	es    = require('event-stream'),
 	mox   = require('./mock-knox'),
 	gutil = require('gulp-util');
 
