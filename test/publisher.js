@@ -31,34 +31,34 @@ describe('publisher', function () {
 
 		it('should throw with empty options', function() {
 			expect(function() {
-				publisher({});
+				publisher.app({});
 			}).to.throw( 'Missing id' );
 		});
 
 		it('should throw with no credentials', function() {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				devTag: 'some-tag'
 			};
 			expect(function() {
-				publisher(options);
+				publisher.app(options);
 			}).to.throw( 'Missing credentials' );
 		});
 
 		it('should throw with no key', function() {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: {},
 				devTag: 'some-tag'
 			};
 			expect(function() {
-				publisher(options);
+				publisher.app(options);
 			}).to.throw( 'Missing credential key' );
 		});
 
 		it('should throw with no secret', function() {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: {
 					key: 'some-key'
 				},
@@ -66,13 +66,13 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher(options);
+				publisher.app(options);
 			}).to.throw( 'Missing credential secret' );
 		});
 
 		it('should throw with no devTag', function() {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: {
 					key: 'some-key',
 					secret: 'some-secret'
@@ -80,11 +80,11 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher(options);
+				publisher.app(options);
 			}).to.throw( 'Missing devTag' );
 		});
 
-		it('should throw with no appID', function() {
+		it('should throw with no id', function() {
 			var options = {
 				creds: {
 					key: 'some-key',
@@ -93,13 +93,13 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 			expect(function() {
-				publisher(options);
+				publisher.app(options);
 			}).to.throw( 'Missing id' );
 		});
 
 		it ('should not throw even if there is extra info in the creds', function() {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: {
 					key: 'some-key',
 					secret: 'some-secret',
@@ -109,7 +109,7 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher(options);
+				publisher.app(options);
 			}).to.not.throw();
 		});
 
@@ -124,7 +124,7 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher.apps(options);
+				publisher.app(options);
 			}).to.not.throw();
 		});
 
@@ -139,7 +139,22 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher.libs(options);
+				publisher.lib(options);
+			}).to.not.throw();
+		});
+
+		it('should still work with deprecated "appID"', function() {
+			var options = {
+				appID: 'some-ID',
+				creds: {
+					key: 'some-key',
+					secret: 'some-secret',
+				},
+				devTag: 'some-tag'
+			};
+
+			expect(function() {
+				publisher.lib(options);
 			}).to.not.throw();
 		});
 	});
@@ -147,12 +162,36 @@ describe('publisher', function () {
 	describe('location', function () {
 		it('should return the proper address', function () {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: { key: 'some-key', secret: 'some-secret' },
 				devTag: 'some-tag'
 			};
 
-			expect(publisher( options ).location).to.equal('https://s.brightspace.com/apps/some-ID/dev/some-tag/');
+			expect(publisher.app( options ).location).to.equal('https://s.brightspace.com/apps/some-ID/dev/some-tag/');
+		});
+
+		it('should return the proper address for libraries', function () {
+			var options = {
+				id: 'some-ID',
+				creds: { key: 'some-key', secret: 'some-secret' },
+				devTag: 'some-tag'
+			};
+
+			expect(publisher.lib( options ).location).to.equal('https://s.brightspace.com/libs/some-ID/dev/some-tag/');
+		});
+
+		it('should give precedence to "id" rather than "appID"', function() {
+			var options = {
+				appID: 'wrong-ID',
+				id: 'correct-ID',
+				creds: {
+					key: 'some-key',
+					secret: 'some-secret',
+				},
+				devTag: 'some-tag'
+			};
+
+			expect(publisher.app( options ).location).to.equal('https://s.brightspace.com/apps/correct-ID/dev/some-tag/');
 		});
 	});
 
@@ -167,7 +206,7 @@ describe('publisher', function () {
 
 			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
-				.pipe( publisher(options) )
+				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
 				.on('end', function (err) {
 
@@ -185,7 +224,7 @@ describe('publisher', function () {
 
 			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
-				.pipe( publisher(options) )
+				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
 				.on('end', function (err) {
 					expect(dataHandler).to.be.called;
@@ -198,13 +237,13 @@ describe('publisher', function () {
 				id: 'some-ID',
 				creds: { key: 'wrong-key', secret: 'some-secret' },
 				devTag: 'some-tag'
-			}; 
+			};
 			
 			gulp.src('./test/dist/**')
-				.pipe( publisher(options) )
-				.on('error', function (err) {			
+				.pipe( publisher.app(options) )
+				.on('error', function (err) {
 
-					done();							
+					done();
 				});
 
 		});
