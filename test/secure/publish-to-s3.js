@@ -25,7 +25,7 @@ var file = new gUtil.File({
 });
 
 describe('publisher', function() {
-	it('should publish new file', function(cb) {
+	it.skip('should publish new file', function(cb) {
 		console.log('file: ' + filename);
 
 		eventStream.readArray( [file] )
