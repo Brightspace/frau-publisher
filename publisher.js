@@ -1,12 +1,12 @@
 'use strict';
 
-var s3 = require('gulp-s3');
-var es = require('event-stream');
-var knox = require('knox');
+var s3    = require('gulp-s3'),
+	es    = require('event-stream'),
+	knox  = require('knox'),
+	gutil = require('gulp-util');
 
-module.exports = function( opts ) {
-	
-	var newOpts = sanitize_opts( opts );
+var appsPublisher = function ( opts ) {
+	var newOpts = sanitize_opts( opts, true );
 
 	var options = {
 			// Need the trailing slash, otherwise the SHA is prepended to the filename.
@@ -16,6 +16,22 @@ module.exports = function( opts ) {
 	return createDuplexStream( newOpts.creds, options );
 };
 
+var libsPublisher = function ( opts ) {
+	var newOpts = sanitize_opts( opts, false );
+
+	var options = {
+		uploadPath: 'libs/' + newOpts.libID + '/dev/' + newOpts.devTag + '/'
+	};
+
+	return createDuplexStream( newOpts.creds, options );
+};
+
+module.exports = appsPublisher;
+
+module.exports.apps = appsPublisher;
+
+module.exports.libs = libsPublisher;
+	
 // create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
 // Also sets the location for the stream to where the file is located.
 var createDuplexStream = function ( aws, options ) {
@@ -24,7 +40,7 @@ var createDuplexStream = function ( aws, options ) {
 	var checkS3 = checkS3Repo( aws, options);
 	var duplexStream = es.duplex( checkS3, gulpS3 );
 	checkS3.pipe(gulpS3);
-	duplexStream.location = 'https://d2660orkic02xl.cloudfront.net/' + options.uploadPath;
+	duplexStream.location = 'https://s.brightspace.com/' + options.uploadPath;
 
 	return duplexStream;
 };
@@ -49,11 +65,12 @@ var checkS3Repo = function ( aws, options ) {
 				return;
 			}
 
-			if (data.Contents.length != 0) {
+			if (data.Contents.length !== 0) {
 				// file exist in s3 buckets
 				cb();
+				gutil.log(gutil.colors.red('[FAILED] Files already exists in this folder.'));
 				return;
-			} 
+			}
 			
 			// no error, and the contents of data is empty
 			cb(null, file);
@@ -63,12 +80,18 @@ var checkS3Repo = function ( aws, options ) {
 };
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
-var sanitize_opts = function ( opts ) {
+var sanitize_opts = function ( opts, isApp ) {
 	if ( !opts ) {
 		throw new Error('Missing options');
 	}
-	if ( !opts.appID ) {
-		throw new Error('Missing app id');
+	if (isApp) {
+		if ( !opts.appID ) {
+			throw new Error('Missing app id');
+		}
+	} else { // Library
+		if ( !opts.libID ) {
+			throw new Error('Missing lib id');
+		}
 	}
 	if ( !opts.devTag ) {
 		throw new Error('Missing devTag');
@@ -76,7 +99,11 @@ var sanitize_opts = function ( opts ) {
 
 	var aws = getCreds(opts.creds);
 
-	return setOptions ( opts.appID, aws, opts.devTag );
+	if (isApp) {
+		return setOptions ( opts.appID, aws, opts.devTag, true );
+	}
+
+	return setOptions ( opts.libID, aws, opts.devTag, false );
 };
 
 // check if the credentials are valid and return it with only the valid properties.
@@ -104,9 +131,18 @@ var setAws = function ( key, secret ) {
 };
 
 // return a valid options object
-var setOptions = function ( appID, creds, devTag ) {
+var setOptions = function ( idTag, creds, devTag, isApp ) {
+
+	if (isApp) {
+		return {
+			appID: idTag,
+			creds: creds,
+			devTag: devTag
+		};
+	}
+
 	return {
-		appID: appID,
+		libID: idTag,
 		creds: creds,
 		devTag: devTag
 	};

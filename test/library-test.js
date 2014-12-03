@@ -3,7 +3,7 @@ var es    = require('event-stream'),
 	mox   = require('./mock-knox'),
 	gutil = require('gulp-util');
 
-describe('publisher', function () {
+describe('Library Publisher', function () {
 	var publisher,
 		gulpS3,
 		mockedStream;
@@ -23,42 +23,41 @@ describe('publisher', function () {
 		});
 
 	});
-
-	describe ('Parameter', function () {
+	describe('Parameter', function () {
 		it('should throw with null options', function() {
-			expect(publisher).to.throw( 'Missing options' );
+			expect(publisher.libs).to.throw( 'Missing options' );
 		});
 
 		it('should throw with empty options', function() {
 			expect(function() {
-				publisher({});
-			}).to.throw( 'Missing app id' );
+				publisher.libs({});
+			}).to.throw( 'Missing lib id' );
 		});
 
 		it('should throw with no credentials', function() {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				devTag: 'some-tag'
 			};
 			expect(function() {
-				publisher(options);
+				publisher.libs(options);
 			}).to.throw( 'Missing credentials' );
 		});
 
 		it('should throw with no key', function() {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: {},
 				devTag: 'some-tag'
 			};
 			expect(function() {
-				publisher(options);
+				publisher.libs(options);
 			}).to.throw( 'Missing credential key' );
 		});
 
 		it('should throw with no secret', function() {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: {
 					key: 'some-key'
 				},
@@ -66,13 +65,13 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher(options);
+				publisher.libs(options);
 			}).to.throw( 'Missing credential secret' );
 		});
 
 		it('should throw with no devTag', function() {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: {
 					key: 'some-key',
 					secret: 'some-secret'
@@ -80,7 +79,7 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher(options);
+				publisher.libs(options);
 			}).to.throw( 'Missing devTag' );
 		});
 
@@ -93,13 +92,13 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 			expect(function() {
-				publisher(options);
-			}).to.throw( 'Missing app id' );
+				publisher.libs(options);
+			}).to.throw( 'Missing lib id' );
 		});
 
 		it ('should not throw even if there is extra info in the creds', function() {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: {
 					key: 'some-key',
 					secret: 'some-secret',
@@ -109,7 +108,7 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher(options);
+				publisher.libs(options);
 			}).to.not.throw();
 		});
 	});
@@ -117,12 +116,12 @@ describe('publisher', function () {
 	describe('location', function () {
 		it('should return the proper address', function () {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: { key: 'some-key', secret: 'some-secret' },
 				devTag: 'some-tag'
 			};
 
-			expect(publisher( options ).location).to.equal('https://s.brightspace.com/apps/some-ID/dev/some-tag/');
+			expect(publisher.libs( options ).location).to.equal('https://s.brightspace.com/libs/some-ID/dev/some-tag/');
 		});
 	});
 
@@ -130,14 +129,14 @@ describe('publisher', function () {
 
 		it('should pipe files into a s3-amazon bucket with existing contents but not overwrite contents', function (done) {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: { key: 'key-a', secret: 'some-secret' },
 				devTag: 'some-tag'
 			};
 
 			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
-				.pipe( publisher(options) )
+				.pipe( publisher.libs(options) )
 				.on('data', dataHandler)
 				.on('end', function (err) {
 
@@ -148,14 +147,14 @@ describe('publisher', function () {
 
 		it('should pipe files into an empty s3-amazon bucket successfully', function (done) {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: { key: 'some-key', secret: 'some-secret' },
 				devTag: 'some-tag'
 			};
 
 			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
-				.pipe( publisher(options) )
+				.pipe( publisher.libs(options) )
 				.on('data', dataHandler)
 				.on('end', function (err) {
 					expect(dataHandler).to.be.called;
@@ -165,19 +164,17 @@ describe('publisher', function () {
 
 		it('should expect an error when give a wrong key', function (done) {
 			var options = {
-				appID: 'some-ID',
+				libID: 'some-ID',
 				creds: { key: 'wrong-key', secret: 'some-secret' },
 				devTag: 'some-tag'
-			}; 
+			};
 			
 			gulp.src('./test/dist/**')
-				.pipe( publisher(options) )
-				.on('error', function (err) {			
+				.pipe( publisher.libs(options) )
+				.on('error', function (err) {
 
-					done();							
+					done();
 				});
-
 		});
 	});
-
 });
