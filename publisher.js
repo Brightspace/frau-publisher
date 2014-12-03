@@ -22,11 +22,11 @@ module.exports = function ( opts ) {
 	return publisher( opts, 'apps/');
 }
 
-module.exports.apps = function ( opts ) {
+module.exports.app = function ( opts ) {
 	return publisher( opts, 'apps/');
 }
 
-module.exports.libs = function ( opts ) {
+module.exports.lib = function ( opts ) {
 	return publisher( opts, 'libs/' );
 };
 	
@@ -81,12 +81,13 @@ var sanitize_opts = function ( opts ) {
 	if ( !opts ) {
 		throw new Error('Missing options');
 	}
-	if ( opts.appID ) {
-		gutil.log(gutil.colors.yellow('[DEPRECATED] Please use "id" instead of "appID", future version will not support "appID".'));
-		opts.id = opts.appID;
-	}
 	if ( !opts.id ) {
-		throw new Error('Missing id');
+		if ( opts.appID ) {
+			gutil.log(gutil.colors.yellow('[DEPRECATED] Please use "id" instead of "appID", future version will not support "appID".'));
+			opts.id = opts.appID;
+		} else {
+			throw new Error('Missing id');
+		}
 	}
 	if ( !opts.devTag ) {
 		throw new Error('Missing devTag');
