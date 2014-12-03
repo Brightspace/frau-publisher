@@ -16,13 +16,15 @@ var publisher = function ( opts, initialPath ) {
 	return createDuplexStream( newOpts.creds, options );
 };
 
-var appPublisher = function ( opts ) {
+module.exports = function ( opts ) {
+	gutil.log(gutil.colors.yellow('[DEPRECATED] Please use publisher.apps(options) or publisher.libs(options),',
+		'future version will not support publisher(options).'));
 	return publisher( opts, 'apps/');
 }
 
-module.exports = appPublisher;
-
-module.exports.apps = appPublisher;
+module.exports.apps = function ( opts ) {
+	return publisher( opts, 'apps/');
+}
 
 module.exports.libs = function ( opts ) {
 	return publisher( opts, 'libs/' );

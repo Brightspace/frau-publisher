@@ -33,13 +33,6 @@ var options = {
 };
 
 gulp.src('./dist/**')
-	.pipe(publisher( options ));
-```
-
-Alternative, if you want to be more specific to apps, you can call:
-
-```javascript
-gulp.src('./dist/**')
 	.pipe(publisher.apps( options ));
 ```
 
@@ -72,9 +65,7 @@ var fileTxtLocation = publisher.location + 'file.txt';
 
 ### Libraries Usage
 
-With version 1.0.2, we added a way to upload libraries (e.g. jquery, VUI, etc.) to our CDN.
-
-Follow the Usage instructions, however, instead of calling `publisher( options )` you will call `publisher.libs( options )` instead.
+Follow the Usage instructions, however, instead of calling `publisher.apps( options )` you will call `publisher.libs( options )` instead.
 
 ## FAQ
 
