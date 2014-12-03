@@ -119,7 +119,7 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			expect(publisher( options ).location).to.equal('https://d2660orkic02xl.cloudfront.net/apps/some-ID/dev/some-tag/');
+			expect(publisher( options ).location).to.equal('https://s.brightspace.com/apps/some-ID/dev/some-tag/');
 		});
 	});
 
