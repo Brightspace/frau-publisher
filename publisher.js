@@ -5,32 +5,28 @@ var s3    = require('gulp-s3'),
 	knox  = require('knox'),
 	gutil = require('gulp-util');
 
-var appsPublisher = function ( opts ) {
-	var newOpts = sanitize_opts( opts, true );
+var publisher = function ( opts, initialPath ) {
+
+	var newOpts = sanitize_opts( opts );
 
 	var options = {
-			// Need the trailing slash, otherwise the SHA is prepended to the filename.
-			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
-		};
-
-	return createDuplexStream( newOpts.creds, options );
-};
-
-var libsPublisher = function ( opts ) {
-	var newOpts = sanitize_opts( opts, false );
-
-	var options = {
-		uploadPath: 'libs/' + newOpts.libID + '/dev/' + newOpts.devTag + '/'
+		uploadPath: initialPath + newOpts.id + '/dev/' + newOpts.devTag + '/'
 	};
 
 	return createDuplexStream( newOpts.creds, options );
 };
 
-module.exports = appsPublisher;
+var appPublisher = function ( opts ) {
+	return publisher( opts, 'apps/');
+}
 
-module.exports.apps = appsPublisher;
+module.exports = appPublisher;
 
-module.exports.libs = libsPublisher;
+module.exports.apps = appPublisher;
+
+module.exports.libs = function ( opts ) {
+	return publisher( opts, 'libs/' );
+};
 	
 // create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
 // Also sets the location for the stream to where the file is located.
@@ -68,7 +64,6 @@ var checkS3Repo = function ( aws, options ) {
 			if (data.Contents.length !== 0) {
 				// file exist in s3 buckets
 				cb();
-				gutil.log(gutil.colors.red('[FAILED] Files already exists in this folder.'));
 				return;
 			}
 			
@@ -80,18 +75,16 @@ var checkS3Repo = function ( aws, options ) {
 };
 
 // sanitize the parameter so that it has only the valid variables. Throw error if parameter is invalid.
-var sanitize_opts = function ( opts, isApp ) {
+var sanitize_opts = function ( opts ) {
 	if ( !opts ) {
 		throw new Error('Missing options');
 	}
-	if (isApp) {
-		if ( !opts.appID ) {
-			throw new Error('Missing app id');
-		}
-	} else { // Library
-		if ( !opts.libID ) {
-			throw new Error('Missing lib id');
-		}
+	if ( opts.appID ) {
+		gutil.log(gutil.colors.yellow('[DEPRECATED] Please use "id" instead of "appID", future version will not support "appID".'));
+		opts.id = opts.appID;
+	}
+	if ( !opts.id ) {
+		throw new Error('Missing id');
 	}
 	if ( !opts.devTag ) {
 		throw new Error('Missing devTag');
@@ -99,11 +92,7 @@ var sanitize_opts = function ( opts, isApp ) {
 
 	var aws = getCreds(opts.creds);
 
-	if (isApp) {
-		return setOptions ( opts.appID, aws, opts.devTag, true );
-	}
-
-	return setOptions ( opts.libID, aws, opts.devTag, false );
+	return setOptions ( opts.id, aws, opts.devTag );
 };
 
 // check if the credentials are valid and return it with only the valid properties.
@@ -131,18 +120,9 @@ var setAws = function ( key, secret ) {
 };
 
 // return a valid options object
-var setOptions = function ( idTag, creds, devTag, isApp ) {
-
-	if (isApp) {
-		return {
-			appID: idTag,
-			creds: creds,
-			devTag: devTag
-		};
-	}
-
+var setOptions = function ( id, creds, devTag ) {
 	return {
-		libID: idTag,
+		id: id,
 		creds: creds,
 		devTag: devTag
 	};
