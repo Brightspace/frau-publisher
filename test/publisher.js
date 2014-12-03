@@ -32,7 +32,7 @@ describe('publisher', function () {
 		it('should throw with empty options', function() {
 			expect(function() {
 				publisher({});
-			}).to.throw( 'Missing app id' );
+			}).to.throw( 'Missing id' );
 		});
 
 		it('should throw with no credentials', function() {
@@ -94,7 +94,7 @@ describe('publisher', function () {
 			};
 			expect(function() {
 				publisher(options);
-			}).to.throw( 'Missing app id' );
+			}).to.throw( 'Missing id' );
 		});
 
 		it ('should not throw even if there is extra info in the creds', function() {
@@ -110,6 +110,36 @@ describe('publisher', function () {
 
 			expect(function() {
 				publisher(options);
+			}).to.not.throw();
+		});
+
+		it ('should not throw when using app publisher', function() {
+			var options = {
+				id: 'some-ID',
+				creds: {
+					key: 'some-key',
+					secret: 'some-secret',
+				},
+				devTag: 'some-tag'
+			};
+
+			expect(function() {
+				publisher.apps(options);
+			}).to.not.throw();
+		});
+
+		it ('should not throw when using library publisher', function() {
+			var options = {
+				id: 'some-ID',
+				creds: {
+					key: 'some-key',
+					secret: 'some-secret',
+				},
+				devTag: 'some-tag'
+			};
+
+			expect(function() {
+				publisher.libs(options);
 			}).to.not.throw();
 		});
 	});
@@ -130,7 +160,7 @@ describe('publisher', function () {
 
 		it('should pipe files into a s3-amazon bucket with existing contents but not overwrite contents', function (done) {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: { key: 'key-a', secret: 'some-secret' },
 				devTag: 'some-tag'
 			};
@@ -148,7 +178,7 @@ describe('publisher', function () {
 
 		it('should pipe files into an empty s3-amazon bucket successfully', function (done) {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: { key: 'some-key', secret: 'some-secret' },
 				devTag: 'some-tag'
 			};
@@ -165,7 +195,7 @@ describe('publisher', function () {
 
 		it('should expect an error when give a wrong key', function (done) {
 			var options = {
-				appID: 'some-ID',
+				id: 'some-ID',
 				creds: { key: 'wrong-key', secret: 'some-secret' },
 				devTag: 'some-tag'
 			}; 
