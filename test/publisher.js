@@ -2,13 +2,14 @@ var gulp  = require('gulp'),
 	es    = require('event-stream'),
 	mox   = require('./mock-knox'),
 	depd  = require('depd');
+/*jshint expr: true*/
 
 describe('publisher', function () {
 	var publisher,
 		gulpS3,
 		mockedStream;
 
-	// replace all the required module with either mocked module or 
+	// replace all the required module with either mocked module or
 	// the exact same module so that istanbul would not include them in the coverage
 	beforeEach(function() {
 		mockedStream = es.mapSync( function (file) { return file;});
