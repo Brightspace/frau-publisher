@@ -196,6 +196,11 @@ describe('publisher', function () {
 	});
 
 	describe('stream', function () {
+		var dataHandler;
+
+		beforeEach(function () {
+			dataHandler = sinon.spy();
+		});
 
 		it('should pipe files into a s3-amazon bucket with existing contents but not overwrite contents', function (done) {
 			var options = {
@@ -204,7 +209,6 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
 				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
@@ -222,7 +226,6 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			var dataHandler = sinon.spy();
 			gulp.src('./test/dist/**')
 				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
