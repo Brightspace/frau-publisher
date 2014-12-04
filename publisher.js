@@ -1,23 +1,37 @@
 'use strict';
 
-var s3 = require('gulp-s3');
-var es = require('event-stream');
-var knox = require('knox');
-var compressor = require('./src/compressor');
+var s3         = require('gulp-s3'),
+	es         = require('event-stream'),
+	knox       = require('knox'),
+	deprecate  = require('depd')('gulp-frau-publisher'),
+	compressor = require('./src/compressor');
 
-module.exports = function( opts ) {
+var publisher = function ( opts, initialPath ) {
 
 	var newOpts = sanitize_opts( opts );
 
 	var options = {
-			// Need the trailing slash, otherwise the SHA is prepended to
-			// the filename.
-			uploadPath: 'apps/' + newOpts.appID + '/dev/' + newOpts.devTag + '/'
-		};
+		uploadPath: initialPath + newOpts.id + '/dev/' + newOpts.devTag + '/'
+	};
 
 	return createDuplexStream( newOpts.creds, options );
 };
 
+module.exports = function ( opts ) {
+	deprecate('Please use "publisher.app(opts)" instead.');
+	return publisher( opts, 'apps/');
+};
+
+module.exports.app = function ( opts ) {
+	return publisher( opts, 'apps/');
+};
+
+module.exports.lib = function ( opts ) {
+	return publisher( opts, 'libs/' );
+};
+	
+// create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
+// Also sets the location for the stream to where the file is located.
 var createDuplexStream = function ( aws, options ) {
 
 	var checkS3 = checkS3Repo( aws, options );
@@ -61,7 +75,6 @@ var checkS3Repo = function ( aws, options ) {
 				cb();
 				return;
 			}
-
 			// no error, and the contents of data is empty
 			cb(null, file);
 		});
@@ -75,16 +88,21 @@ var sanitize_opts = function ( opts ) {
 	if ( !opts ) {
 		throw new Error('Missing options');
 	}
-	if ( !opts.appID ) {
-		throw new Error('Missing app id');
-	}
+	if ( !opts.appID && !opts.id ) {
+		throw new Error('Missing id');
+	} else if ( !opts.id ) {
+		deprecate('Please use "id" instead of "appID", future version will not support "appID".');
+		opts.id = opts.appID;
+	} else if ( opts.appID ) {
+		deprecate('Please use "id" instead of "appID", future version will not support "appID".');
+	} // else id is true and appID is false
 	if ( !opts.devTag ) {
 		throw new Error('Missing devTag');
 	}
 
 	var aws = getCreds(opts.creds);
 
-	return setOptions ( opts.appID, aws, opts.devTag );
+	return setOptions ( opts.id, aws, opts.devTag );
 };
 
 // check if the credentials are valid and return it with only the valid
@@ -113,9 +131,9 @@ var setAws = function ( key, secret ) {
 };
 
 // return a valid options object
-var setOptions = function ( appID, creds, devTag ) {
+var setOptions = function ( id, creds, devTag ) {
 	return {
-		appID: appID,
+		id: id,
 		creds: creds,
 		devTag: devTag
 	};
