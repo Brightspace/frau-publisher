@@ -1,7 +1,7 @@
 {
   "name": "gulp-frau-publisher",
   "version": "1.0.2",
-  "description": "Utility for publishing free-range apps to our CDN.",
+  "description": "Utility for publishing free-range apps and libraries to our CDN.",
   "main": "publisher.js",
   "scripts": {
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/*.js -- -R spec",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "chai": "^1.9.2",
     "coveralls": "^2.11.2",
+    "depd": "^1.0.0",
     "event-stream": "^3.1.7",
     "gulp": "^3.8.10",
     "gulp-s3": "^0.3.0",
@@ -28,8 +29,6 @@
     "knox": "^0.9.1",
     "mocha": "^2.0.1",
     "rmdir": "^1.0.4",
-    "gulp-util": "^3.0.1",
-    "request": "^2.47.0",
     "sandboxed-module": "^1.0.2",
     "sinon": "^1.11.1",
     "sinon-chai": "^2.6.0"
