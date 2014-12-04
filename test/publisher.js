@@ -1,7 +1,7 @@
 var gulp  = require('gulp'),
 	es    = require('event-stream'),
 	mox   = require('./mock-knox'),
-	gutil = require('gulp-util');
+	depd  = require('depd');
 
 describe('publisher', function () {
 	var publisher,
@@ -18,13 +18,13 @@ describe('publisher', function () {
 				'gulp-s3': gulpS3,
 				'event-stream': es,
 				'knox': mox,
-				'gulp-util': gutil
+				'depd': depd
 			}
 		});
 
 	});
 
-	describe ('Parameter', function () {
+	describe('Parameter', function () {
 		it('should throw with null options', function() {
 			expect(publisher).to.throw( 'Missing options' );
 		});
@@ -154,7 +154,7 @@ describe('publisher', function () {
 			};
 
 			expect(function() {
-				publisher.lib(options);
+				publisher.app(options);
 			}).to.not.throw();
 		});
 	});
@@ -191,7 +191,7 @@ describe('publisher', function () {
 				devTag: 'some-tag'
 			};
 
-			expect(publisher.app( options ).location).to.equal('https://s.brightspace.com/apps/correct-ID/dev/some-tag/');
+			expect(publisher( options ).location).to.equal('https://s.brightspace.com/apps/correct-ID/dev/some-tag/');
 		});
 	});
 

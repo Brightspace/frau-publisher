@@ -1,9 +1,9 @@
 'use strict';
 
-var s3    = require('gulp-s3'),
-	es    = require('event-stream'),
-	knox  = require('knox'),
-	gutil = require('gulp-util');
+var s3        = require('gulp-s3'),
+	es        = require('event-stream'),
+	knox      = require('knox'),
+	deprecate = require('depd')('gulp-frau-publisher');
 
 var publisher = function ( opts, initialPath ) {
 
@@ -17,14 +17,13 @@ var publisher = function ( opts, initialPath ) {
 };
 
 module.exports = function ( opts ) {
-	gutil.log(gutil.colors.yellow('[DEPRECATED] Please use publisher.apps(options) or publisher.libs(options),',
-		'future version will not support publisher(options).'));
+	deprecate('Please use "publisher.app(opts)" instead.');
 	return publisher( opts, 'apps/');
-}
+};
 
 module.exports.app = function ( opts ) {
 	return publisher( opts, 'apps/');
-}
+};
 
 module.exports.lib = function ( opts ) {
 	return publisher( opts, 'libs/' );
@@ -81,14 +80,14 @@ var sanitize_opts = function ( opts ) {
 	if ( !opts ) {
 		throw new Error('Missing options');
 	}
-	if ( !opts.id ) {
-		if ( opts.appID ) {
-			gutil.log(gutil.colors.yellow('[DEPRECATED] Please use "id" instead of "appID", future version will not support "appID".'));
-			opts.id = opts.appID;
-		} else {
-			throw new Error('Missing id');
-		}
-	}
+	if ( !opts.appID && !opts.id ) {
+		throw new Error('Missing id');
+	} else if ( !opts.id ) {
+		deprecate('Please use "id" instead of "appID", future version will not support "appID".');
+		opts.id = opts.appID;
+	} else if ( opts.appID ) {
+		deprecate('Please use "id" instead of "appID", future version will not support "appID".');
+	} // else id is true and appID is false
 	if ( !opts.devTag ) {
 		throw new Error('Missing devTag');
 	}
