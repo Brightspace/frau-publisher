@@ -12,7 +12,7 @@ deploy:
     secure: DJo6VGUKeu4Xi/bXH8O+jm89tQnzlOlXcDF1HVhaNjCy6VFWkqv+cdoWTeEs9g6R32XjKTbUDNX/GES+qrteavjcSGNJkfaXGJylt6Le/ro4KpSh+RKHENqeNeQWBE44utgokHnWVt/rjbHiTmiH/EO5bqr+Th5B583DCjR/qdY=
   on:
     tags: true
-    repo: Desire2Learn-Valence/gulp-frau-publisher
+    repo: Brightspace/gulp-frau-publisher
     all_branches: true
 env:
   global:
