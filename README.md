@@ -33,7 +33,7 @@ var options = {
 };
 
 gulp.src('./dist/**')
-	.pipe(publisher.apps( options ));
+	.pipe(publisher.app( options ));
 ```
 
 The publisher function takes in one object that has three properties:
@@ -65,7 +65,7 @@ var fileTxtLocation = publisher.location + 'file.txt';
 
 ### Libraries Usage
 
-Follow the Usage instructions, however, instead of calling `publisher.apps( options )` you will call `publisher.libs( options )` instead.
+Follow the Usage instructions, however, instead of calling `publisher.app( options )` you will call `publisher.lib( options )` instead.
 
 ## FAQ
 
