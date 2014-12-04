@@ -1,5 +1,4 @@
 var compressor = require('../src/compressor'),
-	es = require('event-stream'),
 	fs = require('fs'),
 	gulp = require('gulp'),
 	path = require('path');
@@ -13,13 +12,12 @@ describe( 'compressor', function() {
 
 		gulp.src( filename )
 			.pipe( compressor() )
-			.pipe( es.map( function( file, cb ) {
+			.on( 'data', function( file ) {
 				expect( file.contents.length ).to.be.lessThan(
 					originalSize / 2
 				);
-				cb( null, file );
 				done();
-			} ) );
+			} );
 
 	} );
 
@@ -27,13 +25,12 @@ describe( 'compressor', function() {
 
 		gulp.src('./test/support/file.js')
 			.pipe( compressor() )
-			.pipe( es.map( function( file, cb ) {
+			.on( 'data', function( file ) {
 				expect(
 					path.basename( file.path )
 				).to.equal('file.js.gz');
-				cb( null, file );
 				done();
-			} ) );
+			} );
 
 	} );
 
@@ -44,14 +41,13 @@ describe( 'compressor', function() {
 
 		gulp.src( filename )
 			.pipe( compressor() )
-			.pipe( es.map( function( file, cb ) {
+			.on( 'data', function( file ) {
 				expect(
 					path.basename( file.path )
 				).to.equal('file.gif');
 				expect( file.contents.length ).to.equal( originalSize );
-				cb( null, file );
 				done();
-			} ) );
+			} );
 
 	} );
 
