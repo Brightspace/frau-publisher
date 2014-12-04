@@ -47,7 +47,7 @@ The publisher function takes in one object that has three properties:
 To get the location of your files, simple call
 
 ```javascript
-var publisher = require('gulp-frau-publisher')(options);
+var publisher = require('gulp-frau-publisher').app(options);
 // This is where file.txt was published.
 publisher.location;
 ```
@@ -55,7 +55,7 @@ publisher.location;
 Here is how you would use this feature.
 
 ```javascript
-var publisher = require('gulp-frau-publisher')(options);
+var publisher = require('gulp-frau-publisher').app(options);
 
 gulp.src('file.txt')
 	.pipe( publisher );
