@@ -31,6 +31,7 @@ describe( 'compressor', function() {
 				expect(
 					path.basename( file.path )
 				).to.equal('file.js.gz');
+				cb( null, file );
 				done();
 			} ) );
 
@@ -48,6 +49,7 @@ describe( 'compressor', function() {
 					path.basename( file.path )
 				).to.equal('file.gif');
 				expect( file.contents.length ).to.equal( originalSize );
+				cb( null, file );
 				done();
 			} ) );
 
