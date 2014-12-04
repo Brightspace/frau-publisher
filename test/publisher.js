@@ -1,3 +1,5 @@
+/*jshint expr: true*/
+
 var es = require('event-stream');
 var gulp = require('gulp');
 var mox = require('./mock-knox');
@@ -7,13 +9,13 @@ describe('publisher', function () {
 		gulpS3,
 		mockedStream;
 
-	// replace all the required module with either mocked module or 
+	// replace all the required module with either mocked module or
 	// the exact same module so that istanbul would not include them in the coverage
 	beforeEach(function() {
 		mockedStream = es.mapSync( function (file) { return file;});
 		gulpS3 = sinon.stub().returns( mockedStream );
 		publisher = SandboxedModule.require('../publisher', {
-			requires: { 
+			requires: {
 				'gulp-s3': gulpS3,
 				'event-stream': es,
 				'knox': mox
@@ -33,21 +35,21 @@ describe('publisher', function () {
 		});
 
 		it('should throw with no credentials', function() {
-			var options = { 
-				appID: 'some-ID',            
+			var options = {
+				appID: 'some-ID',
 				devTag: 'some-tag'
-			}
+			};
 			expect(function() {
 				publisher(options);
 			}).to.throw( 'Missing credentials' );
 		});
 
 		it('should throw with no key', function() {
-			var options = { 
-				appID: 'some-ID',            
+			var options = {
+				appID: 'some-ID',
 				creds: {},
 				devTag: 'some-tag'
-			}
+			};
 			expect(function() {
 				publisher(options);
 			}).to.throw( 'Missing credential key' );
@@ -165,13 +167,13 @@ describe('publisher', function () {
 				appID: 'some-ID',
 				creds: { key: 'wrong-key', secret: 'some-secret' },
 				devTag: 'some-tag'
-			}; 
-			
+			};
+
 			gulp.src('./test/dist/**')
 				.pipe( publisher(options) )
-				.on('error', function (err) {			
+				.on('error', function (err) {
 
-					done();							
+					done();
 				});
 
 		});
