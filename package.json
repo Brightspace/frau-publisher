@@ -1,6 +1,6 @@
 {
   "name": "gulp-frau-publisher",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Utility for publishing free-range apps and libraries to our CDN.",
   "main": "publisher.js",
   "scripts": {
