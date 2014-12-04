@@ -3,6 +3,7 @@
 var s3 = require('gulp-s3');
 var es = require('event-stream');
 var knox = require('knox');
+var compressor = require('./src/compressor');
 
 module.exports = function( opts ) {
 
@@ -17,18 +18,22 @@ module.exports = function( opts ) {
 	return createDuplexStream( newOpts.creds, options );
 };
 
-// create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo
-// into gulp-s3. Also sets the location for the stream to where the file is
-// located.
 var createDuplexStream = function ( aws, options ) {
 
+	var checkS3 = checkS3Repo( aws, options );
+	var compressorStream = compressor();
 	var gulpS3 = s3( aws, options );
-	var checkS3 = checkS3Repo( aws, options);
+
+	// duplex between overwrite and S3
 	var duplexStream = es.duplex( checkS3, gulpS3 );
-	checkS3.pipe(gulpS3);
 	duplexStream.location = 'https://s.brightspace.com/' + options.uploadPath;
 
+	// pipe overwrite -> compressor -> S3
+	checkS3.pipe( compressorStream );
+	compressorStream.pipe( gulpS3 );
+
 	return duplexStream;
+
 };
 
 // check if the amazon-s3 already have files on it
