@@ -29,8 +29,8 @@ var createDuplexStream = function ( aws, options ) {
 	duplexStream.location = 'https://s.brightspace.com/' + options.uploadPath;
 
 	// pipe overwrite -> compressor -> S3
-	checkS3.pipe( compressorStream );
-	compressorStream.pipe( gulpS3 );
+	checkS3.pipe( compressorStream )
+		.pipe( gulpS3 );
 
 	return duplexStream;
 
