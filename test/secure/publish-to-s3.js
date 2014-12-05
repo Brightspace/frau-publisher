@@ -3,17 +3,17 @@ var frauPublisher = require('../../publisher'),
 	eventStream = require('event-stream'),
 	gUtil = require('gulp-util');
 
-var publisher = frauPublisher({
-	appID: 'frau-publisher-test',
+var publisher = frauPublisher.app({
+	id: 'frau-publisher-test',
 	creds: {
 		key: 'AKIAJKN55MNZIZXKVCHQ',
 		secret: process.env.CREDS_SECRET
 	},
-	devTag: 'test'
+	devTag: Math.random().toString(16).slice(2)
 });
 
 var content = 'some data';
-var filename = 'test' + Math.random().toString(16).slice(2) + '.txt';
+var filename = 'test.txt';
 var file = new gUtil.File({
 	cwd: '/',
 	base: '/',
@@ -25,9 +25,7 @@ var file = new gUtil.File({
 });
 
 describe('publisher', function() {
-	it.skip('should publish new file', function(cb) {
-		console.log('file: ' + filename);
-
+	it('should publish new file', function(cb) {
 		eventStream.readArray( [file] )
 			.pipe( publisher )
 			.on('end', function() {
