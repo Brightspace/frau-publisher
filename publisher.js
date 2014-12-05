@@ -72,14 +72,13 @@ var checkS3Repo = function ( aws, options ) {
 
 			if (data.Contents.length !== 0) {
 				// file exist in s3 buckets
-				cb();
+				cb( new Error('No files transferred.') );				
 				return;
 			}
 			// no error, and the contents of data is empty
 			cb(null, file);
 		});
 	});
-
 };
 
 // sanitize the parameter so that it has only the valid variables.

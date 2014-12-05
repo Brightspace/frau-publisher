@@ -213,8 +213,7 @@ describe('publisher', function () {
 			gulp.src('./test/dist/**')
 				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
-				.on('end', function (err) {
-
+				.on('error', function (err) {
 					expect(dataHandler).to.not.be.called;
 					done();
 				});
@@ -230,7 +229,7 @@ describe('publisher', function () {
 			gulp.src('./test/dist/**')
 				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
-				.on('end', function (err) {
+				.on('end', function () {
 					expect(dataHandler).to.be.called;
 					done();
 				});
