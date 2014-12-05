@@ -1,10 +1,10 @@
-var frauPublisher = require('../../publisher'),
+var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
 	eventStream = require('event-stream'),
 	gUtil = require('gulp-util');
 
-var publisher = frauPublisher({
-	appID: 'frau-publisher-test',
+var publisher = frauPublisher.app({
+	id: 'frau-publisher-test',
 	creds: {
 		key: '***REMOVED***',
 		secret: process.env.CREDS_SECRET
@@ -33,7 +33,7 @@ describe('publisher', function() {
 			.on('end', function() {
 				// gulp-s3 sends the end event before it's actually done, so we need to introduce an artificial wait.
 				setTimeout(function() {
-					request.get( publisher.location + filename, function(error, result, body) {
+					request.get( publisher.getLocation() + filename, function(error, result, body) {
 						if (error) {
 							cb(error);
 						} else if (result.statusCode != 200 ) {
