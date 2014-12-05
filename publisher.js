@@ -4,14 +4,27 @@ var s3         = require('gulp-s3'),
 	es         = require('event-stream'),
 	knox       = require('knox'),
 	deprecate  = require('depd')('gulp-frau-publisher'),
-	compressor = require('./src/compressor');
+	compressor = require('./src/compressor'),
+	semver     = require('semver');
 
-var publisher = function ( opts, initialPath ) {
+var isRelease = function ( opts, initialPath ) {
+	if ( opts && opts.version ) {
+		var validatedVersion = semver.valid(opts.version);
+		if (validatedVersion === null) {
+			throw new Error('Version number is not valid according to Semantic Versioning.');
+		}
+		opts.devTag = validatedVersion;
+		return publisher( opts, initialPath, '/'); 
+	} 
+	return publisher( opts, initialPath, '/dev/');
+};
+
+var publisher = function ( opts, initialPath, devPath ) {
 
 	var newOpts = sanitize_opts( opts );
 
 	var options = {
-		uploadPath: initialPath + newOpts.id + '/dev/' + newOpts.devTag + '/'
+		uploadPath: initialPath + newOpts.id + devPath + newOpts.devTag + '/'
 	};
 
 	return createDuplexStream( newOpts.creds, options );
@@ -19,15 +32,15 @@ var publisher = function ( opts, initialPath ) {
 
 module.exports = function ( opts ) {
 	deprecate('Please use "publisher.app(opts)" instead.');
-	return publisher( opts, 'apps/');
+	return isRelease( opts, 'apps/' );
 };
 
 module.exports.app = function ( opts ) {
-	return publisher( opts, 'apps/');
+	return isRelease( opts, 'apps/' );
 };
 
 module.exports.lib = function ( opts ) {
-	return publisher( opts, 'libs/' );
+	return isRelease( opts, 'libs/' );
 };
 	
 // create a duplex stream of checkS3Repo and gulp-s3, and pipes checkS3Repo into gulp-s3.
@@ -72,14 +85,13 @@ var checkS3Repo = function ( aws, options ) {
 
 			if (data.Contents.length !== 0) {
 				// file exist in s3 buckets
-				cb();
+				cb( new Error('No files transferred.') );				
 				return;
 			}
 			// no error, and the contents of data is empty
 			cb(null, file);
 		});
 	});
-
 };
 
 // sanitize the parameter so that it has only the valid variables.
