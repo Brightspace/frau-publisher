@@ -44,6 +44,20 @@ The publisher function takes in one object that has three properties:
 | creds         | The credentials to log into the amazon-s3 server. |
 | devTag        | The development version of the module. |
 
+To publish the release version of your app or library, simply change `devTag` property to `version`.
+
+In your `options` variable:
+
+```javascript
+var options = {
+	id: 'someID',
+	creds: require('./creds/keys.json'),
+	version: '4.2.1'
+};
+```
+
+Make sure the version follows the guideline to [Semantic Versioning](http://semver.org) of a valid version number.
+
 To get the location of your files, simple call
 
 ```javascript

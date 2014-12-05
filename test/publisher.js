@@ -1,7 +1,8 @@
-var gulp  = require('gulp'),
-	es    = require('event-stream'),
-	mox   = require('./mock-knox'),
-	depd  = require('depd');
+var gulp   = require('gulp'),
+	es     = require('event-stream'),
+	mox    = require('./mock-knox'), 
+	depd   = require('depd'),
+	semver = require('semver');
 /*jshint expr: true*/
 
 describe('publisher', function () {
@@ -16,10 +17,11 @@ describe('publisher', function () {
 		gulpS3 = sinon.stub().returns( mockedStream );
 		publisher = SandboxedModule.require('../publisher', {
 			requires: {
-				'gulp-s3': gulpS3,
+				'gulp-s3':      gulpS3,
 				'event-stream': es,
-				'knox': mox,
-				'depd': depd
+				'knox':         mox,
+				'depd':         depd,
+				'semver':       semver
 			}
 		});
 
@@ -158,6 +160,36 @@ describe('publisher', function () {
 				publisher.app(options);
 			}).to.not.throw();
 		});
+
+		it('should throw with an invalid release version for apps', function() {
+			var options = {
+				id: 'some-ID',
+				creds: {
+					key: 'some-key',
+					secret: 'some-secret',
+				},
+				version: '1.2.3.4'
+			};
+
+			expect( function() {
+				publisher.app(options);
+			}).to.throw('Version number is not valid according to Semantic Versioning.');
+		});
+
+		it('should throw with an invalid release version for libraries', function() {
+			var options = {
+				id: 'some-ID',
+				creds: {
+					key: 'some-key',
+					secret: 'some-secret',
+				},
+				version: '1.2.3.4'
+			};
+
+			expect( function() {
+				publisher.lib(options);
+			}).to.throw('Version number is not valid according to Semantic Versioning.');
+		});
 	});
 
 	describe('location', function () {
@@ -194,6 +226,16 @@ describe('publisher', function () {
 
 			expect(publisher( options ).location).to.equal('https://s.brightspace.com/apps/correct-ID/dev/some-tag/');
 		});
+
+		it('should return address without the "/dev/" in the path for release version', function () {
+			var options = {
+				id: 'some-ID',
+				creds: { key: 'some-key', secret: 'some-secret' },
+				version: '1.0.0-alpha'
+			};
+
+			expect(publisher.app( options ).location).to.equal('https://s.brightspace.com/apps/some-ID/1.0.0-alpha/');
+		});
 	});
 
 	describe('stream', function () {
@@ -213,8 +255,7 @@ describe('publisher', function () {
 			gulp.src('./test/dist/**')
 				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
-				.on('end', function (err) {
-
+				.on('error', function (err) {
 					expect(dataHandler).to.not.be.called;
 					done();
 				});
@@ -230,7 +271,7 @@ describe('publisher', function () {
 			gulp.src('./test/dist/**')
 				.pipe( publisher.app(options) )
 				.on('data', dataHandler)
-				.on('end', function (err) {
+				.on('end', function () {
 					expect(dataHandler).to.be.called;
 					done();
 				});
