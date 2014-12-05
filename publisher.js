@@ -55,9 +55,6 @@ var checkS3Repo = function ( aws, options ) {
 
 	var client = knox.createClient(aws);
 
-	var hasFileTransfered = false;
-	var tempCb;
-
 	return es.map( function (file, cb) {
 
 		if (!file.isBuffer()) {
@@ -75,20 +72,13 @@ var checkS3Repo = function ( aws, options ) {
 
 			if (data.Contents.length !== 0) {
 				// file exist in s3 buckets
-				cb();
-				tempCb = cb;
+				cb( new Error('No files transferred.') );				
 				return;
 			}
-			hasFileTransfered = true;
 			// no error, and the contents of data is empty
 			cb(null, file);
 		});
-	}).on('end', function () {
-		if ( !hasFileTransfered ) {
-			tempCb( new Error('No files transferred.') );
-		}
 	});
-
 };
 
 // sanitize the parameter so that it has only the valid variables.
