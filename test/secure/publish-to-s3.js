@@ -27,7 +27,7 @@ var file = new gUtil.File({
 describe('publisher', function() {
 	it('should publish new file', function(cb) {
 		eventStream.readArray( [file] )
-			.pipe( publisher )
+			.pipe( publisher.getStream() )
 			.on('end', function() {
 				// gulp-s3 sends the end event before it's actually done, so we need to introduce an artificial wait.
 				setTimeout(function() {
