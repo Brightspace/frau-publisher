@@ -1,48 +1,38 @@
 #gulp-frau-publisher
+[![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
 
-Utility for publishing free-range apps and libraries to our CDN.
+Utility for publishing free-range applications and libraries to our CDN
+using [Gulp](http://www.gulpjs.com).
 
 ## Usage
-**Before you start**: Make sure you have [NodeJS](http://nodejs.org) installed.
 
-Install `gulp-frau-publisher` as a dependency from your cmd:
+Install `gulp-frau-publisher` as a dependency:
 
 ```shell
 npm install --save-dev gulp-frau-publisher
 ```
 
-Set your creds in a file at `./creds/keys.json` like this:
-
-```javascript
-{
-	"key": "AKITHISISSOMEKEYASDF",
-	"secret": "aCD233rDF232RANDOMSECRET12+32g"
-}
-```
-Then in your `gulpfile.js`:
+To publish a free-range application:
 
 ```javascript
 var publisher = require('gulp-frau-publisher');
 
 var options = {
 	id: 'someID',
-	creds: require('./creds/keys.json'),
+	creds: {
+		"key": "AKITHISISSOMEKEYASDF",
+		"secret": "aCD233rDF232RANDOMSECRET12+32g"
+	},
 	devTag: '4.2.0'
 };
 
+var appPublisher = publisher.app( options );
+
 gulp.src('./dist/**')
-	.pipe(publisher.app( options ));
+	.pipe( appPublisher.getStream() );
 ```
-
-The publisher function takes in one object that has three properties:
-
-| Property Name | Description |
-| ------------- | ----------- |
-| id            | Should be the name of your current module. |
-| creds         | The credentials to log into the amazon-s3 server. |
-| devTag        | The development version of the module. |
 
 To publish the release version of your app or library, simply change `devTag` property to `version`.
 
@@ -66,28 +56,33 @@ var publisher = require('gulp-frau-publisher').app(options);
 publisher.location;
 ```
 
-Here is how you would use this feature.
+Alternately, to publish a library (e.g. jQuery, Angular, etc.) to the CDN:
 
 ```javascript
-var publisher = require('gulp-frau-publisher').app(options);
+var libPublisher = publisher.lib( options );
 
-gulp.src('file.txt')
-	.pipe( publisher );
-
-var fileTxtLocation = publisher.location + 'file.txt';
+gulp.src('./lib/jquery/**')
+	.pipe( libPublisher.getStream() );
 ```
 
-### Libraries Usage
+Both the `app()` and `lib()` publisher methods accept the following options:
 
-Follow the Usage instructions, however, instead of calling `publisher.app( options )` you will call `publisher.lib( options )` instead.
+| Property Name | Description |
+| ------------- | ----------- |
+| id            | Unique name of the application or library. |
+| creds         | Credential key/secret. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
+| devTag        | The development version of the application or library. |
 
-## FAQ
+To get the final location on the CDN of your files:
 
- How do I specify which file I want upload?
+```javascript
+var appPublisher = require('gulp-frau-publisher').app( options );
 
->`gulp.src()` takes in a glob that you can specify which folder and which type of file you want to upload.
-Usually you want the files to be in the `dist` folder so our glob `./dist/**` will upload everything in that folder.
+var location = appPublisher.getLocation();
+```
 
+[npm-url]: https://npmjs.org/package/gulp-frau-publisher
+[npm-image]: https://badge.fury.io/js/gulp-frau-publisher.png
 [ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
 [ci-url]: https://travis-ci.org/Brightspace/gulp-frau-publisher
 [coverage-image]: https://img.shields.io/coveralls/Brightspace/gulp-frau-publisher.svg
