@@ -15,7 +15,7 @@ function helper( opts, initialPath ) {
 
 			var overwriteCheck = overwrite( options );
 			var compressorStream = compressor();
-			var gulpS3 = s3( options.getCreds(), options.getUploadPath() );
+			var gulpS3 = s3( options.getCreds(), { uploadPath: options.getUploadPath() } );
 
 			var duplexStream = es.duplex( overwriteCheck, gulpS3 );
 
@@ -39,5 +39,6 @@ module.exports = {
 	},
 	lib: function( opts ) {
 		return helper( opts, 'lib/' );
-	}
+	},
+	_helper: helper
 };
