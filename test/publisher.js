@@ -1,8 +1,18 @@
 /*jshint expr: true*/
 
 var gulp  = require('gulp'),
-	es    = require('event-stream'),
-	publisher = require('../src/publisher');
+	es    = require('event-stream');
+
+var s3 = sinon.stub().returns(es.readArray([]));
+var publisher = SandboxedModule.require('../src/publisher', {
+	requires: {
+		'gulp-s3': s3,
+		'event-stream': es,
+		'./compressor': require('../src/compressor'),
+		'./optionsValidator': require('../src/optionsValidator'),
+		'./overwrite': require('../src/overwrite')
+	}
+} );
 
 var options = {
 		id: 'myId',
@@ -11,6 +21,10 @@ var options = {
 	};
 
 describe('publisher', function () {
+
+	beforeEach( function() {
+		s3.reset();
+	} );
 
 	['app','lib'].forEach( function( val ) {
 
@@ -34,6 +48,15 @@ describe('publisher', function () {
 				expect( stream ).to.not.be.null;
 			});
 
+		} );
+
+	} );
+
+	describe('_helper', function() {
+
+		it ( 'should call s3 with correct options', function() {
+			var stream = publisher._helper( options, 'path/' ).getStream();
+			expect( s3 ).to.be.calledWith( sinon.match.any, { uploadPath: 'path/myId/dev/myDevTag/' } )
 		} );
 
 	} );
