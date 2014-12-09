@@ -142,7 +142,7 @@ describe( 'options validator', function() {
 				}
 			);
 			expect( options.getUploadPath() )
-				.to.equal( 'path/myId/1.2.0/' );
+				.to.equal( 'path/myId/2.2.0/' );
 		} );
 
 	} );
