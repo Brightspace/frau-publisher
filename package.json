@@ -28,7 +28,6 @@
     "request": "^2.49.0",
     "rmdir": "^1.0.4",
     "sandboxed-module": "^1.0.2",
-    "semver": "^4.1.0",
     "sinon": "^1.11.1",
     "sinon-chai": "^2.6.0"
   },

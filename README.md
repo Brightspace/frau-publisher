@@ -34,6 +34,15 @@ gulp.src('./dist/**')
 	.pipe( appPublisher.getStream() );
 ```
 
+Alternately, to publish a library (e.g. jQuery, Angular, etc.) to the CDN:
+
+```javascript
+var libPublisher = publisher.lib( options );
+
+gulp.src('./lib/jquery/**')
+	.pipe( libPublisher.getStream() );
+```
+
 To publish the release version of your app or library, simply change `devTag` property to `version`.
 
 In your `options` variable:
@@ -48,23 +57,6 @@ var options = {
 
 Make sure the version follows the guideline to [Semantic Versioning](http://semver.org) of a valid version number.
 
-To get the location of your files, simple call
-
-```javascript
-var publisher = require('gulp-frau-publisher').app(options);
-// This is where file.txt was published.
-publisher.location;
-```
-
-Alternately, to publish a library (e.g. jQuery, Angular, etc.) to the CDN:
-
-```javascript
-var libPublisher = publisher.lib( options );
-
-gulp.src('./lib/jquery/**')
-	.pipe( libPublisher.getStream() );
-```
-
 Both the `app()` and `lib()` publisher methods accept the following options:
 
 | Property Name | Description |
@@ -72,6 +64,7 @@ Both the `app()` and `lib()` publisher methods accept the following options:
 | id            | Unique name of the application or library. |
 | creds         | Credential key/secret. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
 | devTag        | The development version of the application or library. |
+| version       | The release version of the application or library. Unlike devTag, this property must follow the guideline to Semantic Versioning. |
 
 To get the final location on the CDN of your files:
 

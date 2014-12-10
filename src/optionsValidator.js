@@ -17,7 +17,8 @@ function getDevPath ( opts ) {
 }
 
 module.exports = function( opts ) {
-	return {
+
+	var options = {
 
 		getId: function() {
 			validateOpts( opts );
@@ -27,24 +28,19 @@ module.exports = function( opts ) {
 			return opts.id;
 		},
 
-		getDevTag: function() {
+		getVersion: function () {
 			validateOpts( opts );
-			if( !opts.devTag ) {
-				throw new Error('Missing devTag');
+			if( !opts.devTag && !opts.version ) {
+				throw new Error('Missing version or devTag');
 			}
+			if ( opts.version ) {
+				var validatedVersion = semver.valid( opts.version );
+				if (validatedVersion === null) {
+					throw new Error('Version number is not valid according to Semantic Versioning.');
+				}
+				return validatedVersion;
+			} // if false, there has to be a devTag
 			return opts.devTag;
-		},
-
-		getVersion: function() {
-			validateOpts( opts );
-			if( !opts.version ) {
-				throw new Error('Missing version');
-			}
-			var validatedVersion = semver.valid( opts.version );
-			if (validatedVersion === null) {
-				throw new Error('Version number is not valid according to Semantic Versioning.');
-			}
-			return validatedVersion;
 		},
 
 		getCreds: function() {
@@ -70,8 +66,11 @@ module.exports = function( opts ) {
 			var devPath = getDevPath( opts );
 			// version gets priority over devTag
 			return opts.initialPath + this.getId() + devPath +
-				(opts.version ? this.getVersion() : this.getDevTag()) + '/';
+				this.getVersion() + '/';
 		}
 
 	};
+	options.getDevTag = options.getVersion;
+
+	return options;
 };

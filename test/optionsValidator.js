@@ -9,14 +9,7 @@ var validOptions = optionsValidator(
 	}
 );
 
-var releaseOptions = optionsValidator(
-	{	
-		id: 'myId',
-		version: '1.2.0',
-		initialPath: 'path/',
-		creds: { key: 'myKey', secret: 'mySecret' }
-	}
-);
+
 
 describe( 'options validator', function() {
 
@@ -53,7 +46,7 @@ describe( 'options validator', function() {
 			var options = optionsValidator( { id: 'id' } );
 			expect( function() {
 					options.getDevTag();
-				} ).to.throw( 'Missing devTag' );
+				} ).to.throw( 'Missing version or devTag' );
 		} );
 
 		it( 'should return specified devTag', function() {
@@ -68,7 +61,7 @@ describe( 'options validator', function() {
 			var options = optionsValidator( { id: 'id' } );
 			expect( function() {
 					options.getVersion();
-				} ).to.throw( 'Missing version' );
+				} ).to.throw( 'Missing version or devTag' );
 		} );
 
 		it( 'should throw with wrong semantic version', function() {
@@ -79,6 +72,14 @@ describe( 'options validator', function() {
 		} );
 
 		it( 'should return specified version', function() {
+			var releaseOptions = optionsValidator(
+				{	
+					id: 'myId',
+					version: '1.2.0',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
 			expect( releaseOptions.getVersion() ).to.equal( '1.2.0' );
 		} );
 
@@ -121,12 +122,20 @@ describe( 'options validator', function() {
 
 	describe( 'getUploadPath', function() {
 
-		it( 'should return valid upload path', function() {
+		it( 'should return valid development upload path', function() {
 			expect( validOptions.getUploadPath() )
 				.to.equal( 'path/myId/dev/myDevTag/' );
 		} );
 
 		it( 'should return valid release upload path', function() {
+			var releaseOptions = optionsValidator(
+				{	
+					id: 'myId',
+					version: '1.2.0',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
 			expect( releaseOptions.getUploadPath() )
 				.to.equal( 'path/myId/1.2.0/' );
 		} );
