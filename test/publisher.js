@@ -1,3 +1,5 @@
+/*jshint expr: true*/
+
 var gulp   = require('gulp'),
 	es     = require('event-stream');
 	
