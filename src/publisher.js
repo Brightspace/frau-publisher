@@ -1,10 +1,10 @@
 'use strict';
 
-var compressor = require('./compressor'),
-	es = require('event-stream'),
+var compressor       = require('./compressor'),
+	es               = require('event-stream'),
 	optionsValidator = require('./optionsValidator'),
-	overwrite = require('./overwrite'),
-	s3 = require('gulp-s3');
+	overwrite        = require('./overwrite'),
+	s3               = require('gulp-s3');
 
 function helper( opts, initialPath ) {
 	opts.initialPath = initialPath;

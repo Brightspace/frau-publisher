@@ -1,8 +1,7 @@
 'use strict';
 
 var es = require('event-stream'),
-	knox = require('knox'),
-	gutil = require('gulp-util');
+	knox = require('knox');
 
 var client = null;
 function getClient( options ) {
@@ -21,7 +20,7 @@ module.exports = function( options ) {
 		}
 
 		getClient( options ).list(
-			{ prefix: options.getUploadPath() },
+		 	{ prefix: options.getUploadPath() },
 			function( err, data ) {
 
 				// for some reason, when you have an invalid key or secret
@@ -33,8 +32,7 @@ module.exports = function( options ) {
 
 				if( data.Contents.length !== 0 ) {
 					// file exist in s3 buckets
-					gutil.log(gutil.colors.red('[FAILED]', 'No files transferred because files already exists in ', options.getUploadPath() ));
-					cb( new Error('No files transferred because files already exists in', options.getUploadPath()) );
+					cb( new Error('No files transferred.') );
 					return;
 				}
 

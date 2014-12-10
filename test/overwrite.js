@@ -3,8 +3,7 @@
 var es = require('event-stream'),
 	gulp = require('gulp'),
 	mox = require('./mock-knox'),
-	optionsValidator = require('../src/optionsValidator'),
-	gutil = require('gulp-util');
+	optionsValidator = require('../src/optionsValidator');
 
 function getOptions( key ) {
 	return optionsValidator( {
@@ -27,8 +26,7 @@ describe( 'overwrite', function() {
 		overwrite = SandboxedModule.require('../src/overwrite', {
 			requires: {
 				'event-stream': es,
-				'knox': mox,
-				'gulp-util': gutil
+				'knox': mox
 			}
 		} );
 		sinon.spy( mox, 'createClient' );
