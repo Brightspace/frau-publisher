@@ -1,8 +1,8 @@
 /*jshint expr: true*/
 
-var gulp  = require('gulp'),
-	es    = require('event-stream');
-
+var gulp = require('gulp'),
+	es = require('event-stream');
+	
 var s3 = sinon.stub().returns(es.readArray([]));
 var publisher = SandboxedModule.require('../src/publisher', {
 	requires: {
@@ -49,14 +49,13 @@ describe('publisher', function () {
 			});
 
 		} );
-
 	} );
 
 	describe('_helper', function() {
 
 		it ( 'should call s3 with correct options', function() {
 			var stream = publisher._helper( options, 'path/' ).getStream();
-			expect( s3 ).to.be.calledWith( sinon.match.any, { uploadPath: 'path/myId/dev/myDevTag/' } )
+			expect( s3 ).to.be.calledWith( sinon.match.any, { uploadPath: 'path/myId/dev/myDevTag/' } );
 		} );
 
 	} );
