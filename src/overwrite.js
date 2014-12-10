@@ -20,7 +20,7 @@ module.exports = function( options ) {
 		}
 
 		getClient( options ).list(
-		 	{ prefix: options.getUploadPath() },
+			{ prefix: options.getUploadPath() },
 			function( err, data ) {
 
 				// for some reason, when you have an invalid key or secret
