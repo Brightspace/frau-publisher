@@ -3,7 +3,8 @@
 var es = require('event-stream'),
 	gulp = require('gulp'),
 	mox = require('./mock-knox'),
-	optionsValidator = require('../src/optionsValidator');
+	optionsValidator = require('../src/optionsValidator'),
+	gutil = require('gulp-util');
 
 function getOptions( key ) {
 	return optionsValidator( {
@@ -26,7 +27,8 @@ describe( 'overwrite', function() {
 		overwrite = SandboxedModule.require('../src/overwrite', {
 			requires: {
 				'event-stream': es,
-				'knox': mox
+				'knox': mox,
+				'gulp-util': gutil
 			}
 		} );
 		sinon.spy( mox, 'createClient' );
@@ -47,11 +49,14 @@ describe( 'overwrite', function() {
 	} );
 
 	it( 'should error when files exist in bucket', function( done ) {
+		var opts = getOptions('key-a');
 		gulp.src('./test/support/file.js')
-			.pipe( overwrite( getOptions('key-a') ) )
+			.pipe( overwrite( opts ) )
 			.on( 'data', dataHandler )
 			.on( 'error', function( err ) {
+				var expectedErrorMsg = overwrite._getErrorMsg( opts );
 				expect( dataHandler ).to.not.be.called;
+				expect( err ).to.eql(new Error( expectedErrorMsg ) );
 				done();
 			} );
 	} );
