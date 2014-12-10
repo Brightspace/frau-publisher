@@ -68,7 +68,7 @@ describe( 'options validator', function() {
 			var options = optionsValidator( { id: 'id', version: '1.2.3.4' } );
 			expect( function() {
 					options.getVersion();
-				} ).to.throw( 'Version number is not valid according to Semantic Versioning.' );
+				} ).to.throw( '"1.2.3.4" is not a valid version number. See semver.org for more details.' );
 		} );
 
 		it( 'should return specified version', function() {
