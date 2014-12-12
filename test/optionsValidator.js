@@ -40,35 +40,32 @@ describe( 'options validator', function() {
 
 	} );
 
-	describe( 'devTag', function() {
-
-		it( 'should throw with no devTag', function() {
-			var options = optionsValidator( { id: 'id' } );
-			expect( function() {
-					options.getDevTag();
-				} ).to.throw( 'Missing version or devTag' );
-		} );
-
-		it( 'should return specified devTag', function() {
-			expect( validOptions.getDevTag() ).to.equal( 'myDevTag' );
-		} );
-
-	} );
-
 	describe( 'version', function() {
 
-		it( 'should throw with no version', function() {
+		it( 'should throw with no devTag and no version', function() {
 			var options = optionsValidator( { id: 'id' } );
 			expect( function() {
 					options.getVersion();
-				} ).to.throw( 'Missing version or devTag' );
+				} ).to.throw( 'Missing version' );
 		} );
 
 		it( 'should throw with wrong semantic version', function() {
 			var options = optionsValidator( { id: 'id', version: '1.2.3.4' } );
 			expect( function() {
 					options.getVersion();
-				} ).to.throw( 'Version number is not valid according to Semantic Versioning.' );
+				} ).to.throw( '"1.2.3.4" is not a valid version number. See semver.org for more details.' );
+		} );
+
+		it( 'should return specified devTag', function() {
+			var releaseOptions = optionsValidator(
+				{	
+					id: 'myId',
+					devTag: 'some-tag',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
+			expect( releaseOptions.getVersion() ).to.equal( 'some-tag' );
 		} );
 
 		it( 'should return specified version', function() {
