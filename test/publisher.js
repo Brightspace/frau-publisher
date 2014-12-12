@@ -1,8 +1,8 @@
 /*jshint expr: true*/
 
-var gulp  = require('gulp'),
-	es    = require('event-stream');
-
+var gulp = require('gulp'),
+	es = require('event-stream');
+	
 var s3 = sinon.stub().returns(es.readArray([]));
 var publisher = SandboxedModule.require('../src/publisher', {
 	requires: {
@@ -49,7 +49,6 @@ describe('publisher', function () {
 			});
 
 		} );
-
 	} );
 
 	describe('_helper', function() {
