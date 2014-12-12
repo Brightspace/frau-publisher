@@ -1,13 +1,24 @@
 'use strict';
+var semver = require('semver');
 
-function validateOpts( opts ) {
+function validateOpts ( opts ) {
 	if( !opts ) {
 		throw new Error('Missing options');
 	}
 }
 
+// Check if it is a release version or a dev version and return the correct path for it
+function getDevPath ( opts ) {
+	validateOpts( opts );
+	if ( opts.version ) {
+		return '/';
+	}
+	return '/dev/';
+}
+
 module.exports = function( opts ) {
-	return {
+
+	var options = {
 
 		getId: function() {
 			validateOpts( opts );
@@ -17,11 +28,18 @@ module.exports = function( opts ) {
 			return opts.id;
 		},
 
-		getDevTag: function() {
+		getVersion: function () {
 			validateOpts( opts );
-			if( !opts.devTag ) {
-				throw new Error('Missing devTag');
+			if( !opts.devTag && !opts.version ) {
+				throw new Error('Missing version or devTag');
 			}
+			if ( opts.version ) {
+				var validatedVersion = semver.valid( opts.version );
+				if (validatedVersion === null) {
+					throw new Error('"' + opts.version + '" is not a valid version number. See semver.org for more details.');
+				}
+				return validatedVersion;
+			} // if false, there has to be a devTag
 			return opts.devTag;
 		},
 
@@ -45,9 +63,13 @@ module.exports = function( opts ) {
 
 		getUploadPath: function() {
 			validateOpts( opts );
-			return opts.initialPath + this.getId() + '/dev/' +
-				this.getDevTag() + '/';
+			var devPath = getDevPath( opts );
+			// version gets priority over devTag
+			return opts.initialPath + this.getId() + devPath +
+				this.getVersion() + '/';
 		}
 
 	};
+
+	return options;
 };

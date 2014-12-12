@@ -9,6 +9,8 @@ var validOptions = optionsValidator(
 	}
 );
 
+
+
 describe( 'options validator', function() {
 
 	describe( 'arguments', function() {
@@ -38,20 +40,47 @@ describe( 'options validator', function() {
 
 	} );
 
-	describe( 'devTag', function() {
+	describe( 'version', function() {
 
-		it( 'should throw with no devTag', function() {
+		it( 'should throw with no devTag and no version', function() {
 			var options = optionsValidator( { id: 'id' } );
 			expect( function() {
-					options.getDevTag();
-				} ).to.throw( 'Missing devTag' );
+					options.getVersion();
+				} ).to.throw( 'Missing version' );
+		} );
+
+		it( 'should throw with wrong semantic version', function() {
+			var options = optionsValidator( { id: 'id', version: '1.2.3.4' } );
+			expect( function() {
+					options.getVersion();
+				} ).to.throw( '"1.2.3.4" is not a valid version number. See semver.org for more details.' );
 		} );
 
 		it( 'should return specified devTag', function() {
-			expect( validOptions.getDevTag() ).to.equal( 'myDevTag' );
+			var releaseOptions = optionsValidator(
+				{	
+					id: 'myId',
+					devTag: 'some-tag',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
+			expect( releaseOptions.getVersion() ).to.equal( 'some-tag' );
 		} );
 
-	} );
+		it( 'should return specified version', function() {
+			var releaseOptions = optionsValidator(
+				{	
+					id: 'myId',
+					version: '1.2.0',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
+			expect( releaseOptions.getVersion() ).to.equal( '1.2.0' );
+		} );
+
+	});
 
 	describe( 'creds', function() {
 
@@ -90,9 +119,36 @@ describe( 'options validator', function() {
 
 	describe( 'getUploadPath', function() {
 
-		it( 'should return valid upload path', function() {
+		it( 'should return valid development upload path', function() {
 			expect( validOptions.getUploadPath() )
 				.to.equal( 'path/myId/dev/myDevTag/' );
+		} );
+
+		it( 'should return valid release upload path', function() {
+			var releaseOptions = optionsValidator(
+				{	
+					id: 'myId',
+					version: '1.2.0',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
+			expect( releaseOptions.getUploadPath() )
+				.to.equal( 'path/myId/1.2.0/' );
+		} );
+
+		it( 'should prioritize release version over devTag', function() {
+			var options = optionsValidator(
+				{	
+					id: 'myId',
+					devTag: 'tag',
+					version: '2.2.0',
+					initialPath: 'path/',
+					creds: { key: 'myKey', secret: 'mySecret' }
+				}
+			);
+			expect( options.getUploadPath() )
+				.to.equal( 'path/myId/2.2.0/' );
 		} );
 
 	} );

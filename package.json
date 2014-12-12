@@ -34,6 +34,7 @@
   "dependencies": {
     "gulp-s3": "^0.3.0",
     "event-stream": "^3.1.7",
-    "knox": "^0.9.1"
+    "knox": "^0.9.1",
+    "semver": "^4.1.0"
   }
 }
