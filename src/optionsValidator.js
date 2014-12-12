@@ -36,7 +36,7 @@ module.exports = function( opts ) {
 			if ( opts.version ) {
 				var validatedVersion = semver.valid( opts.version );
 				if (validatedVersion === null) {
-					throw new Error('Version number is not valid according to Semantic Versioning.');
+					throw new Error('"' + opts.version + '" is not a valid version number. See semver.org for more details.');
 				}
 				return validatedVersion;
 			} // if false, there has to be a devTag
@@ -70,7 +70,6 @@ module.exports = function( opts ) {
 		}
 
 	};
-	options.getDevTag = options.getVersion;
 
 	return options;
 };
