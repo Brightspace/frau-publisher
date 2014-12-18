@@ -6,17 +6,22 @@ var es = require('event-stream'),
 
 var client = null;
 function getClient( options ) {
-	if( client === null ) {
-		client = knox.createClient( options.getCreds() );
-	}
+	client = knox.createClient( options.getCreds() );
 	return client;
 }
 
 module.exports = function( options ) {
+	var allowFilesPass = false;
 	return es.map( function( file, cb ) {
 
 		if( !file.isBuffer() ) {
 			cb();
+			return;
+		}
+
+		// don't need to check again for contents in CDN if we already checked before
+		if (allowFilesPass) {
+			cb( null, file );
 			return;
 		}
 
@@ -31,7 +36,7 @@ module.exports = function( options ) {
 					return;
 				}
 
-				if( data.Contents.length !== 0 ) {
+				if( data.Contents.length !== 0 && !allowFilesPass ) {
 					var errorMsg = getErrorMsg( options );
 					// file exist in s3 buckets
 					gutil.log(gutil.colors.red(errorMsg));
@@ -39,6 +44,7 @@ module.exports = function( options ) {
 					return;
 				}
 
+				allowFilesPass = true;
 				// no error, and the contents of data is empty
 				cb( null, file );
 
