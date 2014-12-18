@@ -6,9 +6,7 @@ var es = require('event-stream'),
 
 var client = null;
 function getClient( options ) {
-	if( client === null ) {
-		client = knox.createClient( options.getCreds() );
-	}
+	client = knox.createClient( options.getCreds() );
 	return client;
 }
 
@@ -18,6 +16,12 @@ module.exports = function( options ) {
 
 		if( !file.isBuffer() ) {
 			cb();
+			return;
+		}
+
+		// don't need to check again for contents in CDN if we already checked before
+		if (allowFilesPass) {
+			cb( null, file );
 			return;
 		}
 
