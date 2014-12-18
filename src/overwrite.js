@@ -13,12 +13,14 @@ function getClient( options ) {
 }
 
 module.exports = function( options ) {
+	var allowFilesPass = false;
 	return es.map( function( file, cb ) {
 
 		if( !file.isBuffer() ) {
 			cb();
 			return;
 		}
+
 
 		getClient( options ).list(
 			{ prefix: options.getUploadPath() },
@@ -31,7 +33,7 @@ module.exports = function( options ) {
 					return;
 				}
 
-				if( data.Contents.length !== 0 ) {
+				if( data.Contents.length !== 0 && !allowFilesPass ) {
 					var errorMsg = getErrorMsg( options );
 					// file exist in s3 buckets
 					gutil.log(gutil.colors.red(errorMsg));
@@ -39,6 +41,7 @@ module.exports = function( options ) {
 					return;
 				}
 
+				allowFilesPass = true;
 				// no error, and the contents of data is empty
 				cb( null, file );
 
