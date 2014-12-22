@@ -1,17 +1,13 @@
 /*jshint expr: true*/
 
 var gulp = require('gulp'),
-	es = require('event-stream');
+	proxyquire = require('proxyquire');
 
-var s3 = sinon.stub().returns(es.readArray([]));
-var publisher = SandboxedModule.require('../src/publisher', {
-	requires: {
-		'gulp-s3': s3,
-		'event-stream': es,
-		'./compressor': require('../src/compressor'),
-		'./optionsValidator': require('../src/optionsValidator'),
-		'./overwrite': require('../src/overwrite')
-	}
+// We need to return a stream, but it doesn't matter what the stream is
+var s3 = sinon.stub().returns(gulp.src(''));
+
+var publisher = proxyquire('../src/publisher', {
+	'gulp-s3': s3
 } );
 
 var options = {
