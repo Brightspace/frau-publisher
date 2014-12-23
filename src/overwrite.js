@@ -2,55 +2,61 @@
 
 var es = require('event-stream'),
 	knox = require('knox'),
-	gutil = require('gulp-util');
-
-var client = null;
-function getClient( options ) {
-	if( client === null ) {
-		client = knox.createClient( options.getCreds() );
-	}
-	return client;
-}
+	gutil = require('gulp-util'),
+	Q = require('q');
 
 module.exports = function( options ) {
-	return es.map( function( file, cb ) {
+	var filesExistPromise;
 
-		if( !file.isBuffer() ) {
-			cb();
-			return;
+	return es.map( function( file, cb ) {
+		if (!filesExistPromise) {
+			filesExistPromise = checkFilesExist(options);
 		}
 
-		getClient( options ).list(
-			{ prefix: options.getUploadPath() },
-			function( err, data ) {
-
-				// for some reason, when you have an invalid key or secret
-				// it is not registered in err but in data
-				if( err || data.Code ) {
-					cb( new Error('Error accessing Amazon-S3') );
-					return;
-				}
-
-				if( data.Contents.length !== 0 ) {
-					var errorMsg = getErrorMsg( options );
-					// file exist in s3 buckets
-					gutil.log(gutil.colors.red(errorMsg));
-					cb( new Error(errorMsg) );
-					return;
-				}
-
-				// no error, and the contents of data is empty
+		filesExistPromise.then(
+			function() {
 				cb( null, file );
-
-		} );
-
+			},
+			function(err) {
+				cb( err );
+			}
+		);
 	});
 };
 
-// Error Message when folder cannot be over-written
-function getErrorMsg ( options ) {
-	return 'No files transferred because files already exists in ' + options.getUploadPath();
-}
-module.exports._getErrorMsg = getErrorMsg;
+function checkFilesExist(options) {
+	var client = knox.createClient( options.getCreds() );
 
-module.exports._getClient = getClient;
+	var deferred = Q.defer();
+
+	client.list({
+			prefix: options.getUploadPath()
+		},
+		function( err, data ) {
+			if( err ) {
+				deferred.reject( err );
+				return;
+			}
+
+			// AWS errors like invalid key or secret are specified in the data
+			// For more see http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
+			if( data.Code ) {
+				deferred.reject( new Error(data.Message) );
+				return;
+			}
+
+			if( data.Contents.length !== 0 ) {
+				// files exist in s3 folder
+				var errorMsg = 'No files transferred because files already exists in ' + options.getUploadPath();
+				gutil.log(gutil.colors.red(errorMsg));
+				deferred.reject( new Error(errorMsg) );
+				return;
+			}
+
+			// no files exist in s3 folder
+			deferred.resolve();
+		}
+	);
+
+	return deferred.promise;
+}
