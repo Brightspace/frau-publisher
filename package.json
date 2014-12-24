@@ -34,10 +34,11 @@
     "sinon-chai": "^2.6.0"
   },
   "dependencies": {
+    "event-stream": "^3.1.7",
     "gulp-s3": "^0.3.0",
     "gulp-util": "^3.0.1",
-    "event-stream": "^3.1.7",
     "knox": "^0.9.1",
+    "q": "^1.1.2",
     "semver": "^4.1.0"
   }
 }
