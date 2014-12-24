@@ -3,15 +3,6 @@ var frauPublisher = require('../../src/publisher'),
 	eventStream = require('event-stream'),
 	gUtil = require('gulp-util');
 
-var publisher = frauPublisher.app({
-	id: 'frau-publisher-test',
-	creds: {
-		key: 'AKIAJKN55MNZIZXKVCHQ',
-		secret: process.env.CREDS_SECRET
-	},
-	devTag: Math.random().toString(16).slice(2)
-});
-
 var content = 'some data';
 var filename = 'test.txt';
 var file = new gUtil.File({
@@ -26,6 +17,8 @@ var file = new gUtil.File({
 
 describe('publisher', function() {
 	it('should publish new file', function(cb) {
+		var publisher = createPublisher( Math.random().toString(16).slice(2) );
+
 		eventStream.readArray( [file] )
 			.pipe( publisher.getStream() )
 			.on('end', function() {
@@ -45,4 +38,31 @@ describe('publisher', function() {
 				}, 500);
 			});
 	});
+
+	it('should not overwrite a file', function(cb) {
+		// This test relies on files having already been published with this
+		//  devTag.  We could remove this dependency by publishing a file and
+		//  then trying again.  We should do this if necessary, but it didn't
+		//  start that way because it seems unnecessarily wasteful.
+		var publisher = createPublisher( 'overwrite-test' );
+
+		eventStream.readArray( [file] )
+			.pipe( publisher.getStream() )
+			.on('error', function() {
+				cb();
+			}).on('end', function() {
+				cb('should not have published');
+			});
+	});
 });
+
+function createPublisher(devTag) {
+	return frauPublisher.app({
+		id: 'frau-publisher-test',
+		creds: {
+			key: 'AKIAJKN55MNZIZXKVCHQ',
+			secret: process.env.CREDS_SECRET
+		},
+		devTag: devTag
+	});
+}
