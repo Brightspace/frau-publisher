@@ -37,9 +37,6 @@ gulp.src('./dist/**')
 	.pipe( appPublisher.getStream() );
 ```
 
-**Note**: Make sure the version number for your application follows the guideline specified in [Semantic Versioning](http://semver.org).
-
-
 ### Publish a library
 To publish a library (e.g. jQuery, Angular, etc.) to the CDN:
 
@@ -51,7 +48,10 @@ gulp.src('./lib/jquery/**')
 ```
 
 ### Publish to production
-To publish the released/production version of your app or library, simply change the `devTag` property to `version` in your `options` variable:
+To publish the released/production version of your app or library, you must change the `devTag` property to `version` and you must specify a valid version number that follows the guideline specified in [Semantic Versioning](http://semver.org).
+
+
+In your `options` variable, set the `version` tag with a valid version:
 
 ```javascript
 var options = {
@@ -63,8 +63,6 @@ var options = {
 	version: '4.2.1'
 };
 ```
-
-**Note**: Make sure the version number for your application follows the guideline specified in [Semantic Versioning](http://semver.org).
 
 ### Publishing options
 Both the `app()` and `lib()` publisher methods accept the following options:
