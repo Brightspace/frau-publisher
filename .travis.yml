@@ -17,4 +17,5 @@ deploy:
     all_branches: true
 env:
   global:
-  - secure: NbJJ3Csu5rJcFLdTsfW2hUELqQbrEcJHaDHHiG/W5/o2lZTlc30hrKTKh0S4yKaAEq0BIQ3zWNV6tPyZDD2R11lcDSeWZ7BHRyve8UFNgAgvDjKBjdxFRASp5v11qa8pffN0VWdil+kWARItpF60+ucZiKyydkqjYpLwnj0s+lc=
+  - CREDS_KEY=AKIAJDAR7J62LH6CT5IA
+  - secure: eAmYMiNQEr4UStxhMcdRwodlXM21eHd2itBx3hTRVqbDwnbbcjN3dcz94bc2L9Vvi6Bbo21nhTZh5NIgkyGvZQe6JuPer7tPO4AondWyxqCmAOF0r2fz7fOvQvnF3HPgMmDLEPfZUe6TL0xXChXHjgPZ+EN3SfUHdU+f1FzxyIE=
