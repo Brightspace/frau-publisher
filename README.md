@@ -41,7 +41,7 @@ gulp.src('./dist/**')
 
 
 ### Publish a library
-Alternately, to publish a library (e.g. jQuery, Angular, etc.) to the CDN:
+To publish a library (e.g. jQuery, Angular, etc.) to the CDN:
 
 ```javascript
 var libPublisher = publisher.lib( options );
@@ -51,9 +51,7 @@ gulp.src('./lib/jquery/**')
 ```
 
 ### Publish to production
-To publish the released/production version of your app or library, simply change the `devTag` property to `version`.
-
-In your `options` variable:
+To publish the released/production version of your app or library, simply change the `devTag` property to `version` in your `options` variable:
 
 ```javascript
 var options = {
@@ -79,7 +77,7 @@ Both the `app()` and `lib()` publisher methods accept the following options:
 | version       | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
 
-### Obtaining the CDN location
+### Get the app's location
 To get the final location of where the files are on the CDN:
 
 ```javascript
