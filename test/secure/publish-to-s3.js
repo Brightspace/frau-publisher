@@ -60,7 +60,7 @@ function createPublisher(devTag) {
 	return frauPublisher.app({
 		id: 'frau-publisher-test',
 		creds: {
-			key: '***REMOVED***',
+			key: process.env.CREDS_KEY,
 			secret: process.env.CREDS_SECRET
 		},
 		devTag: devTag
