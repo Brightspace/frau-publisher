@@ -26,7 +26,7 @@ describe('publisher', function () {
 
 		describe( val + '.getLocation', function () {
 
-			it( 'should return the proper address', function () {
+			it( 'should return the proper address when no bucket name provided', function () {
 				var location = publisher[val]( options ).getLocation();
 				var urlVal = ( val === 'app' ) ? 'apps' : val;
 				expect( location ).to.equal(
@@ -34,6 +34,17 @@ describe('publisher', function () {
 					);
 
 			});
+
+            it( 'should return the proper address when a bucket name is provided', function () {
+                var bucketOptions = JSON.parse(JSON.stringify(options)); // to clone the object
+                bucketOptions.creds.bucket = 'test-bucket';
+                var location = publisher[val]( bucketOptions ).getLocation();
+                var urlVal = ( val === 'app' ) ? 'apps' : val;
+                expect( location ).to.equal(
+                    'https://s3.amazonaws.com/test-bucket/' + urlVal + '/myId/dev/myDevTag/'
+                );
+
+            });
 
 		} );
 

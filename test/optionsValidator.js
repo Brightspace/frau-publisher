@@ -109,6 +109,22 @@ describe( 'options validator', function() {
 				} ).to.throw( 'Missing credential secret' );
 		} );
 
+        it( 'should set bucket to production cdn when none provided', function() {
+            var options = optionsValidator(
+                { id: "id", devTag: "devTag", creds: { key: "key", secret: "mySecret" } }
+            );
+            expect(options.getCreds()).to.include.keys("bucket");
+            expect(options.getCreds().bucket).to.equal("d2lprodcdn");
+        } );
+
+        it( 'should set bucket to provided bucket when one provided', function() {
+            var options = optionsValidator(
+                { id: "id", devTag: "devTag", creds: { key: "key", secret: "mySecret", bucket: "test-bucket" } }
+            );
+            expect( options.getCreds() ).to.include.keys("bucket");
+            expect( options.getCreds().bucket ).to.equal("test-bucket");
+        } );
+
 		it( 'should return specified creds', function() {
 
 			expect( validOptions.getCreds().key ).to.equal( 'myKey' );
