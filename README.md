@@ -74,6 +74,8 @@ Both the `app()` and `lib()` publisher methods accept the following options:
 | devTag        | The development version of the app or library. |
 | version       | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
+**Note**: Can also provide a `bucket` property in the creds object that is the name of an S3 bucket to upload to if you don't want to publish to the CDN.
+
 
 ### Get the app's location
 To get the final location of where the files are on the CDN:
