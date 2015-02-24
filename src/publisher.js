@@ -27,8 +27,10 @@ function helper( opts, initialPath ) {
 
 		},
 		getLocation: function() {
-			var options = optionsValidator( opts );
-			return 'https://s.brightspace.com/' + options.getUploadPath();
+            var options = optionsValidator( opts );
+            var bucket = options.getCreds().bucket;
+            var base = bucket === 'd2lprodcdn' ? 'https://s.brightspace.com/' : 'https://s3.amazonaws.com/' + bucket + '/';
+            return base + options.getUploadPath();
 		}
 	};
 }
