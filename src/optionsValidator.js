@@ -64,7 +64,11 @@ module.exports = function( opts ) {
 		getBaseLocation: function() {
 			validateOpts( opts );
 			var bucket = opts.creds.bucket;
-			return bucket ? 'https://s3.amazonaws.com/' + bucket + '/' : 'https://s.brightspace.com/';
+            if (bucket && bucket !== 'd2lprodcdn') {
+                return 'https://s3.amazonaws.com/' + bucket + '/';
+            } else {
+                return 'https://s.brightspace.com/';
+            }
 		},
 
 		getUploadPath: function() {

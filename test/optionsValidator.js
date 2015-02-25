@@ -145,6 +145,20 @@ describe( 'options validator', function() {
             );
             expect( options.getBaseLocation() ).to.equal('https://s3.amazonaws.com/test-bucket/');
         } );
+
+        it( 'should return the production CDN when the production bucket name is provided', function() {
+            var options = optionsValidator(
+                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', bucket: 'd2lprodcdn' } }
+            );
+            expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
+        } );
+
+        it( 'should return the production CDN when an empty bucket name is provided', function() {
+            var options = optionsValidator(
+                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', bucket: '' } }
+            );
+            expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
+        } );
 	} );
 
 	describe( 'getUploadPath', function() {
