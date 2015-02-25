@@ -58,7 +58,7 @@ describe( 'options validator', function() {
 
 		it( 'should return specified devTag', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					devTag: 'some-tag',
 					initialPath: 'path/',
@@ -70,7 +70,7 @@ describe( 'options validator', function() {
 
 		it( 'should return specified version', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					version: '1.2.0',
 					initialPath: 'path/',
@@ -113,16 +113,14 @@ describe( 'options validator', function() {
             var options = optionsValidator(
                 { id: "id", devTag: "devTag", creds: { key: "key", secret: "mySecret" } }
             );
-            expect(options.getCreds()).to.include.keys("bucket");
-            expect(options.getCreds().bucket).to.equal("d2lprodcdn");
+            expect(options.getCreds()).to.have.property('bucket', 'd2lprodcdn');
         } );
 
         it( 'should set bucket to provided bucket when one provided', function() {
             var options = optionsValidator(
                 { id: "id", devTag: "devTag", creds: { key: "key", secret: "mySecret", bucket: "test-bucket" } }
             );
-            expect( options.getCreds() ).to.include.keys("bucket");
-            expect( options.getCreds().bucket ).to.equal("test-bucket");
+            expect( options.getCreds() ).to.have.property('bucket', 'test-bucket');
         } );
 
 		it( 'should return specified creds', function() {
@@ -158,7 +156,7 @@ describe( 'options validator', function() {
 
 		it( 'should return valid release upload path', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					version: '1.2.0',
 					initialPath: 'path/',
@@ -171,7 +169,7 @@ describe( 'options validator', function() {
 
 		it( 'should prioritize release version over devTag', function() {
 			var options = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					devTag: 'tag',
 					version: '2.2.0',
