@@ -67,15 +67,20 @@ var options = {
 ### Publishing options
 Both the `app()` and `lib()` publisher methods accept the following options:
 
+**Options**
 | Property | Description |
 | ------------- | ----------- |
 | id            | Unique name of the app or library. |
-| creds         | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
+| creds         | AWS credentials for the specified app (see table below for properties).
 | devTag        | The development version of the app or library. |
 | version       | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
-**Note**: Can also provide a `bucket` property in the creds object that is the name of an S3 bucket to upload to if you don't want to publish to the CDN.
-
+**Creds**
+| Property | Description |
+| ------------- | ----------- |
+| key            | AWS key. |
+| secret         |  AWS Secret. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
+| bucket [optional] | S3 bucket to publish the app to. Leave undefined to upload to the production Brightspace CDN. |
 
 ### Get the app's location
 To get the final location of where the files are on the CDN:
