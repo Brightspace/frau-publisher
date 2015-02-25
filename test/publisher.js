@@ -16,6 +16,12 @@ var options = {
 		devTag: 'myDevTag'
 	};
 
+var optionsWithBucket = {
+    id: 'myId',
+    creds: { key: 'myKey', secret: 'mySecret', bucket: 'test-bucket' },
+    devTag: 'myDevTag'
+};
+
 describe('publisher', function () {
 
 	beforeEach( function() {
@@ -36,9 +42,7 @@ describe('publisher', function () {
 			});
 
             it( 'should return the proper address when a bucket name is provided', function () {
-                var bucketOptions = JSON.parse(JSON.stringify(options)); // to clone the object
-                bucketOptions.creds.bucket = 'test-bucket';
-                var location = publisher[val]( bucketOptions ).getLocation();
+                var location = publisher[val]( optionsWithBucket ).getLocation();
                 var urlVal = ( val === 'app' ) ? 'apps' : val;
                 expect( location ).to.equal(
                     'https://s3.amazonaws.com/test-bucket/' + urlVal + '/myId/dev/myDevTag/'
