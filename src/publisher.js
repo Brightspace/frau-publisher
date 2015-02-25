@@ -27,9 +27,9 @@ function helper( opts, initialPath ) {
 
 		},
 		getLocation: function() {
-            var options = optionsValidator( opts );
-            return options.getBaseLocation() + options.getUploadPath();
-        }
+			var options = optionsValidator( opts );
+			return options.getBaseLocation() + options.getUploadPath();
+		}
 	};
 }
 

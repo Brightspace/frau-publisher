@@ -17,9 +17,9 @@ var options = {
 	};
 
 var optionsWithBucket = {
-    id: 'myId',
-    creds: { key: 'myKey', secret: 'mySecret', testBucket: 'test-bucket' },
-    devTag: 'myDevTag'
+	id: 'myId',
+	creds: { key: 'myKey', secret: 'mySecret', testBucket: 'test-bucket' },
+	devTag: 'myDevTag'
 };
 
 describe('publisher', function () {
@@ -31,9 +31,9 @@ describe('publisher', function () {
 	['app','lib'].forEach( function( val ) {
 
 		describe( val + '.getLocation', function () {
-            var urlVal = ( val === 'app' ) ? 'apps' : val;
+			var urlVal = ( val === 'app' ) ? 'apps' : val;
 
-            it( 'should return the proper address when no bucket name provided', function () {
+			it( 'should return the proper address when no bucket name provided', function () {
 				var location = publisher[val]( options ).getLocation();
 				expect( location ).to.equal(
 						'https://s.brightspace.com/' + urlVal + '/myId/dev/myDevTag/'
@@ -41,13 +41,13 @@ describe('publisher', function () {
 
 			});
 
-            it( 'should return the proper address when a bucket name is provided', function () {
-                var location = publisher[val]( optionsWithBucket ).getLocation();
-                expect( location ).to.equal(
-                    'https://s3.amazonaws.com/test-bucket/' + urlVal + '/myId/dev/myDevTag/'
-                );
+			it( 'should return the proper address when a bucket name is provided', function () {
+				var location = publisher[val]( optionsWithBucket ).getLocation();
+				expect( location ).to.equal(
+					'https://s3.amazonaws.com/test-bucket/' + urlVal + '/myId/dev/myDevTag/'
+				);
 
-            });
+			});
 
 		} );
 
