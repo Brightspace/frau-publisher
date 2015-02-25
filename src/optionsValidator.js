@@ -61,6 +61,12 @@ module.exports = function( opts ) {
 			};
 		},
 
+		getBaseLocation: function() {
+			validateOpts( opts );
+			var bucket = opts.creds.bucket;
+			return bucket ? 'https://s3.amazonaws.com/' + bucket + '/' : 'https://s.brightspace.com/';
+		},
+
 		getUploadPath: function() {
 			validateOpts( opts );
 			var devPath = getDevPath( opts );
