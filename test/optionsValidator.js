@@ -113,14 +113,14 @@ describe( 'options validator', function() {
             var options = optionsValidator(
                 { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret' } }
             );
-            expect(options.getCreds()).to.have.property('testBucket', 'd2lprodcdn');
+            expect(options.getCreds()).to.have.property('bucket', 'd2lprodcdn');
         } );
 
         it( 'should set bucket to provided bucket when one provided', function() {
             var options = optionsValidator(
                 { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'test-bucket' } }
             );
-            expect( options.getCreds() ).to.have.property('testBucket', 'test-bucket');
+            expect( options.getCreds() ).to.have.property('bucket', 'test-bucket');
         } );
 
 		it( 'should return specified creds', function() {

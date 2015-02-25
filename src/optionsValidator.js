@@ -57,7 +57,7 @@ module.exports = function( opts ) {
 			return {
 				key: opts.creds.key,
 				secret: opts.creds.secret,
-				testBucket: opts.creds.testBucket || 'd2lprodcdn'
+				bucket: opts.creds.testBucket || 'd2lprodcdn'
 			};
 		},
 
