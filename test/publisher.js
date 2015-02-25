@@ -18,7 +18,7 @@ var options = {
 
 var optionsWithBucket = {
     id: 'myId',
-    creds: { key: 'myKey', secret: 'mySecret', bucket: 'test-bucket' },
+    creds: { key: 'myKey', secret: 'mySecret', testBucket: 'test-bucket' },
     devTag: 'myDevTag'
 };
 

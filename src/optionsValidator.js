@@ -57,15 +57,15 @@ module.exports = function( opts ) {
 			return {
 				key: opts.creds.key,
 				secret: opts.creds.secret,
-				bucket: opts.creds.bucket || 'd2lprodcdn'
+				testBucket: opts.creds.testBucket || 'd2lprodcdn'
 			};
 		},
 
 		getBaseLocation: function() {
 			validateOpts( opts );
-			var bucket = opts.creds.bucket;
-            if (bucket && bucket !== 'd2lprodcdn') {
-                return 'https://s3.amazonaws.com/' + bucket + '/';
+			var testBucket = opts.creds.testBucket;
+            if (testBucket && testBucket !== 'd2lprodcdn') {
+                return 'https://s3.amazonaws.com/' + testBucket + '/';
             } else {
                 return 'https://s.brightspace.com/';
             }

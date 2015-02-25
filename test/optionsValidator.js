@@ -113,14 +113,14 @@ describe( 'options validator', function() {
             var options = optionsValidator(
                 { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret' } }
             );
-            expect(options.getCreds()).to.have.property('bucket', 'd2lprodcdn');
+            expect(options.getCreds()).to.have.property('testBucket', 'd2lprodcdn');
         } );
 
         it( 'should set bucket to provided bucket when one provided', function() {
             var options = optionsValidator(
-                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', bucket: 'test-bucket' } }
+                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'test-bucket' } }
             );
-            expect( options.getCreds() ).to.have.property('bucket', 'test-bucket');
+            expect( options.getCreds() ).to.have.property('testBucket', 'test-bucket');
         } );
 
 		it( 'should return specified creds', function() {
@@ -141,21 +141,21 @@ describe( 'options validator', function() {
 
         it( 'should return the AWS bucket location when a bucket is provided', function() {
             var options = optionsValidator(
-                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', bucket: 'test-bucket' } }
+                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'test-bucket' } }
             );
             expect( options.getBaseLocation() ).to.equal('https://s3.amazonaws.com/test-bucket/');
         } );
 
         it( 'should return the production CDN when the production bucket name is provided', function() {
             var options = optionsValidator(
-                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', bucket: 'd2lprodcdn' } }
+                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'd2lprodcdn' } }
             );
             expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
         } );
 
         it( 'should return the production CDN when an empty bucket name is provided', function() {
             var options = optionsValidator(
-                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', bucket: '' } }
+                { id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: '' } }
             );
             expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
         } );
