@@ -58,7 +58,7 @@ describe( 'options validator', function() {
 
 		it( 'should return specified devTag', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					devTag: 'some-tag',
 					initialPath: 'path/',
@@ -70,7 +70,7 @@ describe( 'options validator', function() {
 
 		it( 'should return specified version', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					version: '1.2.0',
 					initialPath: 'path/',
@@ -109,12 +109,56 @@ describe( 'options validator', function() {
 				} ).to.throw( 'Missing credential secret' );
 		} );
 
+		it( 'should set bucket to production cdn when none provided', function() {
+			var options = optionsValidator(
+				{ id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret' } }
+			);
+			expect(options.getCreds()).to.have.property('bucket', 'd2lprodcdn');
+		} );
+
+		it( 'should set bucket to provided bucket when one provided', function() {
+			var options = optionsValidator(
+				{ id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'test-bucket' } }
+			);
+			expect( options.getCreds() ).to.have.property('bucket', 'test-bucket');
+		} );
+
 		it( 'should return specified creds', function() {
 
 			expect( validOptions.getCreds().key ).to.equal( 'myKey' );
 			expect( validOptions.getCreds().secret ).to.equal( 'mySecret' );
 		} );
 
+	} );
+
+	describe( 'getBaseLocation', function() {
+		it( 'should return the production CDN when no bucket provided', function() {
+			var options = optionsValidator(
+				{ id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret' } }
+			);
+			expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
+		} );
+
+		it( 'should return the AWS bucket location when a bucket is provided', function() {
+			var options = optionsValidator(
+				{ id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'test-bucket' } }
+			);
+			expect( options.getBaseLocation() ).to.equal('https://s3.amazonaws.com/test-bucket/');
+		} );
+
+		it( 'should return the production CDN when the production bucket name is provided', function() {
+			var options = optionsValidator(
+				{ id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: 'd2lprodcdn' } }
+			);
+			expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
+		} );
+
+		it( 'should return the production CDN when an empty bucket name is provided', function() {
+			var options = optionsValidator(
+				{ id: 'id', devTag: 'devTag', creds: { key: 'key', secret: 'mySecret', testBucket: '' } }
+			);
+			expect( options.getBaseLocation() ).to.equal('https://s.brightspace.com/');
+		} );
 	} );
 
 	describe( 'getUploadPath', function() {
@@ -126,7 +170,7 @@ describe( 'options validator', function() {
 
 		it( 'should return valid release upload path', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					version: '1.2.0',
 					initialPath: 'path/',
@@ -139,7 +183,7 @@ describe( 'options validator', function() {
 
 		it( 'should prioritize release version over devTag', function() {
 			var options = optionsValidator(
-				{	
+				{
 					id: 'myId',
 					devTag: 'tag',
 					version: '2.2.0',

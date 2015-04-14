@@ -57,8 +57,18 @@ module.exports = function( opts ) {
 			return {
 				key: opts.creds.key,
 				secret: opts.creds.secret,
-				bucket: 'd2lprodcdn'
+				bucket: opts.creds.testBucket || 'd2lprodcdn'
 			};
+		},
+
+		getBaseLocation: function() {
+			validateOpts( opts );
+			var testBucket = opts.creds.testBucket;
+			if (testBucket && testBucket !== 'd2lprodcdn') {
+				return 'https://s3.amazonaws.com/' + testBucket + '/';
+			} else {
+				return 'https://s.brightspace.com/';
+			}
 		},
 
 		getUploadPath: function() {

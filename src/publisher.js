@@ -28,7 +28,7 @@ function helper( opts, initialPath ) {
 		},
 		getLocation: function() {
 			var options = optionsValidator( opts );
-			return 'https://s.brightspace.com/' + options.getUploadPath();
+			return options.getBaseLocation() + options.getUploadPath();
 		}
 	};
 }
