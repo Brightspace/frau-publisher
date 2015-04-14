@@ -15,7 +15,13 @@ function helper( opts, initialPath ) {
 
 			var overwriteCheck = overwrite( options );
 			var compressorStream = compressor();
-			var gulpS3 = s3( options.getCreds(), { uploadPath: options.getUploadPath() } );
+			var s3Options = {
+				headers: {
+					'cache-control': 'public, max-age=31536000'
+				},
+				uploadPath: options.getUploadPath()
+			};
+			var gulpS3 = s3( options.getCreds(), s3Options );
 
 			var duplexStream = es.duplex( overwriteCheck, gulpS3 );
 
