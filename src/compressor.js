@@ -6,6 +6,7 @@ var es = require('event-stream'),
 
 var compressibles = [
 	'.js',
+	'.json',
 	'.css',
 	'.html'
 ];
