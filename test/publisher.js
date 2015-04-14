@@ -49,10 +49,16 @@ describe('publisher', function () {
 
 	describe('_helper', function() {
 
-		it ( 'should call s3 with correct options', function() {
-			var stream = publisher._helper( options, 'path/' ).getStream();
-			expect( s3 ).to.be.calledWith( sinon.match.any, { uploadPath: 'path/myId/dev/myDevTag/' } );
-		} );
+		it('should call s3 with correct options', function() {
+			var expectedOptions = {
+				headers: {
+					'cache-control': 'public, max-age=31536000'
+				},
+				uploadPath: 'path/myId/dev/myDevTag/'
+			};
+			var stream = publisher._helper(options, 'path/').getStream();
+			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
+		});
 
 	} );
 
