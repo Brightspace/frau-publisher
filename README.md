@@ -2,6 +2,7 @@
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
+[![Dependency Status][dependencies-image]][dependencies-url]
 
 A utility for publishing free-range applications and libraries to our CDN
 using [Gulp](http://www.gulpjs.com).
@@ -85,8 +86,10 @@ var location = appPublisher.getLocation();
 ```
 
 [npm-url]: https://npmjs.org/package/gulp-frau-publisher
-[npm-image]: https://badge.fury.io/js/gulp-frau-publisher.png
+[npm-image]: https://img.shields.io/npm/v/gulp-frau-publisher.svg
 [ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
 [ci-url]: https://travis-ci.org/Brightspace/gulp-frau-publisher
 [coverage-image]: https://img.shields.io/coveralls/Brightspace/gulp-frau-publisher.svg
 [coverage-url]: https://coveralls.io/r/Brightspace/gulp-frau-publisher?branch=master
+[dependencies-url]: https://david-dm.org/brightspace/gulp-frau-publisher
+[dependencies-image]: https://img.shields.io/david/Brightspace/gulp-frau-publisher.svg
