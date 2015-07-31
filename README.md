@@ -2,6 +2,7 @@
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
+[![Dependency Status][dependencies-image]][dependencies-url]
 
 A utility for publishing free-range applications and libraries to our CDN
 using [Gulp](http://www.gulpjs.com).
@@ -23,7 +24,7 @@ To publish a free-range application to the CDN:
 var publisher = require('gulp-frau-publisher');
 
 var options = {
-	id: 'someID',
+	targetDirectory: 'someDirectory',
 	creds: {
 		"key": "AKITHISISSOMEKEYASDF",
 		"secret": "aCD233rDF232RANDOMSECRET12+32g"
@@ -55,7 +56,7 @@ In your `options` variable, set the `version` tag with a valid version:
 
 ```javascript
 var options = {
-	id: 'someID',
+	targetDirectory: 'someDirectory',
 	creds: {
 		"key": "AKITHISISSOMEKEYASDF",
 		"secret": "aCD233rDF232RANDOMSECRET12+32g"
@@ -68,11 +69,11 @@ var options = {
 Both the `app()` and `lib()` publisher methods accept the following options:
 
 | Property | Description |
-| ------------- | ----------- |
-| id            | Unique name of the app or library. |
-| creds         | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
-| devTag        | The development version of the app or library. |
-| version       | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
+| --------------- | ----------- |
+| targetDirectory | Unique target directory where the app or library will be published. |
+| creds           | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
+| devTag          | The development version of the app or library. |
+| version         | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
 
 ### Get the app's location
@@ -85,8 +86,10 @@ var location = appPublisher.getLocation();
 ```
 
 [npm-url]: https://npmjs.org/package/gulp-frau-publisher
-[npm-image]: https://badge.fury.io/js/gulp-frau-publisher.png
+[npm-image]: https://img.shields.io/npm/v/gulp-frau-publisher.svg
 [ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
 [ci-url]: https://travis-ci.org/Brightspace/gulp-frau-publisher
 [coverage-image]: https://img.shields.io/coveralls/Brightspace/gulp-frau-publisher.svg
 [coverage-url]: https://coveralls.io/r/Brightspace/gulp-frau-publisher?branch=master
+[dependencies-url]: https://david-dm.org/brightspace/gulp-frau-publisher
+[dependencies-image]: https://img.shields.io/david/Brightspace/gulp-frau-publisher.svg
