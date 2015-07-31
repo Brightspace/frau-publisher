@@ -1,7 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-- '0.10.33'
+- '0.12'
 script:
 - npm test
 - 'if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then npm run test-secure; fi'
@@ -10,7 +10,7 @@ deploy:
   provider: npm
   email: d2ltravisdeploy@d2l.com
   api_key:
-    secure: DJo6VGUKeu4Xi/bXH8O+jm89tQnzlOlXcDF1HVhaNjCy6VFWkqv+cdoWTeEs9g6R32XjKTbUDNX/GES+qrteavjcSGNJkfaXGJylt6Le/ro4KpSh+RKHENqeNeQWBE44utgokHnWVt/rjbHiTmiH/EO5bqr+Th5B583DCjR/qdY=
+    secure: LiIHX9SlXgdegsLzXgKUKCqygHK36E0DNvQiBKc9F6Uc5LYBV1g5dXy7Z4rclBdJBsYm/GKRpps5syZPO24bSJhJ029kg98amm9Lhq8TeFgFqpNCO0HnyGLjPVdiIAWVD4lljqjliPgiQVDBSwMbDFHQHPZd39uWtHftJv12x10=
   on:
     tags: true
     repo: Brightspace/gulp-frau-publisher
