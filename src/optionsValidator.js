@@ -1,5 +1,7 @@
 'use strict';
-var semver = require('semver');
+
+var chalk = require('chalk'),
+	semver = require('semver');
 
 function validateOpts ( opts ) {
 	if( !opts ) {
@@ -20,12 +22,18 @@ module.exports = function( opts ) {
 
 	var options = {
 
-		getId: function() {
+		getTargetDirectory: function() {
 			validateOpts( opts );
-			if( !opts.id ) {
-				throw new Error('Missing id');
+			if( !opts.targetDirectory && !opts.id ) {
+				throw new Error('Missing targetDirectory');
 			}
-			return opts.id;
+			if( opts.id ) {
+				console.log(chalk.red('The targetDirectory should be specified on options rather than id.  Specifying targetDirectory via id will not be supported in a future release.'));
+			}
+			if ( !opts.targetDirectory && opts.id ) {
+				opts.targetDirectory = opts.id;
+			}
+			return opts.targetDirectory;
 		},
 
 		getVersion: function () {
@@ -65,7 +73,7 @@ module.exports = function( opts ) {
 			validateOpts( opts );
 			var devPath = getDevPath( opts );
 			// version gets priority over devTag
-			return opts.initialPath + this.getId() + devPath +
+			return opts.initialPath + this.getTargetDirectory() + devPath +
 				this.getVersion() + '/';
 		}
 

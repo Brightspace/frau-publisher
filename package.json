@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "event-stream": "^3.1.7",
+    "chalk": "^1.1.0",
     "gulp-s3": "^0.3.0",
     "gulp-util": "^3.0.1",
     "knox": "^0.9.1",

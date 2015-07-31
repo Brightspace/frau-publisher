@@ -11,7 +11,7 @@ var publisher = proxyquire('../src/publisher', {
 } );
 
 var options = {
-		id: 'myId',
+		targetDirectory: 'myTargetDirectory',
 		creds: { key: 'myKey', secret: 'mySecret' },
 		devTag: 'myDevTag'
 	};
@@ -30,7 +30,7 @@ describe('publisher', function () {
 				var location = publisher[val]( options ).getLocation();
 				var urlVal = ( val === 'app' ) ? 'apps' : val;
 				expect( location ).to.equal(
-						'https://s.brightspace.com/' + urlVal + '/myId/dev/myDevTag/'
+						'https://s.brightspace.com/' + urlVal + '/myTargetDirectory/dev/myDevTag/'
 					);
 
 			});
@@ -54,7 +54,7 @@ describe('publisher', function () {
 				headers: {
 					'cache-control': 'public, max-age=31536000'
 				},
-				uploadPath: 'path/myId/dev/myDevTag/'
+				uploadPath: 'path/myTargetDirectory/dev/myDevTag/'
 			};
 			var stream = publisher._helper(options, 'path/').getStream();
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
