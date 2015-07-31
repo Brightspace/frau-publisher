@@ -23,7 +23,7 @@ To publish a free-range application to the CDN:
 var publisher = require('gulp-frau-publisher');
 
 var options = {
-	id: 'someID',
+	targetDirectory: 'someDirectory',
 	creds: {
 		"key": "AKITHISISSOMEKEYASDF",
 		"secret": "aCD233rDF232RANDOMSECRET12+32g"
@@ -55,7 +55,7 @@ In your `options` variable, set the `version` tag with a valid version:
 
 ```javascript
 var options = {
-	id: 'someID',
+	targetDirectory: 'someDirectory',
 	creds: {
 		"key": "AKITHISISSOMEKEYASDF",
 		"secret": "aCD233rDF232RANDOMSECRET12+32g"
@@ -68,11 +68,11 @@ var options = {
 Both the `app()` and `lib()` publisher methods accept the following options:
 
 | Property | Description |
-| ------------- | ----------- |
-| id            | Unique name of the app or library. |
-| creds         | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
-| devTag        | The development version of the app or library. |
-| version       | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
+| --------------- | ----------- |
+| targetDirectory | Unique target directory where the app or library will be published. |
+| creds           | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
+| devTag          | The development version of the app or library. |
+| version         | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
 
 ### Get the app's location
