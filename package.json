@@ -1,8 +1,11 @@
 {
   "name": "gulp-frau-publisher",
-  "version": "2.3.1",
-  "description": "Utility for publishing free-range apps and libraries to our CDN.",
+  "version": "2.4.1",
+  "description": "A free-range-app utility for publishing apps and libraries to our CDN.",
   "main": "src/publisher.js",
+  "bin": {
+    "frau-publisher": "bin/publishercli"
+  },
   "scripts": {
     "pretest": "npm run lint",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/*.js -- -R spec",
@@ -39,7 +42,9 @@
     "gulp-s3": "^0.3.0",
     "gulp-util": "^3.0.1",
     "knox": "^0.9.1",
-    "q": "^1.1.2",
-    "semver": "^5.0.1"
+    "q": "^1.4.1",
+    "semver": "^5.0.1",
+    "vinyl-fs": "^1.0.0",
+    "yargs": "^3.10.0"
   }
 }

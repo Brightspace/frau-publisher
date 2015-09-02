@@ -4,69 +4,136 @@
 [![Coverage Status][coverage-image]][coverage-url]
 [![Dependency Status][dependencies-image]][dependencies-url]
 
-A utility for publishing free-range applications and libraries to our CDN
-using [Gulp](http://www.gulpjs.com).
+A free-range-app utility for publishing apps and libraries to our CDN.
 
 ## Installation
 
 Install `gulp-frau-publisher` as a dev dependency:
 
 ```shell
-npm install --save-dev gulp-frau-publisher
+npm install gulp-frau-publisher
 ```
 
-## Publishing to the CDN
+## Usage
 
-### Publish an app
-To publish a free-range application to the CDN:
+### From CLI
+
+The FRAU publisher can be run either directly on the console CLI (assuming dependencies are installed), or specified as a script in `package.json`.  Arguments may be passed directly on the CLI, or may be configured in `package.json`.  In addition, the publish key secret, dev tag, and version can either be explicitly specified, or can be read from the build environmnt.
+
+Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
+
+```javascript
+frau-publisher --moduletype|-m app 
+               --targetdir|-t 'cdn directory' 
+               --key|-k yourkey 
+               --secretvar S3_SECRET 
+               --devtagvar TRAVIS_COMMIT 
+               --versionvar TRAVIS_TAG 
+               --files|-f './dist/**'
+```
+
+```javascript
+"scripts": {
+  "publish-release": "frau-publisher"
+},
+"config": {
+  "frauPublisher": {
+    "files": "./dist/**",
+    "moduleType": "app",
+    "targetDirectory": "cdn directory",
+    "creds": {
+      "key": "your key",
+      "secretVar": "S3_SECRET"
+    },
+    "devTagVar": "TRAVIS_COMMIT",
+    "versionVar": "TRAVIS_TAG"
+  }
+}
+```
+
+Explicitly specifying credentials, dev tag, and/or version:
+
+**Note: never publish or commit unencrypted credentials.**
+
+```javascript
+frau-publisher --moduletype|-m app 
+               --targetdir|-t 'cdn directory' 
+               --key|-k yourkey 
+               --secret|-s yoursecret 
+               --devtag yourtag 
+               --version|-v yourversion ex. 0.0.1 
+               --files|-f './dist/**'
+```
+
+```javascript
+"scripts": {
+  "publish-release": "frau-publisher"
+},
+"config": {
+  "frauPublisher": {
+    "files": "./dist/**",
+    "moduleType": "app",
+    "targetDirectory": "cdn directory",
+    "creds": {
+      "key": "your key",
+      "secret": "your secret"
+    },
+    "devTag": "your tag",
+    "version": "0.0.1"
+  }
+}
+```
+
+### From JavaScript/Gulp
+
+To publish an **app** to the CDN:
 
 ```javascript
 var publisher = require('gulp-frau-publisher');
 
 var options = {
-	targetDirectory: 'someDirectory',
+	targetDirectory: 'cdn directory',
 	creds: {
-		"key": "AKITHISISSOMEKEYASDF",
-		"secret": "aCD233rDF232RANDOMSECRET12+32g"
+		"key": "your key",
+		"secret": "your secret"
 	},
-	devTag: '4.2.0'
+	devTag: 'your tag'
 };
 
 var appPublisher = publisher.app( options );
 
 gulp.src('./dist/**')
-	.pipe( appPublisher.getStream() );
+	.pipe(appPublisher.getStream());
 ```
 
-### Publish a library
-To publish a library (e.g. jQuery, Angular, etc.) to the CDN:
+
+To publish a **library** (e.g. jQuery, Angular, etc.) to the CDN:
 
 ```javascript
 var libPublisher = publisher.lib( options );
 
 gulp.src('./lib/jquery/**')
-	.pipe( libPublisher.getStream() );
+	.pipe(libPublisher.getStream());
 ```
 
-### Publish to production
-To publish the released/production version of your app or library, you must change the `devTag` property to `version` and you must specify a valid version number that follows the guideline specified in [Semantic Versioning](http://semver.org).
+### Publish to Production
 
+To publish the released/production version of your app or library, you must change the `devTag` property to `version` and you must specify a valid version number that follows the guideline specified in [Semantic Versioning](http://semver.org).
 
 In your `options` variable, set the `version` tag with a valid version:
 
 ```javascript
 var options = {
-	targetDirectory: 'someDirectory',
+	targetDirectory: 'cdn directory',
 	creds: {
-		"key": "AKITHISISSOMEKEYASDF",
-		"secret": "aCD233rDF232RANDOMSECRET12+32g"
+		"key": "your key",
+		"secret": "your secret"
 	},
-	version: '4.2.1'
+	version: '0.0.1'
 };
 ```
 
-### Publishing options
-Both the `app()` and `lib()` publisher methods accept the following options:
+### Publishing Options
 
 | Property | Description |
 | --------------- | ----------- |
@@ -76,14 +143,23 @@ Both the `app()` and `lib()` publisher methods accept the following options:
 | version         | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
 
-### Get the app's location
+### Get Published Location
+
 To get the final location of where the files are on the CDN:
 
 ```javascript
-var appPublisher = require('gulp-frau-publisher').app( options );
+var appPublisher = require('gulp-frau-publisher').app(options);
 
 var location = appPublisher.getLocation();
 ```
+
+## Contributing
+
+Contributions are welcome, please submit a pull request!
+
+### Code Style
+
+This repository is configured with [EditorConfig](http://editorconfig.org) rules and contributions should make use of them.
 
 [npm-url]: https://npmjs.org/package/gulp-frau-publisher
 [npm-image]: https://img.shields.io/npm/v/gulp-frau-publisher.svg
