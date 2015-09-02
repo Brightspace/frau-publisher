@@ -1,0 +1,52 @@
+#! /usr/bin/env node
+
+var argv = require('yargs'),
+	chalk = require('chalk'),
+	publisherOptions = require('./publisherOptions'),
+	vfs = require('vinyl-fs');
+
+var argv = argv
+	.alias('m', 'moduletype')
+	.alias('t', 'targetdir')
+	.alias('f', 'files')
+	.alias('k', 'key')
+	.alias('s', 'secret')
+	.alias('v', 'version')
+	.argv;
+
+var opts = publisherOptions.getOptions(argv);
+
+if (!opts.files) {
+	console.log(chalk.grey('No files to publish.\n'));
+	process.exit(0);
+}
+
+if (!opts.moduleType || (opts.moduleType != 'app' && opts.moduleType != 'lib')) {
+	console.log(chalk.red('The moduleType (app/lib) is a requried parameter.\n'));
+	process.exit(1);
+}
+
+console.log(chalk.green('Publish options:\n\n') + chalk.grey(
+		'   Target directory: ' + opts.targetDirectory + '\n' +
+		'   Module type: ' + opts.moduleType + '\n' +
+		'   Files: ' + opts.files + '\n' +
+		'   Publish key: ' + opts.creds.key + '\n' + 
+		'   Publish secret: ' + (opts.creds.secret ? '[secret]' : 'undefined') + '\n' +
+		'   Dev tag: ' + opts.devTag + '\n' +
+		'   Version: ' + opts.version + '\n'
+	));
+
+var publisher = require('../src/publisher');
+if (opts.moduleType === 'app') {
+	publisher = publisher.app(opts);
+} else {
+	publisher = publisher.lib(opts);
+}
+
+vfs.src(opts.files).pipe(
+	publisher.getStream()
+).on('end', function() {
+	console.log(chalk.green('Published to:\n\n') + chalk.grey(
+		'   ' + publisher.getLocation() + '\n'
+	));
+});
