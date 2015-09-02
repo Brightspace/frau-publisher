@@ -23,7 +23,7 @@ The FRAU publisher can be run either directly on the console CLI (assuming depen
 Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
 
 ```javascript
-frau-publisher --moduletype|-m app 
+frau-publisher --moduletype|-m app|lib 
                --targetdir|-t 'cdn directory' 
                --key|-k yourkey 
                --secretvar S3_SECRET 
@@ -39,7 +39,7 @@ frau-publisher --moduletype|-m app
 "config": {
   "frauPublisher": {
     "files": "./dist/**",
-    "moduleType": "app",
+    "moduleType": "app|lib",
     "targetDirectory": "cdn directory",
     "creds": {
       "key": "your key",
@@ -72,7 +72,7 @@ frau-publisher --moduletype|-m app
 "config": {
   "frauPublisher": {
     "files": "./dist/**",
-    "moduleType": "app",
+    "moduleType": "app|lib",
     "targetDirectory": "cdn directory",
     "creds": {
       "key": "your key",
