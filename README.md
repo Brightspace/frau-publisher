@@ -18,7 +18,7 @@ npm install gulp-frau-publisher
 
 ### From CLI
 
-The FRAU publisher can be run either directly on the console CLI (assuming dependencies are installed), or specified as a script in `package.json`.  Arguments may be passed directly on the CLI, or may be specified in `package.json` configuration as shown.  In addition, the publish key secret, dev tag, and version can either be explicitly specified, or can be read from the build environmnt.
+The FRAU publisher can be run either directly on the console CLI (assuming dependencies are installed), or specified as a script in `package.json`.  Arguments may be passed directly on the CLI, or may be configured in `package.json`.  In addition, the publish key secret, dev tag, and version can either be explicitly specified, or can be read from the build environmnt.
 
 Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
 
@@ -116,7 +116,7 @@ gulp.src('./lib/jquery/**')
 	.pipe(libPublisher.getStream());
 ```
 
-### Publish to production
+### Publish to Production
 
 To publish the released/production version of your app or library, you must change the `devTag` property to `version` and you must specify a valid version number that follows the guideline specified in [Semantic Versioning](http://semver.org).
 
@@ -143,7 +143,8 @@ var options = {
 | version         | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
 
-### Get the app's location
+### Get Published Location
+
 To get the final location of where the files are on the CDN:
 
 ```javascript
