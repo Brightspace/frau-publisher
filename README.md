@@ -153,6 +153,14 @@ var appPublisher = require('gulp-frau-publisher').app(options);
 var location = appPublisher.getLocation();
 ```
 
+## Contributing
+
+Contributions are welcome, please submit a pull request!
+
+### Code Style
+
+This repository is configured with [EditorConfig](http://editorconfig.org) rules and contributions should make use of them.
+
 [npm-url]: https://npmjs.org/package/gulp-frau-publisher
 [npm-image]: https://img.shields.io/npm/v/gulp-frau-publisher.svg
 [ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
