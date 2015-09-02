@@ -24,7 +24,7 @@ Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
 
 ```javascript
 frau-publisher --moduletype|-m app 
-               --targetdirectory|-t 'cdn directory' 
+               --targetdir|-t 'cdn directory' 
                --key|-k yourkey 
                --secretvar S3_SECRET 
                --devtagvar TRAVIS_COMMIT 
@@ -57,7 +57,7 @@ Explicitly specifying credentials, dev tag, and/or version:
 
 ```javascript
 frau-publisher --moduletype|-m app 
-               --targetdirectory|-t 'cdn directory' 
+               --targetdir|-t 'cdn directory' 
                --key|-k yourkey 
                --secret|-s yoursecret 
                --devtag yourtag 
