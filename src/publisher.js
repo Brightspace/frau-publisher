@@ -3,6 +3,7 @@
 var compressor = require('./compressor'),
 	es = require('event-stream'),
 	optionsValidator = require('./optionsValidator'),
+	optionsProvider = require('./optionsProvider'),
 	overwrite = require('./overwrite'),
 	s3 = require('gulp-s3');
 
@@ -46,5 +47,6 @@ module.exports = {
 	lib: function( opts ) {
 		return helper( opts, 'lib/' );
 	},
+	optionsProvider: optionsProvider,
 	_helper: helper
 };
