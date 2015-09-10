@@ -2,28 +2,28 @@
 
 module.exports = {
 	getDevTag: function(argv) {
-		return argv.devtag
-			|| process.env[argv.devtagvar]
-			|| process.env.npm_package_config_frauPublisher_devTag
-			|| process.env[process.env.npm_package_config_frauPublisher_devTagVar];
+		return argv.devtag || 
+			process.env[argv.devtagvar] || 
+			process.env.npm_package_config_frauPublisher_devTag || 
+			process.env[process.env.npm_package_config_frauPublisher_devTagVar];
 	},
 	getFiles: function(argv) {
-		return argv.files
-			|| process.env.npm_package_config_frauPublisher_files;
+		return argv.files || 
+			process.env.npm_package_config_frauPublisher_files;
 	},
 	getKey: function(argv) {
-		return argv.key 
-			|| process.env.npm_package_config_frauPublisher_creds_key;
+		return argv.key || 
+			process.env.npm_package_config_frauPublisher_creds_key;
 	},
 	getSecret: function(argv) {
-		return argv.secret
-			|| process.env[argv.secretvar]
-			|| process.env.npm_package_config_frauPublisher_creds_secret
-			|| process.env[process.env.npm_package_config_frauPublisher_creds_secretVar];
+		return argv.secret || 
+			process.env[argv.secretvar] || 
+			process.env.npm_package_config_frauPublisher_creds_secret || 
+			process.env[process.env.npm_package_config_frauPublisher_creds_secretVar];
 	},
 	getModuleType: function(argv) {
-		return argv.moduletype 
-			|| process.env.npm_package_config_frauPublisher_moduleType;
+		return argv.moduletype  || 
+			process.env.npm_package_config_frauPublisher_moduleType;
 	},
 	getOptions: function(argv) {
 		return {
@@ -39,13 +39,13 @@ module.exports = {
 		};
 	},
 	getTargetDirectory: function(argv) {
-		return argv.targetdir 
-			|| process.env.npm_package_config_frauPublisher_targetDirectory;
+		return argv.targetdir || 
+			process.env.npm_package_config_frauPublisher_targetDirectory;
 	},
 	getVersion: function(argv) {
-		return argv.version
-			|| process.env[argv.versionvar]
-			|| process.env.npm_package_config_frauPublisher_version
-			|| process.env[process.env.npm_package_config_frauPublisher_versionVar];
+		return argv.version || 
+			process.env[argv.versionvar] || 
+			process.env.npm_package_config_frauPublisher_version || 
+			process.env[process.env.npm_package_config_frauPublisher_versionVar];
 	}
 };
