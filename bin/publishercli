@@ -2,7 +2,7 @@
 
 var argv = require('yargs'),
 	chalk = require('chalk'),
-	publisherOptions = require('./publisherOptions'),
+	optionsProvider = require('../src/optionsProvider'),
 	vfs = require('vinyl-fs');
 
 var argv = argv
@@ -14,7 +14,7 @@ var argv = argv
 	.alias('v', 'version')
 	.argv;
 
-var opts = publisherOptions.getOptions(argv);
+var opts = optionsProvider.getOptions(argv);
 
 if (!opts.files) {
 	console.log(chalk.grey('No files to publish.\n'));
