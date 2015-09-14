@@ -10,10 +10,10 @@ deploy:
   provider: npm
   email: d2ltravisdeploy@d2l.com
   api_key:
-    secure: LiIHX9SlXgdegsLzXgKUKCqygHK36E0DNvQiBKc9F6Uc5LYBV1g5dXy7Z4rclBdJBsYm/GKRpps5syZPO24bSJhJ029kg98amm9Lhq8TeFgFqpNCO0HnyGLjPVdiIAWVD4lljqjliPgiQVDBSwMbDFHQHPZd39uWtHftJv12x10=
+    secure: aMd8sTqEqJQs2oyA+M08U1QOdV7rTP5ZOdPcaY/b68jZuQq1VucQh9T4BDvlsUvrzei4t1x3ahJqvHeL9erWJS3fwc7qdq8JFWh1CS2PHUo28h6nmuv78N8I/gF61dNxFskl8lU2xW9Z1pGfrPgDKxjRfuo6E3nLmcC2VLHONdo=
   on:
     tags: true
-    repo: Brightspace/gulp-frau-publisher
+    repo: Brightspace/frau-publisher
     all_branches: true
 env:
   global:
