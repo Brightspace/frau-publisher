@@ -1,8 +1,7 @@
 {
-  "name": "gulp-frau-publisher",
-  "version": "2.5.0",
-  "description": "A free-range-app utility for publishing apps and libraries to our CDN.",
-  "main": "src/publisher.js",
+  "name": "frau-publisher",
+  "version": "2.5.1",
+  "description": "A free-range-app utility for publishing to our CDN.",
   "bin": {
     "frau-publisher": "bin/publishercli"
   },
@@ -15,14 +14,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Brightspace/gulp-frau-publisher.git"
+    "url": "https://github.com/Brightspace/frau-publisher.git"
   },
   "keywords": [
     "d2l",
+    "frau",
     "free-range"
   ],
   "author": "D2L Corporation",
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Brightspace/frau-publisher/issues"
+  },
+  "homepage": "https://github.com/Brightspace/frau-publisher",
   "devDependencies": {
     "chai": "^1.9.2",
     "coveralls": "^2.11.2",

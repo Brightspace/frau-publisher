@@ -1,17 +1,17 @@
-# gulp-frau-publisher
+# frau-publisher
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
 [![Dependency Status][dependencies-image]][dependencies-url]
 
-A free-range-app utility for publishing apps and libraries to our CDN.
+A free-range-app utility for publishing to our CDN.
 
 ## Installation
 
-Install `gulp-frau-publisher` as a dev dependency:
+Install `frau-publisher` as a dev dependency:
 
 ```shell
-npm install gulp-frau-publisher
+npm install frau-publisher
 ```
 
 ## Usage
@@ -89,7 +89,7 @@ frau-publisher --moduletype|-m app
 To publish an **app** to the CDN:
 
 ```javascript
-var publisher = require('gulp-frau-publisher');
+var publisher = require('frau-publisher');
 
 var options = {
 	targetDirectory: 'cdn directory',
@@ -148,7 +148,7 @@ var options = {
 To get the final location of where the files are on the CDN:
 
 ```javascript
-var appPublisher = require('gulp-frau-publisher').app(options);
+var appPublisher = require('frau-publisher').app(options);
 
 var location = appPublisher.getLocation();
 ```
@@ -161,11 +161,11 @@ Contributions are welcome, please submit a pull request!
 
 This repository is configured with [EditorConfig](http://editorconfig.org) rules and contributions should make use of them.
 
-[npm-url]: https://npmjs.org/package/gulp-frau-publisher
-[npm-image]: https://img.shields.io/npm/v/gulp-frau-publisher.svg
-[ci-image]: https://travis-ci.org/Brightspace/gulp-frau-publisher.svg?branch=master
-[ci-url]: https://travis-ci.org/Brightspace/gulp-frau-publisher
-[coverage-image]: https://img.shields.io/coveralls/Brightspace/gulp-frau-publisher.svg
-[coverage-url]: https://coveralls.io/r/Brightspace/gulp-frau-publisher?branch=master
-[dependencies-url]: https://david-dm.org/brightspace/gulp-frau-publisher
-[dependencies-image]: https://img.shields.io/david/Brightspace/gulp-frau-publisher.svg
+[npm-url]: https://npmjs.org/package/frau-publisher
+[npm-image]: https://img.shields.io/npm/v/frau-publisher.svg
+[ci-image]: https://travis-ci.org/Brightspace/frau-publisher.svg?branch=master
+[ci-url]: https://travis-ci.org/Brightspace/frau-publisher
+[coverage-image]: https://img.shields.io/coveralls/Brightspace/frau-publisher.svg
+[coverage-url]: https://coveralls.io/r/Brightspace/frau-publisher?branch=master
+[dependencies-url]: https://david-dm.org/brightspace/frau-publisher
+[dependencies-image]: https://img.shields.io/david/Brightspace/frau-publisher.svg
