@@ -3,14 +3,14 @@
 var chalk = require('chalk'),
 	semver = require('semver');
 
-function validateOpts ( opts ) {
-	if( !opts ) {
+function validateOpts( opts ) {
+	if ( !opts ) {
 		throw new Error('Missing options');
 	}
 }
 
 // Check if it is a release version or a dev version and return the correct path for it
-function getDevPath ( opts ) {
+function getDevPath( opts ) {
 	validateOpts( opts );
 	if ( opts.version ) {
 		return '/';
@@ -24,11 +24,11 @@ module.exports = function( opts ) {
 
 		getTargetDirectory: function() {
 			validateOpts( opts );
-			if( !opts.targetDirectory && !opts.id ) {
+			if ( !opts.targetDirectory && !opts.id ) {
 				throw new Error('Missing targetDirectory');
 			}
-			if( opts.id ) {
-				console.log(chalk.red('The targetDirectory should be specified on options rather than id.  Specifying targetDirectory via id will not be supported in a future release.'));
+			if ( opts.id ) {
+				console.log(chalk.red('The targetDirectory should be specified on options rather than id.  Specifying targetDirectory via id will not be supported in a future release.')); // eslint-disable-line no-console
 			}
 			if ( !opts.targetDirectory && opts.id ) {
 				opts.targetDirectory = opts.id;
@@ -36,9 +36,9 @@ module.exports = function( opts ) {
 			return opts.targetDirectory;
 		},
 
-		getVersion: function () {
+		getVersion: function() {
 			validateOpts( opts );
-			if( !opts.devTag && !opts.version ) {
+			if ( !opts.devTag && !opts.version ) {
 				throw new Error('Missing version or devTag');
 			}
 			if ( opts.version ) {
@@ -53,13 +53,13 @@ module.exports = function( opts ) {
 
 		getCreds: function() {
 			validateOpts( opts );
-			if( !opts.creds ) {
+			if ( !opts.creds ) {
 				throw new Error('Missing credentials');
 			}
-			if( !opts.creds.key ) {
+			if ( !opts.creds.key ) {
 				throw new Error('Missing credential key');
 			}
-			if( !opts.creds.secret ) {
+			if ( !opts.creds.secret ) {
 				throw new Error('Missing credential secret');
 			}
 			return {

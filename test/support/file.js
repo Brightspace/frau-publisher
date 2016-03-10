@@ -1,3 +1,3 @@
 'use strict';
 
-var foo = 'bar';
+//var foo = 'bar';
