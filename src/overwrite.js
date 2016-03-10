@@ -30,22 +30,22 @@ function checkFilesExist(options) {
 	var deferred = Q.defer();
 
 	client.list({
-			prefix: options.getUploadPath()
-		},
+		prefix: options.getUploadPath()
+	},
 		function( err, data ) {
-			if( err ) {
+			if ( err ) {
 				deferred.reject( err );
 				return;
 			}
 
 			// AWS errors like invalid key or secret are specified in the data
 			// For more see http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
-			if( data.Code ) {
+			if ( data.Code ) {
 				deferred.reject( new Error(data.Message) );
 				return;
 			}
 
-			if( data.Contents.length !== 0 ) {
+			if ( data.Contents.length !== 0 ) {
 				// files exist in s3 folder
 				var errorMsg = 'No files transferred because files already exists in ' + options.getUploadPath();
 				gutil.log(gutil.colors.red(errorMsg));

@@ -1,4 +1,4 @@
-/*jshint expr: true*/
+'use strict';
 
 var gulp = require('gulp'),
 	proxyquire = require('proxyquire');
@@ -11,22 +11,22 @@ var publisher = proxyquire('../src/publisher', {
 } );
 
 var options = {
-		targetDirectory: 'myTargetDirectory',
-		creds: { key: 'myKey', secret: 'mySecret' },
-		devTag: 'myDevTag'
-	};
+	targetDirectory: 'myTargetDirectory',
+	creds: { key: 'myKey', secret: 'mySecret' },
+	devTag: 'myDevTag'
+};
 
-describe('publisher', function () {
+describe('publisher', function() {
 
 	beforeEach( function() {
 		s3.reset();
 	} );
 
-	['app','lib'].forEach( function( val ) {
+	['app', 'lib'].forEach( function( val ) {
 
-		describe( val + '.getLocation', function () {
+		describe( val + '.getLocation', function() {
 
-			it( 'should return the proper address', function () {
+			it( 'should return the proper address', function() {
 				var location = publisher[val]( options ).getLocation();
 				var urlVal = ( val === 'app' ) ? 'apps' : val;
 				expect( location ).to.equal(
@@ -37,9 +37,9 @@ describe('publisher', function () {
 
 		} );
 
-		describe( val + '.getStream', function () {
+		describe( val + '.getStream', function() {
 
-			it( 'should return a valid stream', function () {
+			it( 'should return a valid stream', function() {
 				var stream = publisher[val]( options ).getStream();
 				expect( stream ).to.not.be.null;
 			});
@@ -56,7 +56,7 @@ describe('publisher', function () {
 				},
 				uploadPath: 'path/myTargetDirectory/dev/myDevTag/'
 			};
-			var stream = publisher._helper(options, 'path/').getStream();
+			publisher._helper(options, 'path/').getStream();
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
 		});
 

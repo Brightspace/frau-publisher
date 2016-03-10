@@ -1,6 +1,6 @@
 {
   "name": "frau-publisher",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "A free-range-app utility for publishing to our CDN.",
   "main": "src/publisher.js",
   "bin": {
@@ -10,7 +10,7 @@
     "pretest": "npm run lint",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/*.js -- -R spec",
     "test-secure": "mocha test/secure/*.js",
-    "lint": "jshint src test",
+    "lint": "eslint src && eslint test",
     "report-coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
@@ -29,11 +29,12 @@
   },
   "homepage": "https://github.com/Brightspace/frau-publisher",
   "devDependencies": {
-    "chai": "^1.9.2",
+    "chai": "^3.5.0",
     "coveralls": "^2.11.2",
+    "eslint": "^2.3.0",
+    "eslint-config-brightspace": "^0.2.0",
     "gulp": "^3.8.10",
-    "istanbul": "^0.3.2",
-    "jshint": "^2.5.11",
+    "istanbul": "^0.4.2",
     "mocha": "^2.0.1",
     "proxyquire": "^1.3.0",
     "request": "^2.49.0",
@@ -49,7 +50,7 @@
     "knox": "^0.9.1",
     "q": "^1.4.1",
     "semver": "^5.0.1",
-    "vinyl-fs": "^1.0.0",
-    "yargs": "^3.10.0"
+    "vinyl-fs": "^2.4.2",
+    "yargs": "^4.2.0"
   }
 }

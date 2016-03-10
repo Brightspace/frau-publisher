@@ -1,3 +1,5 @@
+'use strict';
+
 var optionsValidator = require('../src/optionsValidator');
 
 var validOptions = optionsValidator(
@@ -17,7 +19,6 @@ var obsoleteValidOptions = optionsValidator(
 		creds: { key: 'myKey', secret: 'mySecret' }
 	}
 );
-
 
 describe( 'options validator', function() {
 
@@ -57,20 +58,20 @@ describe( 'options validator', function() {
 		it( 'should throw with no devTag and no version', function() {
 			var options = optionsValidator( { targetDirectory: 'myTargetDirectory' } );
 			expect( function() {
-					options.getVersion();
-				} ).to.throw( 'Missing version' );
+				options.getVersion();
+			} ).to.throw( 'Missing version' );
 		} );
 
 		it( 'should throw with wrong semantic version', function() {
 			var options = optionsValidator( { targetDirectory: 'myTargetDirectory', version: '1.2.3.4' } );
 			expect( function() {
-					options.getVersion();
-				} ).to.throw( '"1.2.3.4" is not a valid version number. See semver.org for more details.' );
+				options.getVersion();
+			} ).to.throw( '"1.2.3.4" is not a valid version number. See semver.org for more details.' );
 		} );
 
 		it( 'should return specified devTag', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					targetDirectory: 'myTargetDirectory',
 					devTag: 'some-tag',
 					initialPath: 'path/',
@@ -82,7 +83,7 @@ describe( 'options validator', function() {
 
 		it( 'should return specified version', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					targetDirectory: 'myTargetDirectory',
 					version: '1.2.0',
 					initialPath: 'path/',
@@ -99,8 +100,8 @@ describe( 'options validator', function() {
 		it( 'should throw with no credentials', function() {
 			var options = optionsValidator( { targetDirectory: 'myTargetDirectory', devTag: 'tag' } );
 			expect( function() {
-					options.getCreds();
-				} ).to.throw( 'Missing credentials' );
+				options.getCreds();
+			} ).to.throw( 'Missing credentials' );
 		} );
 
 		it( 'should throw with no credentials key', function() {
@@ -108,17 +109,17 @@ describe( 'options validator', function() {
 				{ targetDirectory: 'myTargetDirectory', devTag: 'tag', creds: {} }
 			);
 			expect( function() {
-					options.getCreds();
-				} ).to.throw( 'Missing credential key' );
+				options.getCreds();
+			} ).to.throw( 'Missing credential key' );
 		} );
 
 		it( 'should throw with no credentials secret', function() {
 			var options = optionsValidator(
-				{ targetDirectory: "myTargetDirectory", devTag: "devTag", creds: { key: "key" } }
+				{ targetDirectory: 'myTargetDirectory', devTag: 'devTag', creds: { key: 'key' } }
 			);
 			expect( function() {
-					options.getCreds();
-				} ).to.throw( 'Missing credential secret' );
+				options.getCreds();
+			} ).to.throw( 'Missing credential secret' );
 		} );
 
 		it( 'should return specified creds', function() {
@@ -138,7 +139,7 @@ describe( 'options validator', function() {
 
 		it( 'should return valid release upload path', function() {
 			var releaseOptions = optionsValidator(
-				{	
+				{
 					targetDirectory: 'myTargetDirectory',
 					version: '1.2.0',
 					initialPath: 'path/',
@@ -151,7 +152,7 @@ describe( 'options validator', function() {
 
 		it( 'should prioritize release version over devTag', function() {
 			var options = optionsValidator(
-				{	
+				{
 					targetDirectory: 'myTargetDirectory',
 					devTag: 'tag',
 					version: '2.2.0',
