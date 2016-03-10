@@ -1,0 +1,10 @@
+{
+  "env": {
+    "mocha": true,
+    "jasmine": true
+  },
+  "extends": "brightspace/node-config",
+  "globals": {
+    "sinon": true
+  }
+}

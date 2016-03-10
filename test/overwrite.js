@@ -1,7 +1,6 @@
-/*jshint expr: true*/
+'use strict';
 
-var es = require('event-stream'),
-	gulp = require('gulp'),
+var gulp = require('gulp'),
 	proxyquire = require('proxyquire');
 
 describe( 'overwrite', function() {
@@ -90,7 +89,7 @@ describe( 'overwrite', function() {
 	it( 'should only get knox client once for multiple files', function( done ) {
 		setUpEmptyFolder();
 
-		gulp.src(['./test/support/file.js','./test/support/file.html'])
+		gulp.src(['./test/support/file.js', './test/support/file.html'])
 			.pipe( overwrite( optsValidator ) )
 			.on( 'end', function() {
 				try {
@@ -106,7 +105,7 @@ describe( 'overwrite', function() {
 	it( 'should only call knox#list once for multiple files', function( done ) {
 		setUpEmptyFolder();
 
-		gulp.src(['./test/support/file.js','./test/support/file.html'])
+		gulp.src(['./test/support/file.js', './test/support/file.html'])
 			.pipe( overwrite( optsValidator ) )
 			.on( 'end', function() {
 				try {
@@ -119,7 +118,7 @@ describe( 'overwrite', function() {
 			} );
 	} );
 
-	beforeEach( function () {
+	beforeEach( function() {
 		client = {
 			list: function() {}
 		};
