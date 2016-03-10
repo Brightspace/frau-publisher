@@ -20,13 +20,13 @@ module.exports = function() {
 
 	return es.map( function( file, cb ) {
 
-		if( !isCompressibleFile( file ) ) {
+		if ( !isCompressibleFile( file ) ) {
 			cb( null, file );
 			return;
 		}
 
 		zlib.gzip( file.contents, function( err, result ) {
-			if( err ) {
+			if ( err ) {
 				cb( err, null );
 				return;
 			}

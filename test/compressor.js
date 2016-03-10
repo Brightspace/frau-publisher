@@ -1,3 +1,5 @@
+'use strict';
+
 var compressor = require('../src/compressor'),
 	fs = require('fs'),
 	gulp = require('gulp'),

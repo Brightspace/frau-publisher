@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	isCompressibleFile = require('../src/compressor')
 	._isCompressibleFile,
@@ -6,7 +8,7 @@ var fs = require('fs'),
 var compressibleFiles = [
 	'file.js',
 	'file.css',
- 	'file.html',
+	'file.html',
 	'uppercase.HTML'
 ];
 

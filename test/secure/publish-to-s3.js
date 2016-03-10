@@ -1,3 +1,5 @@
+'use strict';
+
 var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
 	eventStream = require('event-stream'),
@@ -27,9 +29,9 @@ describe('publisher', function() {
 					request.get( publisher.getLocation() + filename, function(error, result, body) {
 						if (error) {
 							cb(error);
-						} else if (result.statusCode != 200 ) {
+						} else if (result.statusCode !== 200 ) {
 							cb(result.statusCode);
-						} else if ( body !== content ){
+						} else if ( body !== content ) {
 							cb(body);
 						} else {
 							cb();
