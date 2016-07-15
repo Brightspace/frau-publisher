@@ -1,7 +1,8 @@
 'use strict';
 
 var gulp = require('gulp'),
-	proxyquire = require('proxyquire');
+	proxyquire = require('proxyquire'),
+	optionsValidator = require('../src/optionsValidator');
 
 // We need to return a stream, but it doesn't matter what the stream is
 var s3 = sinon.stub().returns(gulp.src(''));
@@ -58,6 +59,25 @@ describe('publisher', function() {
 			};
 			publisher._helper(options, 'path/').getStream();
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
+		});
+
+	} );
+
+	describe('_getSemVerAppConfigs', function() {
+		it('should return null for non-release builds', function() {
+			var configs = publisher._getSemVerAppConfigs(optionsValidator(options).getVersion());
+			expect(configs).to.be.null;
+		});
+
+		it('should return two things for release builds', function() {
+			var options = {
+				targetDirectory: 'foo',
+				version: '1.2.3'
+			};
+			var configs = publisher._getSemVerAppConfigs(optionsValidator(options).getVersion());
+			expect(configs).to.be.an('object');
+			expect(configs.major).to.equal('appconfig.v1.json.gz');
+			expect(configs.majorMinor).to.equal('appconfig.v1.2.json.gz');
 		});
 
 	} );

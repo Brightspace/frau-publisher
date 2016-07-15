@@ -36,7 +36,7 @@ function helper( opts, initialPath ) {
 				.pipe( compressorStream )
 				.pipe( mirror(
 					uploadBundle( options ),
-					uploadSemverAppconfig( options )
+					uploadSemVerAppConfigs( options )
 				) );
 
 			return duplexStream;
@@ -63,10 +63,26 @@ function uploadBundle( options ) {
 	return gulpS3;
 }
 
-function uploadSemverAppconfig( options ) {
+function getSemVerAppConfigs( version ) {
+	if ( !semver.valid( version ) ) {
+		return null;
+	}
+
+	var major = semver.major( version );
+	var minor = semver.minor( version );
+
+	return {
+		major: 'appconfig.v' + major + '.json.gz',
+		majorMinor: 'appconfig.v' + major + '.' + minor + '.json.gz'
+	};
+}
+
+function uploadSemVerAppConfigs( options ) {
 	var version = options.getVersion();
 
-	if ( !semver.valid(version) ) {
+	var semVerAppConfigs = getSemVerAppConfigs( version );
+
+	if ( semVerAppConfigs === null ) {
 		return util.noop();
 	}
 
@@ -82,8 +98,8 @@ function uploadSemverAppconfig( options ) {
 	return pipe(
 		filter(f => f.path.endsWith('appconfig.json.gz')),
 		mirror(
-			rename('appconfig.v' + semver.major( version ) + '.json.gz'),
-			rename('appconfig.v' + semver.major( version ) + '.' + semver.minor( version ) + '.json.gz')
+			rename(semVerAppConfigs.major),
+			rename(semVerAppConfigs.majorMinor)
 		),
 		gulpS3
 	);
@@ -97,5 +113,6 @@ module.exports = {
 		return helper( opts, 'lib/' );
 	},
 	optionsProvider: optionsProvider,
-	_helper: helper
+	_helper: helper,
+	_getSemVerAppConfigs: getSemVerAppConfigs
 };
