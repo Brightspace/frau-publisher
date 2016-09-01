@@ -13,9 +13,9 @@ function validateOpts( opts ) {
 function getDevPath( opts ) {
 	validateOpts( opts );
 	if ( opts.version ) {
-		return '/';
+		return '';
 	}
-	return '/dev/';
+	return 'dev/';
 }
 
 module.exports = function( opts ) {
@@ -73,8 +73,11 @@ module.exports = function( opts ) {
 			validateOpts( opts );
 			var devPath = getDevPath( opts );
 			// version gets priority over devTag
-			return opts.initialPath + this.getTargetDirectory() + devPath +
-				this.getVersion() + '/';
+			return this.getBasePath() + devPath + this.getVersion() + '/';
+		},
+
+		getBasePath: function() {
+			return opts.initialPath + this.getTargetDirectory() + '/';
 		}
 
 	};
