@@ -1,7 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-- '0.12'
+- '6'
 script:
 - npm test
 - 'if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then npm run test-secure; fi'
