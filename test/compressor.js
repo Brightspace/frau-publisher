@@ -60,7 +60,7 @@ describe( 'compressor', function() {
 
 		beforeEach( function() {
 			zlib._gzip = zlib.gzip;
-			zlib.gzip = function( contents, cb ) {
+			zlib.gzip = function( contents, options, cb ) {
 				cb( error );
 			};
 		} );
