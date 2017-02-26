@@ -8,7 +8,10 @@ var compressibles = [
 	'.js',
 	'.json',
 	'.css',
-	'.html'
+	'.html',
+	'.svg',
+	'.ttf',
+	'.ico'
 ];
 
 function isCompressibleFile( file ) {
