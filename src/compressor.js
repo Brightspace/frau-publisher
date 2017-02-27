@@ -14,6 +14,8 @@ var compressibles = [
 	'.ico'
 ];
 
+var COMPRESSION_LEVEL = (zlib.constants || zlib).Z_BEST_COMPRESSION;
+
 function isCompressibleFile( file ) {
 	var ext = path.extname( file.path ).toLowerCase();
 	return ( compressibles.indexOf( ext ) > -1 );
@@ -28,7 +30,9 @@ module.exports = function() {
 			return;
 		}
 
-		zlib.gzip( file.contents, function( err, result ) {
+		zlib.gzip(file.contents, {
+			level: COMPRESSION_LEVEL
+		}, function( err, result ) {
 			if ( err ) {
 				cb( err, null );
 				return;
