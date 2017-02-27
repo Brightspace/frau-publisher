@@ -20,7 +20,8 @@ function helper( opts, initialPath ) {
 				headers: {
 					'cache-control': 'public,max-age=31536000,immutable'
 				},
-				uploadPath: options.getUploadPath()
+				uploadPath: options.getUploadPath(),
+				failOnError: true
 			};
 			var gulpS3 = s3( options.getCreds(), s3Options );
 
