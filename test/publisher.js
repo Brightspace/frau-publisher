@@ -54,8 +54,7 @@ describe('publisher', function() {
 				headers: {
 					'cache-control': 'public,max-age=31536000,immutable'
 				},
-				uploadPath: 'path/myTargetDirectory/dev/myDevTag/',
-				failOnError: true
+				uploadPath: 'path/myTargetDirectory/dev/myDevTag/'
 			};
 			publisher._helper(options, 'path/').getStream();
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
