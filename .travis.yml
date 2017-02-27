@@ -1,7 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-- '0.12'
+- 4
+- 6
+- 7
 script:
 - npm test
 - 'if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then npm run test-secure; fi'
@@ -14,7 +16,7 @@ deploy:
   on:
     tags: true
     repo: Brightspace/frau-publisher
-    all_branches: true
+    node: 6
 env:
   global:
   - CREDS_KEY=***REMOVED***
