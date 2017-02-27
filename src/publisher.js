@@ -18,7 +18,7 @@ function helper( opts, initialPath ) {
 			var compressorStream = compressor();
 			var s3Options = {
 				headers: {
-					'cache-control': 'public, max-age=31536000'
+					'cache-control': 'public,max-age=31536000,immutable'
 				},
 				uploadPath: options.getUploadPath()
 			};
