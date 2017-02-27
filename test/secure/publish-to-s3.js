@@ -39,7 +39,7 @@ describe('publisher', function() {
 								if (body !== '<body></body>') return reject(new Error(body));
 
 								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'text/html') return reject(new Error(res.headers['content-type']));
+								if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
 
 								resolve();
 							});
