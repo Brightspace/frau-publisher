@@ -37,7 +37,6 @@ module.exports = function() {
 				cb( err, null );
 				return;
 			}
-			file.path += '.gz';
 			file.contents = result;
 			cb( null, file );
 		} );
