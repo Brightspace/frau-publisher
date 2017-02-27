@@ -29,47 +29,44 @@ describe('publisher', function() {
 			.readArray([html, svg, woff])
 			.pipe(publisher.getStream())
 			.on('end', function() {
-				// gulp-s3 sends the end event before it's actually done, so we need to introduce an artificial wait.
-				setTimeout(function() {
-					Promise.all([
-						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-								if (body !== '<body></body>') return reject(new Error(body));
+				Promise.all([
+					new Promise(function(resolve, reject) {
+						request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
+							if (err) return reject(err);
+							if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+							if (body !== '<body></body>') return reject(new Error(body));
 
-								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
+							if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+							if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
 
-								resolve();
-							});
-						}),
-						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-								if (body !== '<g></g>') return reject(new Error(body));
+							resolve();
+						});
+					}),
+					new Promise(function(resolve, reject) {
+						request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
+							if (err) return reject(err);
+							if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+							if (body !== '<g></g>') return reject(new Error(body));
 
-								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
+							if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+							if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
 
-								resolve();
-							});
-						}),
-						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'test.woff', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-								if (body !== woff.contents.toString()) return reject(new Error(body));
+							resolve();
+						});
+					}),
+					new Promise(function(resolve, reject) {
+						request.get(publisher.getLocation() + 'test.woff', { gzip: true }, function(err, res, body) {
+							if (err) return reject(err);
+							if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+							if (body !== woff.contents.toString()) return reject(new Error(body));
 
-								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
-								resolve();
-							});
-						})
-					])
-					.then(function() { cb(); }, cb);
-				}, 500);
+							if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
+							if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
+							resolve();
+						});
+					})
+				])
+				.then(function() { cb(); }, cb);
 			});
 	});
 
