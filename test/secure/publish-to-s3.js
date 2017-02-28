@@ -89,7 +89,7 @@ describe('publisher', function() {
 
 function createPublisher(devTag) {
 	return frauPublisher.app({
-		id: 'frau-publisher-test',
+		targetDirectory: 'frau-publisher-test',
 		creds: {
 			key: process.env.CREDS_KEY,
 			secret: process.env.CREDS_SECRET
