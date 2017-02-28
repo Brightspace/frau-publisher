@@ -3,40 +3,72 @@
 var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
 	eventStream = require('event-stream'),
-	gUtil = require('gulp-util');
+	gulpUtil = require('gulp-util');
 
-var content = 'some data';
-var filename = 'test.txt';
-var file = new gUtil.File({
-	cwd: '/',
-	base: '/',
-	path: '/' + filename,
-	contents: new Buffer(content),
-	stat: {
-		size: content.length
-	}
-});
+function makeFile(filename, content) {
+	return new gulpUtil.File({
+		cwd: '/',
+		base: '/',
+		path: '/' + filename,
+		contents: new Buffer(content),
+		stat: {
+			size: Buffer.byteLength(content)
+		}
+	});
+}
 
 describe('publisher', function() {
 	it('should publish new file', function(cb) {
 		var publisher = createPublisher( Math.random().toString(16).slice(2) );
 
-		eventStream.readArray( [file] )
-			.pipe( publisher.getStream() )
+		var html = makeFile('test.html', '<body></body>');
+		var svg = makeFile('test.svg', '<g></g>');
+		var woff = makeFile('test.woff', new Buffer(10).fill(0));
+
+		eventStream
+			.readArray([html, svg, woff])
+			.pipe(publisher.getStream())
 			.on('end', function() {
 				// gulp-s3 sends the end event before it's actually done, so we need to introduce an artificial wait.
 				setTimeout(function() {
-					request.get( publisher.getLocation() + filename, function(error, result, body) {
-						if (error) {
-							cb(error);
-						} else if (result.statusCode !== 200 ) {
-							cb(result.statusCode);
-						} else if ( body !== content ) {
-							cb(body);
-						} else {
-							cb();
-						}
-					});
+					Promise.all([
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+								if (body !== '<body></body>') return reject(new Error(body));
+
+								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'text/html') return reject(new Error(res.headers['content-type']));
+
+								resolve();
+							});
+						}),
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+								if (body !== '<g></g>') return reject(new Error(body));
+
+								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
+
+								resolve();
+							});
+						}),
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.woff', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+								if (body !== woff.contents.toString()) return reject(new Error(body));
+
+								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
+								resolve();
+							});
+						})
+					])
+					.then(function() { cb(); }, cb);
 				}, 500);
 			});
 	});
@@ -48,7 +80,7 @@ describe('publisher', function() {
 		//  start that way because it seems unnecessarily wasteful.
 		var publisher = createPublisher( 'overwrite-test' );
 
-		eventStream.readArray( [file] )
+		eventStream.readArray([makeFile('test.txt', 'some data')])
 			.pipe( publisher.getStream() )
 			.on('error', function() {
 				cb();
