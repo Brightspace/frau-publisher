@@ -3,13 +3,6 @@
 var gulp = require('gulp'),
 	proxyquire = require('proxyquire');
 
-// We need to return a stream, but it doesn't matter what the stream is
-var s3 = sinon.stub().returns(gulp.src(''));
-
-var publisher = proxyquire('../src/publisher', {
-	'gulp-s3': s3
-} );
-
 var options = {
 	targetDirectory: 'myTargetDirectory',
 	creds: { key: 'myKey', secret: 'mySecret' },
@@ -17,10 +10,16 @@ var options = {
 };
 
 describe('publisher', function() {
+	var publisher, s3;
 
-	beforeEach( function() {
-		s3.reset();
-	} );
+	beforeEach(function() {
+		// We need to return a stream, but it doesn't matter what the stream is
+		s3 = sinon.stub().returns(gulp.src(''));
+
+		publisher = proxyquire('../src/publisher', {
+			'gulp-s3': s3
+		});
+	});
 
 	['app', 'lib'].forEach( function( val ) {
 
@@ -54,7 +53,8 @@ describe('publisher', function() {
 				headers: {
 					'cache-control': 'public,max-age=31536000,immutable'
 				},
-				uploadPath: 'path/myTargetDirectory/dev/myDevTag/'
+				uploadPath: 'path/myTargetDirectory/dev/myDevTag/',
+				failOnError: true
 			};
 			publisher._helper(options, 'path/').getStream();
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
