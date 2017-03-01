@@ -23,19 +23,6 @@ describe( 'compressor', function() {
 
 	} );
 
-	it( 'should add GZ extension', function( done ) {
-
-		gulp.src('./test/support/file.js')
-			.pipe( compressor() )
-			.on( 'data', function( file ) {
-				expect(
-					path.basename( file.path )
-				).to.equal('file.js.gz');
-				done();
-			} );
-
-	} );
-
 	it( 'should not compress GIFs', function( done ) {
 
 		var filename = './test/support/file.gif';
