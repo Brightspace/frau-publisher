@@ -1,4 +1,6 @@
 # frau-publisher
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Brightspace/frau-publisher.svg)](https://greenkeeper.io/)
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Coverage Status][coverage-image]][coverage-url]
