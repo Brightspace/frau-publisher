@@ -21,30 +21,30 @@ describe('publisher', function() {
 		});
 	});
 
-	['app', 'lib'].forEach( function( val ) {
+	['app', 'lib'].forEach(function(val) {
 
-		describe( val + '.getLocation', function() {
+		describe(val + '.getLocation', function() {
 
-			it( 'should return the proper address', function() {
-				var location = publisher[val]( options ).getLocation();
-				var urlVal = ( val === 'app' ) ? 'apps' : val;
-				expect( location ).to.equal(
-						'https://s.brightspace.com/' + urlVal + '/myTargetDirectory/dev/myDevTag/'
-					);
+			it('should return the proper address', function() {
+				var location = publisher[val](options).getLocation();
+				var urlVal = (val === 'app') ? 'apps' : val;
+				expect(location).to.equal(
+					'https://s.brightspace.com/' + urlVal + '/myTargetDirectory/dev/myDevTag/'
+				);
 
 			});
 
-		} );
+		});
 
-		describe( val + '.getStream', function() {
+		describe(val + '.getStream', function() {
 
-			it( 'should return a valid stream', function() {
-				var stream = publisher[val]( options ).getStream();
-				expect( stream ).to.not.be.null;
+			it('should return a valid stream', function() {
+				var stream = publisher[val](options).getStream();
+				expect(stream).to.not.be.null;
 			});
 
-		} );
-	} );
+		});
+	});
 
 	describe('_helper', function() {
 
@@ -60,6 +60,6 @@ describe('publisher', function() {
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
 		});
 
-	} );
+	});
 
 });
