@@ -9,11 +9,11 @@ var compressor = require('./compressor'),
 	optionsProvider = require('./optionsProvider'),
 	overwrite = require('./overwrite');
 
-function helper( opts, initialPath ) {
+function helper(opts, initialPath) {
 	opts.initialPath = initialPath;
 	return {
 		getStream: function() {
-			var options = optionsValidator( opts );
+			var options = optionsValidator(opts);
 			var s3BaseOptions = {
 				headers: {
 					'cache-control': 'public,max-age=31536000,immutable'
@@ -22,7 +22,7 @@ function helper( opts, initialPath ) {
 				failOnError: true
 			};
 
-			var overwriteCheck = overwrite( options );
+			var overwriteCheck = overwrite(options);
 
 			var compressionStream = getCompressionStream();
 			var htmlStream = getHtmlStream();
@@ -96,18 +96,18 @@ function helper( opts, initialPath ) {
 			}
 		},
 		getLocation: function() {
-			var options = optionsValidator( opts );
+			var options = optionsValidator(opts);
 			return 'https://s.brightspace.com/' + options.getUploadPath();
 		}
 	};
 }
 
 module.exports = {
-	app: function( opts ) {
-		return helper( opts, 'apps/' );
+	app: function(opts) {
+		return helper(opts, 'apps/');
 	},
-	lib: function( opts ) {
-		return helper( opts, 'lib/' );
+	lib: function(opts) {
+		return helper(opts, 'lib/');
 	},
 	optionsProvider: optionsProvider,
 	_helper: helper

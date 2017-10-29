@@ -19,7 +19,7 @@ function makeFile(filename, content) {
 
 describe('publisher', function() {
 	it('should publish new file', function(cb) {
-		var publisher = createPublisher( Math.random().toString(16).slice(2) );
+		var publisher = createPublisher(Math.random().toString(16).slice(2));
 
 		var html = makeFile('test.html', '<body></body>');
 		var svg = makeFile('test.svg', '<g></g>');
@@ -66,7 +66,7 @@ describe('publisher', function() {
 						});
 					})
 				])
-				.then(function() { cb(); }, cb);
+					.then(function() { cb(); }, cb);
 			});
 	});
 
@@ -75,10 +75,10 @@ describe('publisher', function() {
 		//  devTag.  We could remove this dependency by publishing a file and
 		//  then trying again.  We should do this if necessary, but it didn't
 		//  start that way because it seems unnecessarily wasteful.
-		var publisher = createPublisher( 'overwrite-test' );
+		var publisher = createPublisher('overwrite-test');
 
 		eventStream.readArray([makeFile('test.txt', 'some data')])
-			.pipe( publisher.getStream() )
+			.pipe(publisher.getStream())
 			.on('error', function() {
 				cb();
 			}).on('end', function() {
