@@ -18,8 +18,10 @@ describe('overwrite', function() {
 			.on('data', function(data) {
 				try {
 					expect(data)
-						.to.have.deep.property('history[0]')
-						.that.contain('file.js');
+						.to.have.a.property('history')
+						.that.is.an.instanceof(Array)
+						.with.a.property(0)
+						.that.contains('file.js');
 
 					done();
 				} catch (e) {
@@ -40,7 +42,10 @@ describe('overwrite', function() {
 				done('should be no data');
 			}).on('error', function(err) {
 				try {
-					expect(err).to.deep.equal(new Error(expectedErrorMsg));
+					expect(err)
+						.to.be.and.instanceof(Error)
+						.and.to.have.a.property('message')
+						.that.equals(expectedErrorMsg);
 
 					done();
 				} catch (e) {
@@ -58,7 +63,10 @@ describe('overwrite', function() {
 				done('should be no data');
 			}).on('error', function(err) {
 				try {
-					expect(err).to.deep.equal(new Error('some-message'));
+					expect(err)
+						.to.be.an.instanceof(Error)
+						.and.to.have.a.property('message')
+						.that.equals('some-message');
 
 					done();
 				} catch (e) {
