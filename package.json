@@ -36,21 +36,21 @@
     "gulp": "^3.8.10",
     "istanbul": "^0.4.2",
     "mocha": "^5.0.0",
-    "proxyquire": "^1.3.0",
+    "proxyquire": "^2.0.0",
     "request": "^2.49.0",
     "rmdir": "^1.0.4",
     "sinon": "^4.0.2",
-    "sinon-chai": "^2.6.0"
+    "sinon-chai": "^3.0.0"
   },
   "dependencies": {
-    "chalk": "^1.1.0",
+    "chalk": "^2.0.0",
     "event-stream": "^3.1.7",
     "gulp-s3": "^0.11.0",
     "gulp-util": "^3.0.1",
     "knox": "^0.9.1",
     "q": "^1.4.1",
     "semver": "^5.0.1",
-    "vinyl-fs": "^2.4.2",
+    "vinyl-fs": "^3.0.0",
     "yargs": "^7.0.0"
   }
 }
