@@ -39,7 +39,7 @@
     "proxyquire": "^2.0.0",
     "request": "^2.49.0",
     "rmdir": "^1.0.4",
-    "sinon": "^4.0.2",
+    "sinon": "^5.0.0",
     "sinon-chai": "^3.0.0"
   },
   "dependencies": {
