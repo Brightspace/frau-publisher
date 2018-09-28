@@ -45,8 +45,12 @@ if (opts.moduleType === 'app') {
 
 vfs.src(opts.files).pipe(
 	publisher.getStream()
-).on('end', function() {
+).on('error', function(err) {
+	console.log(chalk.red('Error occurred during publishing', err));
+	process.exit(1);
+}).on('end', function() {
 	console.log(chalk.green('Published to:\n\n') + chalk.grey(
 		'   ' + publisher.getLocation() + '\n'
 	));
+	process.exit(0);
 });
