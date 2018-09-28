@@ -30,7 +30,7 @@ console.log(chalk.green('Publish options:\n\n') + chalk.grey(
 		'   Target directory: ' + opts.targetDirectory + '\n' +
 		'   Module type: ' + opts.moduleType + '\n' +
 		'   Files: ' + opts.files + '\n' +
-		'   Publish key: ' + opts.creds.key + '\n' + 
+		'   Publish key: ' + opts.creds.key + '\n' +
 		'   Publish secret: ' + (opts.creds.secret ? '[secret]' : 'undefined') + '\n' +
 		'   Dev tag: ' + opts.devTag + '\n' +
 		'   Version: ' + opts.version + '\n'
@@ -52,5 +52,4 @@ vfs.src(opts.files).pipe(
 	console.log(chalk.green('Published to:\n\n') + chalk.grey(
 		'   ' + publisher.getLocation() + '\n'
 	));
-	process.exit(0);
 });
