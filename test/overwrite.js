@@ -1,6 +1,6 @@
 'use strict';
 
-var gulp = require('gulp'),
+var vfs = require('vinyl-fs'),
 	proxyquire = require('proxyquire');
 
 describe('overwrite', function() {
@@ -13,7 +13,7 @@ describe('overwrite', function() {
 	it('should succeed when folder is empty', function(done) {
 		setUpEmptyFolder();
 
-		gulp.src('./test/support/file.js')
+		vfs.src('./test/support/file.js')
 			.pipe(overwrite(optsValidator))
 			.on('data', function(data) {
 				try {
@@ -36,7 +36,7 @@ describe('overwrite', function() {
 		optsValidator.getUploadPath.returns('some-folder');
 		var expectedErrorMsg = 'No files transferred because files already exists in some-folder';
 
-		gulp.src('./test/support/file.js')
+		vfs.src('./test/support/file.js')
 			.pipe(overwrite(optsValidator))
 			.on('data', function() {
 				done('should be no data');
@@ -57,7 +57,7 @@ describe('overwrite', function() {
 	it('should handle bad data.Code error from knox', function(done) {
 		setUpList(null, { Code: 'some-code', Message: 'some-message' });
 
-		gulp.src('./test/support/file.js')
+		vfs.src('./test/support/file.js')
 			.pipe(overwrite(optsValidator))
 			.on('data', function() {
 				done('should be no data');
@@ -79,7 +79,7 @@ describe('overwrite', function() {
 		var error = new Error('some-message');
 		setUpList(error);
 
-		gulp.src('./test/support/file.js')
+		vfs.src('./test/support/file.js')
 			.pipe(overwrite(optsValidator))
 			.on('data', function() {
 				done('should be no data');
@@ -97,7 +97,7 @@ describe('overwrite', function() {
 	it('should only get knox client once for multiple files', function(done) {
 		setUpEmptyFolder();
 
-		gulp.src(['./test/support/file.js', './test/support/file.html'])
+		vfs.src(['./test/support/file.js', './test/support/file.html'])
 			.pipe(overwrite(optsValidator))
 			.on('end', function() {
 				try {
@@ -113,7 +113,7 @@ describe('overwrite', function() {
 	it('should only call knox#list once for multiple files', function(done) {
 		setUpEmptyFolder();
 
-		gulp.src(['./test/support/file.js', './test/support/file.html'])
+		vfs.src(['./test/support/file.js', './test/support/file.html'])
 			.pipe(overwrite(optsValidator))
 			.on('end', function() {
 				try {
