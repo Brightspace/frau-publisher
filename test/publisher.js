@@ -1,7 +1,7 @@
 'use strict';
 
-var gulp = require('gulp'),
-	proxyquire = require('proxyquire');
+var proxyquire = require('proxyquire'),
+	through = require('through2');
 
 var options = {
 	targetDirectory: 'myTargetDirectory',
@@ -14,7 +14,9 @@ describe('publisher', function() {
 
 	beforeEach(function() {
 		// We need to return a stream, but it doesn't matter what the stream is
-		s3 = sinon.stub().returns(gulp.src(''));
+		var emptyStream = through.obj();
+		s3 = sinon.stub().returns(emptyStream);
+		process.nextTick(emptyStream.end.bind(emptyStream));
 
 		publisher = proxyquire('../src/publisher', {
 			'gulp-s3': s3
