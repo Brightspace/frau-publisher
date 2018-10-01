@@ -97,7 +97,7 @@ function helper(opts, initialPath) {
 		},
 		getLocation: function() {
 			var options = optionsValidator(opts);
-			return 'https://s.brightspace.com/' + options.getUploadPath();
+			return 'https://s.brightspace.com/' + options.getUploadPath() + '/';
 		}
 	};
 }
