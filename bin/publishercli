@@ -30,7 +30,7 @@ console.log(chalk.green('Publish options:\n\n') + chalk.grey(
 		'   Target directory: ' + opts.targetDirectory + '\n' +
 		'   Module type: ' + opts.moduleType + '\n' +
 		'   Files: ' + opts.files + '\n' +
-		'   Publish key: ' + opts.creds.key + '\n' +
+		'   Publish key: ' + opts.creds.key + '\n' + 
 		'   Publish secret: ' + (opts.creds.secret ? '[secret]' : 'undefined') + '\n' +
 		'   Dev tag: ' + opts.devTag + '\n' +
 		'   Version: ' + opts.version + '\n'
@@ -45,10 +45,7 @@ if (opts.moduleType === 'app') {
 
 vfs.src(opts.files).pipe(
 	publisher.getStream()
-).on('error', function(err) {
-	console.log(chalk.red('Error occurred during publishing', err));
-	process.exit(1);
-}).on('end', function() {
+).on('end', function() {
 	console.log(chalk.green('Published to:\n\n') + chalk.grey(
 		'   ' + publisher.getLocation() + '\n'
 	));
