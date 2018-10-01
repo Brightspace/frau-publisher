@@ -2,7 +2,6 @@
 
 var es = require('event-stream'),
 	knox = require('knox'),
-	gutil = require('gulp-util'),
 	Q = require('q');
 
 module.exports = function(options) {
@@ -48,7 +47,6 @@ function checkFilesExist(options) {
 		if (data.Contents.length !== 0) {
 			// files exist in s3 folder
 			var errorMsg = 'No files transferred because files already exists in ' + options.getUploadPath();
-			gutil.log(gutil.colors.red(errorMsg));
 			deferred.reject(new Error(errorMsg));
 			return;
 		}
