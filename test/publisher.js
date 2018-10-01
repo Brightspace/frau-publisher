@@ -55,7 +55,7 @@ describe('publisher', function() {
 				headers: {
 					'cache-control': 'public,max-age=31536000,immutable'
 				},
-				uploadPath: 'path/myTargetDirectory/dev/myDevTag/',
+				uploadPath: 'path/myTargetDirectory/dev/myDevTag',
 				failOnError: true
 			};
 			publisher._helper(options, 'path/').getStream();

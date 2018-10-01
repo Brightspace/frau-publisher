@@ -74,7 +74,7 @@ module.exports = function(opts) {
 			var devPath = getDevPath(opts);
 			// version gets priority over devTag
 			return opts.initialPath + this.getTargetDirectory() + devPath +
-				this.getVersion() + '/';
+				this.getVersion();
 		}
 
 	};
