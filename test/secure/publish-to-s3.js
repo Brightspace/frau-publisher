@@ -4,55 +4,57 @@ var fs = require('fs');
 
 var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
-	vfs = require('vinyl-fs');
+	vfs = require('vinyl-fs'),
+	gulp = require('gulp');
 
 describe('publisher', function() {
-	it('should publish new file', function(cb) {
-		var publisher = createPublisher(Math.random().toString(16).slice(2));
+	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
+		it('should publish new file (' + testVariant.name + ')', function(cb) {
+			var publisher = createPublisher(Math.random().toString(16).slice(2));
 
-		vfs
-			.src('./test/test-files/*')
-			.pipe(publisher.getStream())
-			.on('end', function() {
-				Promise.all([
-					new Promise(function(resolve, reject) {
-						request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
-							if (err) return reject(err);
-							if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-							if (body !== fs.readFileSync('./test/test-files/test.html', 'utf8')) return reject(new Error(body));
+			testVariant.fn('./test/test-files/*')
+				.pipe(publisher.getStream())
+				.on('end', function() {
+					Promise.all([
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+								if (body !== fs.readFileSync('./test/test-files/test.html', 'utf8')) return reject(new Error(body));
 
-							if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-							if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
+								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
 
-							resolve();
-						});
-					}),
-					new Promise(function(resolve, reject) {
-						request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
-							if (err) return reject(err);
-							if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-							if (body !== fs.readFileSync('./test/test-files/test.svg', 'utf8')) return reject(new Error(body));
+								resolve();
+							});
+						}),
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+								if (body !== fs.readFileSync('./test/test-files/test.svg', 'utf8')) return reject(new Error(body));
 
-							if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-							if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
+								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
 
-							resolve();
-						});
-					}),
-					new Promise(function(resolve, reject) {
-						request.get(publisher.getLocation() + 'test.woff', { gzip: true }, function(err, res, body) {
-							if (err) return reject(err);
-							if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-							if (body !== fs.readFileSync('./test/test-files/test.woff', 'utf8')) return reject(new Error(body));
+								resolve();
+							});
+						}),
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.woff', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+								if (body !== fs.readFileSync('./test/test-files/test.woff', 'utf8')) return reject(new Error(body));
 
-							if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
-							if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
-							resolve();
-						});
-					})
-				])
-					.then(function() { cb(); }, cb);
-			});
+								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
+								resolve();
+							});
+						})
+					])
+						.then(function() { cb(); }, cb);
+				});
+		});
 	});
 
 	it('should not overwrite a file', function(cb) {
