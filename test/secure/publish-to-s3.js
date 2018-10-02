@@ -1,6 +1,7 @@
 'use strict';
 
-var fs = require('fs');
+var child_process = require('child_process'),
+	fs = require('fs');
 
 var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
@@ -72,6 +73,30 @@ describe('publisher', function() {
 			}).on('end', function() {
 				cb('should not have published');
 			});
+	});
+});
+
+describe('cli', function() {
+	it('should publish successfully', function(done) {
+		var p = child_process.execFile('./bin/publishercli', [
+			'--moduletype', 'app',
+			'--targetdir', 'frau-publisher-test',
+			'--files', './test/test-files/*',
+			'--key', process.env.CREDS_KEY,
+			'--secretvar', 'CREDS_SECRET',
+			'--devtag', Math.random().toString(16).slice(2)
+		])
+			.on('error', done)
+			.on('exit', function(code) {
+				if (code !== 0) {
+					return done(new Error('Expected exit code 0, saw ' + code));
+				}
+
+				done();
+			});
+
+		p.stdout.pipe(process.stderr);
+		p.stderr.pipe(process.stderr);
 	});
 });
 
