@@ -2,6 +2,7 @@
 
 var es = require('event-stream'),
 	path = require('path'),
+	pumpify = require('pumpify'),
 	s3 = require('gulp-s3');
 
 var compressor = require('./compressor'),
@@ -47,8 +48,6 @@ function helper(opts, initialPath) {
 				cb(null, file);
 			});
 
-			overwriteCheck.pipe(splitter);
-
 			splitter.once('end', function noMoreFiles() {
 				htmlStream.end();
 				compressionStream.end();
@@ -56,7 +55,7 @@ function helper(opts, initialPath) {
 			});
 
 			return es.duplex(
-				overwriteCheck,
+				pumpify.obj(overwriteCheck, splitter),
 				es.merge(compressionStream, htmlStream, otherStream)
 			);
 
@@ -67,9 +66,7 @@ function helper(opts, initialPath) {
 				var compress = compressor();
 				var s3Stream = s3(options.getCreds(), s3Options);
 
-				compress.pipe(s3Stream);
-
-				return es.duplex(compress, s3Stream);
+				return pumpify.obj(compress, s3Stream);
 			}
 
 			function getHtmlStream() {
@@ -86,9 +83,7 @@ function helper(opts, initialPath) {
 
 				if (useCompression) {
 					var compress = compressor();
-					stream = es.duplex(compress, s3Stream);
-
-					compress.pipe(s3Stream);
+					stream = pumpify.obj(compress, s3Stream);
 				}
 
 				return stream;

@@ -3,6 +3,7 @@
 var argv = require('yargs'),
 	chalk = require('chalk'),
 	optionsProvider = require('../src/optionsProvider'),
+	pump = require('pump'),
 	vfs = require('vinyl-fs');
 
 var argv = argv
@@ -43,12 +44,12 @@ if (opts.moduleType === 'app') {
 	publisher = publisher.lib(opts);
 }
 
-vfs.src(opts.files).pipe(
-	publisher.getStream()
-).on('error', function(err) {
-	console.log(chalk.red('Error occurred during publishing', err));
-	process.exit(1);
-}).on('end', function() {
+pump(vfs.src(opts.files), publisher.getStream(), function(err) {
+	if (err) {
+		console.log(chalk.red('Error occurred during publishing', err));
+		process.exit(1);
+	}
+
 	console.log(chalk.green('Published to:\n\n') + chalk.grey(
 		'   ' + publisher.getLocation() + '\n'
 	));
