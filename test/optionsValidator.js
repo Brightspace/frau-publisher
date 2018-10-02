@@ -134,7 +134,7 @@ describe('options validator', function() {
 
 		it('should return valid development upload path', function() {
 			expect(validOptions.getUploadPath())
-				.to.equal('path/myTargetDirectory/dev/myDevTag/');
+				.to.equal('path/myTargetDirectory/dev/myDevTag');
 		});
 
 		it('should return valid release upload path', function() {
@@ -147,7 +147,7 @@ describe('options validator', function() {
 				}
 			);
 			expect(releaseOptions.getUploadPath())
-				.to.equal('path/myTargetDirectory/1.2.0/');
+				.to.equal('path/myTargetDirectory/1.2.0');
 		});
 
 		it('should prioritize release version over devTag', function() {
@@ -161,7 +161,7 @@ describe('options validator', function() {
 				}
 			);
 			expect(options.getUploadPath())
-				.to.equal('path/myTargetDirectory/2.2.0/');
+				.to.equal('path/myTargetDirectory/2.2.0');
 		});
 
 	});

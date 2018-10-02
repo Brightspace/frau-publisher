@@ -2,7 +2,7 @@
 
 var compressor = require('../src/compressor'),
 	fs = require('fs'),
-	gulp = require('gulp'),
+	vfs = require('vinyl-fs'),
 	path = require('path');
 
 describe('compressor', function() {
@@ -12,7 +12,7 @@ describe('compressor', function() {
 		var filename = './test/support/file.html';
 		var originalSize = fs.statSync(filename).size;
 
-		gulp.src(filename)
+		vfs.src(filename)
 			.pipe(compressor())
 			.on('data', function(file) {
 				expect(file.contents.length).to.be.lessThan(
@@ -28,7 +28,7 @@ describe('compressor', function() {
 		var filename = './test/support/file.gif';
 		var originalSize = fs.statSync(filename).size;
 
-		gulp.src(filename)
+		vfs.src(filename)
 			.pipe(compressor())
 			.on('data', function(file) {
 				expect(
@@ -57,7 +57,7 @@ describe('compressor', function() {
 		});
 
 		it('should pass along errors from zlib', function(done) {
-			gulp.src('./test/support/file.js')
+			vfs.src('./test/support/file.js')
 				.pipe(compressor())
 				.on('error', function(err) {
 					expect(err).to.equal(error);
