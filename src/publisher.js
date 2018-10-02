@@ -29,6 +29,10 @@ function helper(opts, initialPath) {
 			var otherStream = getOtherStream();
 
 			var splitter = es.map(function(file, cb) {
+				if (file.base[file.base.length - 1] === '/') {
+					file.base = file.base.substring(0, file.base.length - 1);
+				}
+
 				if (path.extname(file.path).toLowerCase() === '.html') {
 					htmlStream.write(file);
 					return cb(null, file);
@@ -97,7 +101,7 @@ function helper(opts, initialPath) {
 		},
 		getLocation: function() {
 			var options = optionsValidator(opts);
-			return 'https://s.brightspace.com/' + options.getUploadPath();
+			return 'https://s.brightspace.com/' + options.getUploadPath() + '/';
 		}
 	};
 }
