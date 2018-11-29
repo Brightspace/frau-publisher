@@ -34,7 +34,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			headers['Content-Type'] = contentType;
 
 			if (charset) {
-				headers['Content-Type'] += `; charset=${charset}`;
+				headers['Content-Type'] += `; charset=${charset.toLowerCase()}`;
 			}
 		}
 
