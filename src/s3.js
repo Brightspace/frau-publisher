@@ -11,7 +11,18 @@ function replaceWindowsSlash(path) {
 }
 
 module.exports = function s3UploadFactory(knoxOpt, opt) {
-	opt = opt || {};
+	if (!opt) {
+		throw new TypeError(`Expected "opt" to be a non-null Object". Saw "${typeof opt}"`);
+	}
+
+	if (typeof opt.uploadPath !== 'string') {
+		throw new TypeError(`Expected "opt.uploadPath" to be a String. Saw "${typeof opt.uploadPath}"`);
+	}
+
+	if (opt.headers && typeof opt.headers !== 'object') {
+		throw new TypeError(`Expected "opt.headers" to be an Object, if provided. Saw "${typeof opt.headers}"`);
+	}
+
 	opt.headers = opt.headers || {};
 
 	const client = knox.createClient(knoxOpt);
