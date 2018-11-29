@@ -1,60 +1,42 @@
 'use strict';
 
-var es = require('event-stream'),
-	knox = require('knox'),
-	Q = require('q');
+const knox = require('knox');
 
-module.exports = function(options) {
-	var filesExistPromise;
+module.exports = function overwriteCheckFactory(options) {
+	let filesExistPromise;
 
-	return es.map(function(file, cb) {
-		if (!filesExistPromise) {
-			filesExistPromise = checkFilesExist(options);
-		}
+	return function() {
+		filesExistPromise = filesExistPromise || checkFilesExist(options);
 
-		filesExistPromise.then(
-			function() {
-				cb(null, file);
-			},
-			function(err) {
-				cb(err);
-			}
-		);
-	});
+		return filesExistPromise;
+	};
 };
 
 function checkFilesExist(options) {
-	var client = knox.createClient(options.getCreds());
+	const client = knox.createClient(options.getCreds());
 
-	var deferred = Q.defer();
+	return new Promise((resolve, reject) => {
+		client.list({
+			prefix: options.getUploadPath()
+		}, function(err, data) {
+			if (err) {
+				return reject(err);
+			}
 
-	client.list({
-		prefix: options.getUploadPath()
-	},
-	function(err, data) {
-		if (err) {
-			deferred.reject(err);
-			return;
-		}
+			// AWS errors like invalid key or secret are specified in the data
+			// For more see http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
+			if (data.Code) {
+				return reject(new Error(data.Message));
+			}
 
-		// AWS errors like invalid key or secret are specified in the data
-		// For more see http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
-		if (data.Code) {
-			deferred.reject(new Error(data.Message));
-			return;
-		}
+			if (data.Contents.length !== 0) {
+				// files exist in s3 folder
+				var errorMsg = 'No files transferred because files already exists in ' + options.getUploadPath();
+				return reject(new Error(errorMsg));
+			}
 
-		if (data.Contents.length !== 0) {
-			// files exist in s3 folder
-			var errorMsg = 'No files transferred because files already exists in ' + options.getUploadPath();
-			deferred.reject(new Error(errorMsg));
-			return;
-		}
-
-		// no files exist in s3 folder
-		deferred.resolve();
-	}
-	);
-
-	return deferred.promise;
+			// no files exist in s3 folder
+			resolve();
+		});
+	});
 }
