@@ -6,6 +6,12 @@
   "bin": {
     "frau-publisher": "bin/publishercli"
   },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "pretest": "npm run lint",
     "test": "nyc -i source-map-support --produce-source-map mocha -t .nyc_output/unit test/*.js",
