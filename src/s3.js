@@ -28,8 +28,8 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 	const client = knox.createClient(knoxOpt);
 
 	return promised(function s3Uploader(file) {
-		if (!file || !file.base || !file.path || !file.contents) {
-			throw new TypeError('Expected a vinyl file.');
+		if (!file.isBuffer()) {
+			return Promise.resolve(file);
 		}
 
 		const base = replaceWindowsSlash(file.base);
