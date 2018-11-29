@@ -15,6 +15,7 @@ describe('publisher', function() {
 
 			testVariant.fn('./test/test-files/*')
 				.pipe(publisher.getStream())
+				.on('error', cb)
 				.on('end', function() {
 					Promise.all([
 						new Promise(function(resolve, reject) {
@@ -48,13 +49,14 @@ describe('publisher', function() {
 								if (body !== fs.readFileSync('./test/test-files/test.woff', 'utf8')) return reject(new Error(body));
 
 								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
+								if (res.headers['content-type'] !== 'font/woff') return reject(new Error(res.headers['content-type']));
 								resolve();
 							});
 						})
 					])
 						.then(function() { cb(); }, cb);
-				});
+				})
+				.resume();
 		});
 	});
 

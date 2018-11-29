@@ -1,14 +1,13 @@
 'use strict';
 
-var es = require('event-stream'),
-	path = require('path'),
-	pumpify = require('pumpify'),
-	s3 = require('gulp-s3');
+var path = require('path'),
+	throughConcurrent = require('through2-concurrent');
 
-var compressor = require('./compressor'),
+var compress = require('./compressor'),
 	optionsValidator = require('./optionsValidator'),
 	optionsProvider = require('./optionsProvider'),
-	overwrite = require('./overwrite');
+	overwrite = require('./overwrite'),
+	s3 = require('./s3');
 
 function helper(opts, initialPath) {
 	opts.initialPath = initialPath;
@@ -17,81 +16,74 @@ function helper(opts, initialPath) {
 			var options = optionsValidator(opts);
 			var s3BaseOptions = {
 				headers: {
-					'cache-control': 'public,max-age=31536000,immutable'
+					'cache-control': 'public,max-age=31536000,immutable',
+					'x-amz-acl': 'public-read'
 				},
-				uploadPath: options.getUploadPath(),
-				failOnError: true
+				uploadPath: options.getUploadPath()
 			};
 
+			var compressionTransform = getCompressionTransform();
+			var htmlTransform = getHtmlTransform();
+			var otherTransform = getOtherTransform();
+
 			var overwriteCheck = overwrite(options);
+			return throughConcurrent.obj(/* @this */ function(file, _, cb) {
+				overwriteCheck().then(() => {
+					if (file.base[file.base.length - 1] === '/') {
+						file.base = file.base.substring(0, file.base.length - 1);
+					}
 
-			var compressionStream = getCompressionStream();
-			var htmlStream = getHtmlStream();
-			var otherStream = getOtherStream();
+					const push = file => {
+						this.push(file);
+						cb();
+					};
 
-			var splitter = es.map(function(file, cb) {
-				if (file.base[file.base.length - 1] === '/') {
-					file.base = file.base.substring(0, file.base.length - 1);
-				}
+					if (path.extname(file.path).toLowerCase() === '.html') {
+						return htmlTransform(file).then(push, cb);
+					}
 
-				if (path.extname(file.path).toLowerCase() === '.html') {
-					htmlStream.write(file);
-					return cb(null, file);
-				}
+					if (compress._isCompressibleFile(file)) {
+						return compressionTransform(file).then(push, cb);
+					}
 
-				if (compressor._isCompressibleFile(file)) {
-					compressionStream.write(file);
-					return cb(null, file);
-				}
-
-				otherStream.write(file);
-				cb(null, file);
+					otherTransform(file).then(push, cb);
+				}, cb);
 			});
 
-			splitter.once('end', function noMoreFiles() {
-				htmlStream.end();
-				compressionStream.end();
-				otherStream.end();
-			});
-
-			return es.duplex(
-				pumpify.obj(overwriteCheck, splitter),
-				es.merge(compressionStream, htmlStream, otherStream)
-			);
-
-			function getCompressionStream() {
+			function getCompressionTransform() {
 				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
 				s3Options.headers['content-encoding'] = 'gzip';
 
-				var compress = compressor();
-				var s3Stream = s3(options.getCreds(), s3Options);
+				var upload = s3(options.getCreds(), s3Options);
 
-				return pumpify.obj(compress, s3Stream);
+				return function(file) {
+					return compress(file).then(upload);
+				};
 			}
 
-			function getHtmlStream() {
-				var useCompression = compressor._isCompressibleFile({ path: 'foo.html' });
+			function getHtmlTransform() {
+				var useCompression = compress._isCompressibleFile({ path: 'foo.html' });
 
 				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
-				s3Options.encoding = 'utf-8';
+				s3Options.type = 'text/html';
+				s3Options.charset = 'utf-8';
 				if (useCompression) {
 					s3Options.headers['content-encoding'] = 'gzip';
 				}
 
-				var s3Stream = s3(options.getCreds(), s3Options);
-				var stream = s3Stream;
+				var transform = s3(options.getCreds(), s3Options);
 
 				if (useCompression) {
-					var compress = compressor();
-					stream = pumpify.obj(compress, s3Stream);
+					transform = function(orig, file) {
+						return compress(file).then(orig);
+					}.bind(null, transform);
 				}
 
-				return stream;
+				return transform;
 			}
 
-			function getOtherStream() {
-				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
-				return s3(options.getCreds(), s3Options);
+			function getOtherTransform() {
+				return s3(options.getCreds(), s3BaseOptions);
 			}
 		},
 		getLocation: function() {
