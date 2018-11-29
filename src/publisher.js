@@ -1,20 +1,22 @@
 'use strict';
 
-var path = require('path'),
-	throughConcurrent = require('through2-concurrent');
+const path = require('path');
 
-var compress = require('./compressor'),
-	optionsValidator = require('./optionsValidator'),
-	optionsProvider = require('./optionsProvider'),
-	overwrite = require('./overwrite'),
-	s3 = require('./s3');
+const throughConcurrent = require('through2-concurrent');
+
+const compress = require('./compressor');
+const optionsProvider = require('./optionsProvider');
+const optionsValidator = require('./optionsValidator');
+const overwrite = require('./overwrite');
+const s3 = require('./s3');
 
 function helper(opts, initialPath) {
 	opts.initialPath = initialPath;
+
 	return {
 		getStream: function() {
-			var options = optionsValidator(opts);
-			var s3BaseOptions = {
+			const options = optionsValidator(opts);
+			const s3BaseOptions = {
 				headers: {
 					'cache-control': 'public,max-age=31536000,immutable',
 					'x-amz-acl': 'public-read'
@@ -22,11 +24,11 @@ function helper(opts, initialPath) {
 				uploadPath: options.getUploadPath()
 			};
 
-			var compressionTransform = getCompressionTransform();
-			var htmlTransform = getHtmlTransform();
-			var otherTransform = getOtherTransform();
+			const compressionTransform = getCompressionTransform();
+			const htmlTransform = getHtmlTransform();
+			const otherTransform = getOtherTransform();
 
-			var overwriteCheck = overwrite(options);
+			const overwriteCheck = overwrite(options);
 			return throughConcurrent.obj(/* @this */ function(file, _, cb) {
 				overwriteCheck().then(() => {
 					if (file.base[file.base.length - 1] === '/') {
@@ -51,27 +53,27 @@ function helper(opts, initialPath) {
 			});
 
 			function getCompressionTransform() {
-				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
 				s3Options.headers['content-encoding'] = 'gzip';
 
-				var upload = s3(options.getCreds(), s3Options);
+				const upload = s3(options.getCreds(), s3Options);
 
-				return function(file) {
+				return function compressionTransform(file) {
 					return compress(file).then(upload);
 				};
 			}
 
 			function getHtmlTransform() {
-				var useCompression = compress._isCompressibleFile({ path: 'foo.html' });
+				const useCompression = compress._isCompressibleFile({ path: 'foo.html' });
 
-				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
 				s3Options.type = 'text/html';
 				s3Options.charset = 'utf-8';
 				if (useCompression) {
 					s3Options.headers['content-encoding'] = 'gzip';
 				}
 
-				var transform = s3(options.getCreds(), s3Options);
+				let transform = s3(options.getCreds(), s3Options);
 
 				if (useCompression) {
 					transform = function(orig, file) {
@@ -87,19 +89,15 @@ function helper(opts, initialPath) {
 			}
 		},
 		getLocation: function() {
-			var options = optionsValidator(opts);
+			const options = optionsValidator(opts);
 			return 'https://s.brightspace.com/' + options.getUploadPath() + '/';
 		}
 	};
 }
 
 module.exports = {
-	app: function(opts) {
-		return helper(opts, 'apps/');
-	},
-	lib: function(opts) {
-		return helper(opts, 'lib/');
-	},
+	app: opts => helper(opts, 'apps/'),
+	lib: opts => helper(opts, 'lib/'),
 	optionsProvider: optionsProvider,
 	_helper: helper
 };
