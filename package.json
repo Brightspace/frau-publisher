@@ -10,7 +10,7 @@
     "pretest": "npm run lint",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/*.js -- -R spec",
     "test-secure": "mocha test/secure/*.js",
-    "lint": "eslint src && eslint test",
+    "lint": "eslint .",
     "report-coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
