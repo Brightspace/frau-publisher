@@ -5,7 +5,7 @@ const knox = require('knox');
 module.exports = function overwriteCheckFactory(options) {
 	let filesExistPromise;
 
-	return function() {
+	return function overwriteCheck() {
 		filesExistPromise = filesExistPromise || checkFilesExist(options);
 
 		return filesExistPromise;
@@ -18,7 +18,7 @@ function checkFilesExist(options) {
 	return new Promise((resolve, reject) => {
 		client.list({
 			prefix: options.getUploadPath()
-		}, function(err, data) {
+		}, (err, data) => {
 			if (err) {
 				return reject(err);
 			}
