@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path');
-
 const throughConcurrent = require('through2-concurrent');
 
 const compress = require('./compressor');
@@ -25,7 +23,6 @@ function helper(opts, initialPath) {
 			};
 
 			const compressionTransform = getCompressionTransform();
-			const htmlTransform = getHtmlTransform();
 			const otherTransform = getOtherTransform();
 
 			const overwriteCheck = overwrite(options);
@@ -39,10 +36,6 @@ function helper(opts, initialPath) {
 						this.push(file);
 						cb();
 					};
-
-					if (path.extname(file.path).toLowerCase() === '.html') {
-						return htmlTransform(file).then(push, cb);
-					}
 
 					if (compress._isCompressibleFile(file)) {
 						return compressionTransform(file).then(push, cb);
@@ -61,27 +54,6 @@ function helper(opts, initialPath) {
 				return function compressionTransform(file) {
 					return compress(file).then(upload);
 				};
-			}
-
-			function getHtmlTransform() {
-				const useCompression = compress._isCompressibleFile({ path: 'foo.html' });
-
-				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
-				s3Options.type = 'text/html';
-				s3Options.charset = 'utf-8';
-				if (useCompression) {
-					s3Options.headers['content-encoding'] = 'gzip';
-				}
-
-				let transform = s3(options.getCreds(), s3Options);
-
-				if (useCompression) {
-					transform = function(orig, file) {
-						return compress(file).then(orig);
-					}.bind(null, transform);
-				}
-
-				return transform;
 			}
 
 			function getOtherTransform() {
