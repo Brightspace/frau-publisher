@@ -15,7 +15,7 @@ const compressibles = [
 	'.ico'
 ];
 
-const COMPRESSION_LEVEL = zlib.constants.Z_BEST_COMPRESSION;
+const COMPRESSION_LEVEL = (zlib.constants || zlib).Z_BEST_COMPRESSION;
 
 function isCompressibleFile(file) {
 	const ext = path.extname(file.path).toLowerCase();
