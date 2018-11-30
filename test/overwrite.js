@@ -1,7 +1,6 @@
 'use strict';
 
-var vfs = require('vinyl-fs'),
-	proxyquire = require('proxyquire');
+const proxyquire = require('proxyquire');
 
 describe('overwrite', function() {
 
@@ -10,119 +9,70 @@ describe('overwrite', function() {
 		optsValidator,
 		client;
 
-	it('should succeed when folder is empty', function(done) {
+	it('should succeed when folder is empty', function() {
 		setUpEmptyFolder();
 
-		vfs.src('./test/support/file.js')
-			.pipe(overwrite(optsValidator))
-			.on('data', function(data) {
-				try {
-					expect(data)
-						.to.have.a.property('history')
-						.that.is.an.instanceof(Array)
-						.with.a.property(0)
-						.that.contains('file.js');
-
-					done();
-				} catch (e) {
-					done(e);
-				}
-			});
+		return overwrite(optsValidator)();
 	});
 
-	it('should error when files exist in bucket', function(done) {
+	it('should error when files exist in bucket', function() {
 		setUpNonEmptyFolder();
 
 		optsValidator.getUploadPath.returns('some-folder');
 		var expectedErrorMsg = 'No files transferred because files already exists in some-folder';
 
-		vfs.src('./test/support/file.js')
-			.pipe(overwrite(optsValidator))
-			.on('data', function() {
-				done('should be no data');
-			}).on('error', function(err) {
-				try {
-					expect(err)
-						.to.be.and.instanceof(Error)
-						.and.to.have.a.property('message')
-						.that.equals(expectedErrorMsg);
-
-					done();
-				} catch (e) {
-					done(e);
-				}
-			});
+		return overwrite(optsValidator)().then(
+			() => { throw new Error('Should reject'); },
+			err => expect(err)
+				.to.be.an.instanceof(Error)
+				.and.to.have.a.property('message')
+				.that.equals(expectedErrorMsg)
+		);
 	});
 
-	it('should handle bad data.Code error from knox', function(done) {
+	it('should handle bad data.Code error from knox', function() {
 		setUpList(null, { Code: 'some-code', Message: 'some-message' });
 
-		vfs.src('./test/support/file.js')
-			.pipe(overwrite(optsValidator))
-			.on('data', function() {
-				done('should be no data');
-			}).on('error', function(err) {
-				try {
-					expect(err)
-						.to.be.an.instanceof(Error)
-						.and.to.have.a.property('message')
-						.that.equals('some-message');
-
-					done();
-				} catch (e) {
-					done(e);
-				}
-			});
+		return overwrite(optsValidator)().then(
+			() => { throw new Error('Should reject'); },
+			err => expect(err)
+				.to.be.an.instanceof(Error)
+				.and.to.have.a.property('message')
+				.that.equals('some-message')
+		);
 	});
 
-	it('should handle err from knox', function(done) {
+	it('should handle err from knox', function() {
 		var error = new Error('some-message');
 		setUpList(error);
 
-		vfs.src('./test/support/file.js')
-			.pipe(overwrite(optsValidator))
-			.on('data', function() {
-				done('should be no data');
-			}).on('error', function(err) {
-				try {
-					expect(err).to.equal(error);
+		return overwrite(optsValidator)().then(
+			() => { throw new Error('Should reject'); },
+			err => expect(err).to.equal(error)
+		);
+	});
 
-					done();
-				} catch (e) {
-					done(e);
-				}
+	it('should only get knox client once for multiple files', function() {
+		setUpEmptyFolder();
+
+		const overwriteCheck = overwrite(optsValidator);
+
+		return Promise
+			.all([overwriteCheck(), overwriteCheck()])
+			.then(() => {
+				expect(createClient).to.have.been.calledOnce;
 			});
 	});
 
-	it('should only get knox client once for multiple files', function(done) {
+	it('should only call knox#list once for multiple files', function() {
 		setUpEmptyFolder();
 
-		vfs.src(['./test/support/file.js', './test/support/file.html'])
-			.pipe(overwrite(optsValidator))
-			.on('end', function() {
-				try {
-					expect(createClient).to.have.been.calledOnce;
+		const overwriteCheck = overwrite(optsValidator);
 
-					done();
-				} catch (e) {
-					done(e);
-				}
-			});
-	});
-
-	it('should only call knox#list once for multiple files', function(done) {
-		setUpEmptyFolder();
-
-		vfs.src(['./test/support/file.js', './test/support/file.html'])
-			.pipe(overwrite(optsValidator))
-			.on('end', function() {
-				try {
-					expect(client.list).to.have.been.calledOnce;
-
-					done();
-				} catch (e) {
-					done(e);
-				}
+		return Promise
+			.all([overwriteCheck(), overwriteCheck()])
+			.then(() => {
+				expect(client.list).to.have.been.calledOnce;
 			});
 	});
 

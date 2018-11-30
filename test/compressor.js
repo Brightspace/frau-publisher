@@ -1,11 +1,23 @@
 'use strict';
 
-var compressor = require('../src/compressor'),
-	fs = require('fs'),
-	vfs = require('vinyl-fs'),
+var fs = require('fs'),
 	path = require('path');
 
+var through = require('through2'),
+	vfs = require('vinyl-fs');
+
+var compressor = require('../src/compressor');
+
 describe('compressor', function() {
+
+	function compressionStream() {
+		return through.obj(/* @this */function(file, _, cb) {
+			compressor(file).then(file => {
+				this.push(file);
+				cb();
+			}, cb);
+		});
+	}
 
 	it('should compress a file', function(done) {
 
@@ -13,7 +25,7 @@ describe('compressor', function() {
 		var originalSize = fs.statSync(filename).size;
 
 		vfs.src(filename)
-			.pipe(compressor())
+			.pipe(compressionStream())
 			.on('data', function(file) {
 				expect(file.contents.length).to.be.lessThan(
 					originalSize / 2
@@ -29,7 +41,7 @@ describe('compressor', function() {
 		var originalSize = fs.statSync(filename).size;
 
 		vfs.src(filename)
-			.pipe(compressor())
+			.pipe(compressionStream())
 			.on('data', function(file) {
 				expect(
 					path.basename(file.path)
@@ -58,7 +70,7 @@ describe('compressor', function() {
 
 		it('should pass along errors from zlib', function(done) {
 			vfs.src('./test/support/file.js')
-				.pipe(compressor())
+				.pipe(compressionStream())
 				.on('error', function(err) {
 					expect(err).to.equal(error);
 					done();

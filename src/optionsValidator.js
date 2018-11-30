@@ -1,7 +1,7 @@
 'use strict';
 
-var chalk = require('chalk'),
-	semver = require('semver');
+const chalk = require('chalk');
+const semver = require('semver');
 
 function validateOpts(opts) {
 	if (!opts) {
@@ -20,7 +20,7 @@ function getDevPath(opts) {
 
 module.exports = function(opts) {
 
-	var options = {
+	const options = {
 
 		getTargetDirectory: function() {
 			validateOpts(opts);
@@ -42,7 +42,7 @@ module.exports = function(opts) {
 				throw new Error('Missing version or devTag');
 			}
 			if (opts.version) {
-				var validatedVersion = semver.valid(opts.version);
+				const validatedVersion = semver.valid(opts.version);
 				if (validatedVersion === null) {
 					throw new Error('"' + opts.version + '" is not a valid version number. See semver.org for more details.');
 				}
@@ -71,7 +71,7 @@ module.exports = function(opts) {
 
 		getUploadPath: function() {
 			validateOpts(opts);
-			var devPath = getDevPath(opts);
+			const devPath = getDevPath(opts);
 			// version gets priority over devTag
 			return opts.initialPath + this.getTargetDirectory() + devPath +
 				this.getVersion();
