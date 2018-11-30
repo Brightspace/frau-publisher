@@ -1,11 +1,10 @@
 'use strict';
 
-const path = require('path');
-const zlib = require('zlib');
+var es = require('event-stream'),
+	path = require('path'),
+	zlib = require('zlib');
 
-const promised = require('promised-method');
-
-const compressibles = [
+var compressibles = [
 	'.js',
 	'.json',
 	'.css',
@@ -15,30 +14,34 @@ const compressibles = [
 	'.ico'
 ];
 
-const COMPRESSION_LEVEL = (zlib.constants || zlib).Z_BEST_COMPRESSION;
+var COMPRESSION_LEVEL = (zlib.constants || zlib).Z_BEST_COMPRESSION;
 
 function isCompressibleFile(file) {
-	const ext = path.extname(file.path).toLowerCase();
-	return compressibles.indexOf(ext) > -1;
+	var ext = path.extname(file.path).toLowerCase();
+	return (compressibles.indexOf(ext) > -1);
 }
 
-module.exports = promised(function compressor(file) {
-	if (!isCompressibleFile(file)) {
-		return file;
-	}
+module.exports = function() {
 
-	return new Promise((resolve, reject) => {
+	return es.map(function(file, cb) {
+
+		if (!isCompressibleFile(file)) {
+			cb(null, file);
+			return;
+		}
+
 		zlib.gzip(file.contents, {
 			level: COMPRESSION_LEVEL
-		}, (err, result) => {
+		}, function(err, result) {
 			if (err) {
-				return reject(err);
+				cb(err, null);
+				return;
 			}
-
 			file.contents = result;
-			resolve(file);
+			cb(null, file);
 		});
+
 	});
-});
+};
 
 module.exports._isCompressibleFile = isCompressibleFile;

@@ -1,6 +1,7 @@
 'use strict';
 
-var proxyquire = require('proxyquire');
+var proxyquire = require('proxyquire'),
+	through = require('through2');
 
 var options = {
 	targetDirectory: 'myTargetDirectory',
@@ -12,10 +13,13 @@ describe('publisher', function() {
 	var publisher, s3;
 
 	beforeEach(function() {
-		s3 = sinon.stub().returns(Promise.resolve());
+		// We need to return a stream, but it doesn't matter what the stream is
+		var emptyStream = through.obj();
+		s3 = sinon.stub().returns(emptyStream);
+		process.nextTick(emptyStream.end.bind(emptyStream));
 
 		publisher = proxyquire('../src/publisher', {
-			'./s3': s3
+			'gulp-s3': s3
 		});
 	});
 
@@ -49,10 +53,10 @@ describe('publisher', function() {
 		it('should call s3 with correct options', function() {
 			var expectedOptions = {
 				headers: {
-					'cache-control': 'public,max-age=31536000,immutable',
-					'x-amz-acl': 'public-read',
+					'cache-control': 'public,max-age=31536000,immutable'
 				},
-				uploadPath: 'path/myTargetDirectory/dev/myDevTag'
+				uploadPath: 'path/myTargetDirectory/dev/myDevTag',
+				failOnError: true
 			};
 			publisher._helper(options, 'path/').getStream();
 			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);

@@ -1,75 +1,113 @@
 'use strict';
 
-const throughConcurrent = require('through2-concurrent');
+var es = require('event-stream'),
+	path = require('path'),
+	pumpify = require('pumpify'),
+	s3 = require('gulp-s3');
 
-const compress = require('./compressor');
-const optionsProvider = require('./optionsProvider');
-const optionsValidator = require('./optionsValidator');
-const overwrite = require('./overwrite');
-const s3 = require('./s3');
+var compressor = require('./compressor'),
+	optionsValidator = require('./optionsValidator'),
+	optionsProvider = require('./optionsProvider'),
+	overwrite = require('./overwrite');
 
 function helper(opts, initialPath) {
 	opts.initialPath = initialPath;
-
 	return {
 		getStream: function() {
-			const options = optionsValidator(opts);
-			const s3BaseOptions = {
+			var options = optionsValidator(opts);
+			var s3BaseOptions = {
 				headers: {
-					'cache-control': 'public,max-age=31536000,immutable',
-					'x-amz-acl': 'public-read'
+					'cache-control': 'public,max-age=31536000,immutable'
 				},
-				uploadPath: options.getUploadPath()
+				uploadPath: options.getUploadPath(),
+				failOnError: true
 			};
 
-			const compressionTransform = getCompressionTransform();
-			const otherTransform = getOtherTransform();
+			var overwriteCheck = overwrite(options);
 
-			const overwriteCheck = overwrite(options);
-			return throughConcurrent.obj(/* @this */ function(file, _, cb) {
-				overwriteCheck().then(() => {
-					if (file.base[file.base.length - 1] === '/') {
-						file.base = file.base.substring(0, file.base.length - 1);
-					}
+			var compressionStream = getCompressionStream();
+			var htmlStream = getHtmlStream();
+			var otherStream = getOtherStream();
 
-					const push = file => {
-						this.push(file);
-						cb();
-					};
+			var splitter = es.map(function(file, cb) {
+				if (file.base[file.base.length - 1] === '/') {
+					file.base = file.base.substring(0, file.base.length - 1);
+				}
 
-					if (compress._isCompressibleFile(file)) {
-						return compressionTransform(file).then(push, cb);
-					}
+				if (path.extname(file.path).toLowerCase() === '.html') {
+					htmlStream.write(file);
+					return cb(null, file);
+				}
 
-					otherTransform(file).then(push, cb);
-				}, cb);
+				if (compressor._isCompressibleFile(file)) {
+					compressionStream.write(file);
+					return cb(null, file);
+				}
+
+				otherStream.write(file);
+				cb(null, file);
 			});
 
-			function getCompressionTransform() {
-				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+			splitter.once('end', function noMoreFiles() {
+				htmlStream.end();
+				compressionStream.end();
+				otherStream.end();
+			});
+
+			return es.duplex(
+				pumpify.obj(overwriteCheck, splitter),
+				es.merge(compressionStream, htmlStream, otherStream)
+			);
+
+			function getCompressionStream() {
+				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
 				s3Options.headers['content-encoding'] = 'gzip';
 
-				const upload = s3(options.getCreds(), s3Options);
+				var compress = compressor();
+				var s3Stream = s3(options.getCreds(), s3Options);
 
-				return function compressionTransform(file) {
-					return compress(file).then(upload);
-				};
+				return pumpify.obj(compress, s3Stream);
 			}
 
-			function getOtherTransform() {
-				return s3(options.getCreds(), s3BaseOptions);
+			function getHtmlStream() {
+				var useCompression = compressor._isCompressibleFile({ path: 'foo.html' });
+
+				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+				s3Options.encoding = 'utf-8';
+				if (useCompression) {
+					s3Options.headers['content-encoding'] = 'gzip';
+				}
+
+				var s3Stream = s3(options.getCreds(), s3Options);
+				var stream = s3Stream;
+
+				if (useCompression) {
+					var compress = compressor();
+					stream = pumpify.obj(compress, s3Stream);
+				}
+
+				return stream;
+			}
+
+			function getOtherStream() {
+				var s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+				return s3(options.getCreds(), s3Options);
 			}
 		},
 		getLocation: function() {
-			const options = optionsValidator(opts);
+			var options = optionsValidator(opts);
 			return 'https://s.brightspace.com/' + options.getUploadPath() + '/';
 		}
 	};
 }
 
 module.exports = {
-	app: opts => helper(opts, 'apps/'),
-	lib: opts => helper(opts, 'lib/'),
+	app: function(opts) {
+		return helper(opts, 'apps/');
+	},
+	lib: function(opts) {
+		return helper(opts, 'lib/');
+	},
 	optionsProvider: optionsProvider,
 	_helper: helper
 };
