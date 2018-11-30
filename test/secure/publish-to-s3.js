@@ -3,22 +3,30 @@
 var child_process = require('child_process'),
 	fs = require('fs');
 
+const throughConcurrent = require('through2-concurrent');
+
 var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
 	vfs = require('vinyl-fs'),
 	gulp = require('gulp'),
 	pump = require('pump');
 
-describe('publisher', function() {
+describe('publisher', /* @this */ function() {
+	this.timeout(10000);
+
 	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
 		it('should publish new file (' + testVariant.name + ')', function(cb) {
-			var publisher = createPublisher(Math.random().toString(16).slice(2));
+			const glob = './test/test-files/**';
+			const devtag = Math.random().toString(16).slice(2);
 
-			testVariant.fn('./test/test-files/*')
+			const publisher = createPublisher(devtag);
+
+			testVariant.fn(glob)
 				.pipe(publisher.getStream())
 				.on('error', cb)
 				.on('end', function() {
 					Promise.all([
+						assertUploaded(glob, devtag),
 						new Promise(function(resolve, reject) {
 							request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
 								if (err) return reject(err);
@@ -56,8 +64,7 @@ describe('publisher', function() {
 						})
 					])
 						.then(function() { cb(); }, cb);
-				})
-				.resume();
+				});
 		});
 	});
 
@@ -75,19 +82,24 @@ describe('publisher', function() {
 			} catch (err) {
 				cb(err);
 			}
-		}).resume();
+		});
 	});
 });
 
-describe('cli', function() {
+describe('cli', /* @this */ function() {
+	this.timeout(10000);
+
 	it('should publish successfully', function(done) {
+		const glob = './test/test-files/**';
+		const devtag = Math.random().toString(16).slice(2);
+
 		var p = child_process.execFile('./bin/publishercli', [
 			'--moduletype', 'app',
 			'--targetdir', 'frau-publisher-test',
-			'--files', './test/test-files/*',
+			'--files', glob,
 			'--key', process.env.CREDS_KEY,
 			'--secretvar', 'CREDS_SECRET',
-			'--devtag', Math.random().toString(16).slice(2)
+			'--devtag', devtag
 		])
 			.on('error', done)
 			.on('exit', function(code) {
@@ -95,7 +107,8 @@ describe('cli', function() {
 					return done(new Error('Expected exit code 0, saw ' + code));
 				}
 
-				done();
+				assertUploaded(glob, devtag)
+					.then(() => done(), done);
 			});
 
 		p.stdout.pipe(process.stderr);
@@ -111,5 +124,33 @@ function createPublisher(devTag) {
 			secret: process.env.CREDS_SECRET
 		},
 		devTag: devTag
+	});
+}
+
+function assertUploaded(glob, tag) {
+	const uploadBase = createPublisher(tag).getLocation();
+
+	return new Promise((resolve, reject) => {
+		pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
+			if (file.isDirectory()) { return cb(); }
+
+			const location = file.path.replace(file.base + '/', uploadBase);
+
+			request
+				.get(location, (err, res) => {
+					if (err) {
+						return cb(err);
+					}
+
+					if (res.statusCode !== 200) {
+						return cb(new Error(`${res.statusCode}: ${location}`));
+					}
+
+					cb();
+				});
+		}), err => {
+			if (err) { return reject(err); }
+			resolve();
+		}).resume();
 	});
 }
