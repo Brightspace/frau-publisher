@@ -1,15 +1,12 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 
-'use strict';
+var argv = require('yargs'),
+	chalk = require('chalk'),
+	optionsProvider = require('../src/optionsProvider'),
+	pump = require('pump'),
+	vfs = require('vinyl-fs');
 
-const yargs = require('yargs');
-const chalk = require('chalk');
-const pump = require('pump');
-const vfs = require('vinyl-fs');
-
-const optionsProvider = require('../src/optionsProvider');
-
-const argv = yargs
+var argv = argv
 	.alias('m', 'moduletype')
 	.alias('t', 'targetdir')
 	.alias('f', 'files')
@@ -18,7 +15,7 @@ const argv = yargs
 	.alias('v', 'version')
 	.argv;
 
-const opts = optionsProvider.getOptions(argv);
+var opts = optionsProvider.getOptions(argv);
 
 if (!opts.files) {
 	console.log(chalk.grey('No files to publish.\n'));
@@ -40,7 +37,7 @@ console.log(chalk.green('Publish options:\n\n') + chalk.grey(
 		'   Version: ' + opts.version + '\n'
 	));
 
-let publisher = require('../src/publisher');
+var publisher = require('../src/publisher');
 if (opts.moduleType === 'app') {
 	publisher = publisher.app(opts);
 } else {

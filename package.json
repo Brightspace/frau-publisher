@@ -1,23 +1,17 @@
 {
   "name": "frau-publisher",
-  "version": "2.7.6",
+  "version": "2.7.3",
   "description": "A free-range-app utility for publishing to our CDN.",
   "main": "src/publisher.js",
   "bin": {
     "frau-publisher": "bin/publishercli"
   },
-  "files": [
-    "bin",
-    "src",
-    "LICENSE",
-    "README.md"
-  ],
   "scripts": {
     "pretest": "npm run lint",
-    "test": "nyc -i source-map-support --produce-source-map mocha -t .nyc_output/unit test/*.js",
-    "test-secure": "nyc -i source-map-support --produce-source-map -t .nyc_output/secure mocha test/secure/*.js",
-    "lint": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov -t .nyc_output/* | coveralls"
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/*.js -- -R spec",
+    "test-secure": "mocha test/secure/*.js",
+    "lint": "eslint src && eslint test",
+    "report-coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -37,27 +31,28 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
-    "eslint": "^5.0.0",
+    "eslint": "^4.10.0",
     "eslint-config-brightspace": "^0.4.0",
     "gulp": "^3.9.1",
+    "istanbul": "^0.4.2",
     "mocha": "^5.0.0",
-    "nyc": "^13.1.0",
     "proxyquire": "^2.0.0",
     "request": "^2.49.0",
-    "sinon": "^7.1.1",
-    "sinon-chai": "^3.3.0",
-    "source-map-support": "^0.5.9",
-    "through2": "^3.0.0"
+    "rmdir": "^1.0.4",
+    "sinon": "^4.0.2",
+    "sinon-chai": "^3.0.0",
+    "through2": "^2.0.3"
   },
   "dependencies": {
     "chalk": "^2.0.0",
+    "event-stream": "^3.1.7",
+    "gulp-s3": "^0.11.0",
     "knox": "^0.9.1",
-    "mime-types": "^2.1.21",
-    "promised-method": "^1.0.0",
     "pump": "^3.0.0",
+    "pumpify": "^1.5.1",
+    "q": "^1.4.1",
     "semver": "^5.0.1",
-    "through2-concurrent": "^2.0.0",
     "vinyl-fs": "^3.0.0",
-    "yargs": "^12.0.1"
+    "yargs": "^11.0.0"
   }
 }

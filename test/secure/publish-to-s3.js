@@ -6,8 +6,7 @@ var child_process = require('child_process'),
 var frauPublisher = require('../../src/publisher'),
 	request = require('request'),
 	vfs = require('vinyl-fs'),
-	gulp = require('gulp'),
-	pump = require('pump');
+	gulp = require('gulp');
 
 describe('publisher', function() {
 	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
@@ -16,7 +15,6 @@ describe('publisher', function() {
 
 			testVariant.fn('./test/test-files/*')
 				.pipe(publisher.getStream())
-				.on('error', cb)
 				.on('end', function() {
 					Promise.all([
 						new Promise(function(resolve, reject) {
@@ -50,14 +48,13 @@ describe('publisher', function() {
 								if (body !== fs.readFileSync('./test/test-files/test.woff', 'utf8')) return reject(new Error(body));
 
 								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'font/woff') return reject(new Error(res.headers['content-type']));
+								if (res.headers['content-type'] !== 'application/font-woff') return reject(new Error(res.headers['content-type']));
 								resolve();
 							});
 						})
 					])
 						.then(function() { cb(); }, cb);
-				})
-				.resume();
+				});
 		});
 	});
 
@@ -68,14 +65,14 @@ describe('publisher', function() {
 		//  start that way because it seems unnecessarily wasteful.
 		var publisher = createPublisher('overwrite-test');
 
-		pump(vfs.src('./test/test-files/test.txt'), publisher.getStream(), err => {
-			try {
-				expect(err.message).to.match(/^No files transferred because files already exists in/);
+		vfs
+			.src('./test/test-files/test.txt')
+			.pipe(publisher.getStream())
+			.on('error', function() {
 				cb();
-			} catch (err) {
-				cb(err);
-			}
-		}).resume();
+			}).on('end', function() {
+				cb('should not have published');
+			});
 	});
 });
 
