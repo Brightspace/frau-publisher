@@ -43,7 +43,7 @@ function helper(opts, initialPath) {
 
 					otherTransform(file).then(push, cb);
 				}, cb);
-			});
+			}).resume();
 
 			function getCompressionTransform() {
 				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
