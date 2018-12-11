@@ -5,7 +5,7 @@ const knox = require('knox');
 const mime = require('mime-types');
 const promised = require('promised-method');
 
-const WINDOWS_SLASH_REGEX = /\//g;
+const WINDOWS_SLASH_REGEX = /\\/g;
 function replaceWindowsSlash(path) {
 	return path.replace(WINDOWS_SLASH_REGEX, '/');
 }
