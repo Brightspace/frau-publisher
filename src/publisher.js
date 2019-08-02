@@ -13,12 +13,10 @@ function helper(opts, initialPath) {
 
 	return {
 		getStream: function() {
+
 			const options = optionsValidator(opts);
 			const s3BaseOptions = {
-				headers: {
-					'cache-control': 'public,max-age=31536000,immutable',
-					'x-amz-acl': 'public-read'
-				},
+				headers: {},
 				uploadPath: options.getUploadPath()
 			};
 

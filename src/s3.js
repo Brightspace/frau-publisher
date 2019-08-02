@@ -1,7 +1,7 @@
 'use strict';
 
+const AWS = require('aws-sdk');
 const chalk = require('chalk');
-const knox = require('knox');
 const mime = require('mime-types');
 const promised = require('promised-method');
 
@@ -25,7 +25,11 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 
 	opt.headers = opt.headers || {};
 
-	const client = knox.createClient(knoxOpt);
+	const client = new AWS.S3({
+		accessKeyId: knoxOpt.key,
+		apiVersion: '2006-03-01',
+		secretAccessKey: knoxOpt.secret
+	});
 
 	return promised(function s3Uploader(file) {
 		if (!file.isBuffer()) {
@@ -49,31 +53,30 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			}
 		}
 
-		headers['Content-Length'] = file.contents.length;
+		const params = {
+			ACL: 'public-read',
+			Body: file.contents,
+			Bucket: knoxOpt.bucket,
+			CacheControl: 'public,max-age=31536000,immutable',
+			ContentEncoding: headers['content-encoding'],
+			ContentLength: file.contents.length,
+			ContentType: headers['Content-Type'],
+			Key: uploadPath
+		};
 
 		return new Promise((resolve, reject) => {
-			client
-				.put(uploadPath, headers)
-				.on('response', res => {
-					res.resume();
+			client.upload(params, function(err) {
 
-					if (res.statusCode !== 200) {
-						let message = chalk.red(`[FAILED] ${file.path} -> ${uploadPath}`);
-						message += `\n\tHTTP Status Code: ${res.statusCode}`;
-
-						return reject(new Error(message));
-					}
-
-					console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`)); // eslint-disable-line no-console
-					resolve(file);
-				})
-				.on('error', err => {
+				if (err) {
 					let message = chalk.red(`[FAILED] ${file.path} -> ${uploadPath}`);
 					message += `\n\t${err.message}`;
+					return reject(new Error(message));
+				}
 
-					reject(new Error(message));
-				})
-				.end(file.contents);
+				console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`)); // eslint-disable-line no-console
+				resolve(file);
+
+			});
 		});
 	});
 };
