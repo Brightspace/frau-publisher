@@ -52,7 +52,7 @@ describe('overwrite', function() {
 			});
 	});
 
-	it('should only call listObjects once for multiple files', function() {
+	it('should only call listObjectsV2 once for multiple files', function() {
 		setUpEmptyFolder();
 
 		const overwriteCheck = overwrite(optsValidator);
@@ -60,13 +60,13 @@ describe('overwrite', function() {
 		return Promise
 			.all([overwriteCheck(), overwriteCheck()])
 			.then(() => {
-				expect(client.listObjects).to.have.been.calledOnce;
+				expect(client.listObjectsV2).to.have.been.calledOnce;
 			});
 	});
 
 	beforeEach(function() {
 		client = {
-			listObjects: function() {}
+			listObjectsV2: function() {}
 		};
 
 		createClient = sinon.spy(function() {
@@ -86,9 +86,14 @@ describe('overwrite', function() {
 	});
 
 	function setUpList(err, data) {
-		sinon.stub(client, 'listObjects').callsFake(function(object, cb) {
-			cb(err, data);
-		});
+		const p = err
+			? Promise.reject(err)
+			: Promise.resolve(data);
+		sinon
+			.stub(client, 'listObjectsV2')
+			.returns({
+				promise: () => p
+			});
 	}
 
 	function setUpEmptyFolder() {
