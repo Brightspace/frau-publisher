@@ -1,6 +1,6 @@
 'use strict';
 
-const knox = require('knox');
+const AWS = require('aws-sdk');
 
 module.exports = function overwriteCheckFactory(options) {
 	let filesExistPromise;
@@ -13,25 +13,28 @@ module.exports = function overwriteCheckFactory(options) {
 };
 
 function checkFilesExist(options) {
-	const client = knox.createClient(options.getCreds());
+
+	const creds = options.getCreds();
+	const client = new AWS.S3({
+		accessKeyId: creds.key,
+		apiVersion: '2006-03-01',
+		secretAccessKey: creds.secret
+	});
 
 	return new Promise((resolve, reject) => {
-		client.list({
-			prefix: options.getUploadPath()
-		}, (err, data) => {
+		const params = {
+			Bucket: creds.bucket,
+			MaxKeys: 1,
+			Prefix: options.getUploadPath()
+		};
+		client.listObjects(params, function(err, data) {
 			if (err) {
 				return reject(err);
 			}
 
-			// AWS errors like invalid key or secret are specified in the data
-			// For more see http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html
-			if (data.Code) {
-				return reject(new Error(data.Message));
-			}
-
 			if (data.Contents.length !== 0) {
 				// files exist in s3 folder
-				var errorMsg = 'No files transferred because files already exists in ' + options.getUploadPath();
+				const errorMsg = `No files transferred because files already exists in ${options.getUploadPath()}`;
 				return reject(new Error(errorMsg));
 			}
 

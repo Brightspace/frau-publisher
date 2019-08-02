@@ -48,10 +48,7 @@ describe('publisher', function() {
 
 		it('should call s3 with correct options', function() {
 			var expectedOptions = {
-				headers: {
-					'cache-control': 'public,max-age=31536000,immutable',
-					'x-amz-acl': 'public-read',
-				},
+				headers: {},
 				uploadPath: 'path/myTargetDirectory/dev/myDevTag'
 			};
 			publisher._helper(options, 'path/').getStream();
