@@ -1,6 +1,7 @@
 'use strict';
 
 var proxyquire = require('proxyquire');
+var vfs = require('vinyl-fs');
 
 var options = {
 	targetDirectory: 'myTargetDirectory',
@@ -9,13 +10,15 @@ var options = {
 };
 
 describe('publisher', function() {
-	var publisher, s3;
+	var publisher, s3Factory, s3;
 
 	beforeEach(function() {
 		s3 = sinon.stub().returns(Promise.resolve());
+		s3Factory = sinon.stub().returns(s3);
 
 		publisher = proxyquire('../src/publisher', {
-			'./s3': s3
+			'./s3': s3Factory,
+			'./overwrite': () => () => Promise.resolve()
 		});
 	});
 
@@ -46,13 +49,38 @@ describe('publisher', function() {
 
 	describe('_helper', function() {
 
-		it('should call s3 with correct options', function() {
+		it('should call s3Factory with correct options', function() {
 			var expectedOptions = {
 				headers: {},
 				uploadPath: 'path/myTargetDirectory/dev/myDevTag'
 			};
 			publisher._helper(options, 'path/').getStream();
-			expect(s3).to.be.calledWith(sinon.match.any, expectedOptions);
+			expect(s3Factory).to.be.calledWith(sinon.match.any, expectedOptions);
+		});
+
+		it('should stream files to s3', function(done) {
+			var options = {
+				targetDirectory: 'myTargetDirectory',
+				devTag: 'myDevTag',
+				creds: {
+					key: 'key',
+					secret: 'secret'
+				}
+			};
+			const stream = publisher._helper(options, 'path/').getStream();
+
+			vfs.src('./test/support/file.html')
+				.pipe(stream)
+				.on('end', () => {
+					try {
+						expect(s3).to.be.calledWith(sinon.match({ _isVinyl: true }));
+						done();
+					} catch (e) {
+						done(e);
+					}
+				})
+				.on('error', done);
+
 		});
 
 	});
