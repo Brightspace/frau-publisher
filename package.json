@@ -14,10 +14,10 @@
   ],
   "scripts": {
     "pretest": "npm run lint",
-    "test": "nyc -i source-map-support --produce-source-map mocha -t .nyc_output/unit test/*.js",
-    "test-secure": "nyc -i source-map-support --produce-source-map -t .nyc_output/secure mocha test/secure/*.js",
+    "test": "nyc -i source-map-support --produce-source-map mocha",
+    "test-secure": "nyc --no-clean -i source-map-support --produce-source-map mocha test/secure/*.js",
     "lint": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov -t .nyc_output/* | coveralls"
+    "report-coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -50,8 +50,8 @@
     "through2": "^3.0.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.503.0",
     "chalk": "^2.0.0",
-    "knox": "^0.9.1",
     "mime-types": "^2.1.21",
     "promised-method": "^1.0.0",
     "pump": "^3.0.0",
