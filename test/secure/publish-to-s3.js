@@ -12,7 +12,7 @@ var frauPublisher = require('../../src/publisher'),
 	pump = require('pump');
 
 describe('publisher', /* @this */ function() {
-	this.timeout(10000);
+	this.timeout(180000);
 
 	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
 		it('should publish new file (' + testVariant.name + ')', function(cb) {
@@ -92,7 +92,7 @@ describe('publisher', /* @this */ function() {
 });
 
 describe('cli', /* @this */ function() {
-	this.timeout(10000);
+	this.timeout(180000);
 
 	it('should publish successfully', function(done) {
 		const glob = './test/test-files/**';
