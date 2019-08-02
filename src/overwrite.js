@@ -21,25 +21,20 @@ function checkFilesExist(options) {
 		secretAccessKey: creds.secret
 	});
 
-	return new Promise((resolve, reject) => {
-		const params = {
-			Bucket: creds.bucket,
-			MaxKeys: 1,
-			Prefix: options.getUploadPath()
-		};
-		client.listObjects(params, function(err, data) {
-			if (err) {
-				return reject(err);
-			}
+	const params = {
+		Bucket: creds.bucket,
+		MaxKeys: 1,
+		Prefix: options.getUploadPath()
+	};
 
+	return client
+		.listObjectsV2(params)
+		.promise()
+		.then(data => {
 			if (data.Contents.length !== 0) {
 				// files exist in s3 folder
 				const errorMsg = `No files transferred because files already exists in ${options.getUploadPath()}`;
-				return reject(new Error(errorMsg));
+				throw new Error(errorMsg);
 			}
-
-			// no files exist in s3 folder
-			resolve();
 		});
-	});
 }

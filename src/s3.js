@@ -64,19 +64,16 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			Key: uploadPath
 		};
 
-		return new Promise((resolve, reject) => {
-			client.upload(params, function(err) {
-
-				if (err) {
-					let message = chalk.red(`[FAILED] ${file.path} -> ${uploadPath}`);
-					message += `\n\t${err.message}`;
-					return reject(new Error(message));
-				}
-
+		return client
+			.upload(params)
+			.promise()
+			.then(() => {
 				console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`)); // eslint-disable-line no-console
-				resolve(file);
-
+				return file;
+			}, err => {
+				let message = chalk.red(`[FAILED] ${file.path} -> ${uploadPath}`);
+				message += `\n\t${err.message}`;
+				throw new Error(message);
 			});
-		});
 	});
 };
