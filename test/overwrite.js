@@ -30,19 +30,7 @@ describe('overwrite', function() {
 		);
 	});
 
-	it('should handle bad data.Code error from knox', function() {
-		setUpList(null, { Code: 'some-code', Message: 'some-message' });
-
-		return overwrite(optsValidator)().then(
-			() => { throw new Error('Should reject'); },
-			err => expect(err)
-				.to.be.an.instanceof(Error)
-				.and.to.have.a.property('message')
-				.that.equals('some-message')
-		);
-	});
-
-	it('should handle err from knox', function() {
+	it('should handle err from S3', function() {
 		var error = new Error('some-message');
 		setUpList(error);
 
@@ -52,7 +40,7 @@ describe('overwrite', function() {
 		);
 	});
 
-	it('should only get knox client once for multiple files', function() {
+	it('should only get S3 client once for multiple files', function() {
 		setUpEmptyFolder();
 
 		const overwriteCheck = overwrite(optsValidator);
@@ -64,7 +52,7 @@ describe('overwrite', function() {
 			});
 	});
 
-	it('should only call knox#list once for multiple files', function() {
+	it('should only call listObjectsV2 once for multiple files', function() {
 		setUpEmptyFolder();
 
 		const overwriteCheck = overwrite(optsValidator);
@@ -72,13 +60,13 @@ describe('overwrite', function() {
 		return Promise
 			.all([overwriteCheck(), overwriteCheck()])
 			.then(() => {
-				expect(client.list).to.have.been.calledOnce;
+				expect(client.listObjectsV2).to.have.been.calledOnce;
 			});
 	});
 
 	beforeEach(function() {
 		client = {
-			list: function() {}
+			listObjectsV2: function() {}
 		};
 
 		createClient = sinon.spy(function() {
@@ -86,8 +74,8 @@ describe('overwrite', function() {
 		});
 
 		overwrite = proxyquire('../src/overwrite', {
-			knox: {
-				createClient: createClient
+			'aws-sdk': {
+				S3: createClient
 			}
 		});
 
@@ -98,9 +86,14 @@ describe('overwrite', function() {
 	});
 
 	function setUpList(err, data) {
-		sinon.stub(client, 'list').callsFake(function(object, cb) {
-			cb(err, data);
-		});
+		const p = err
+			? Promise.reject(err)
+			: Promise.resolve(data);
+		sinon
+			.stub(client, 'listObjectsV2')
+			.returns({
+				promise: () => p
+			});
 	}
 
 	function setUpEmptyFolder() {

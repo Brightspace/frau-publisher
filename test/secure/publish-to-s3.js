@@ -12,7 +12,7 @@ var frauPublisher = require('../../src/publisher'),
 	pump = require('pump');
 
 describe('publisher', /* @this */ function() {
-	this.timeout(10000);
+	this.timeout(180000);
 
 	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
 		it('should publish new file (' + testVariant.name + ')', function(cb) {
@@ -23,7 +23,9 @@ describe('publisher', /* @this */ function() {
 
 			testVariant.fn(glob)
 				.pipe(publisher.getStream())
-				.on('error', cb)
+				.on('error', function(err) {
+					cb(err);
+				})
 				.on('end', function() {
 					Promise.all([
 						assertUploaded(glob, devtag),
@@ -35,6 +37,7 @@ describe('publisher', /* @this */ function() {
 
 								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
 								if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
+								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
 
 								resolve();
 							});
@@ -47,6 +50,7 @@ describe('publisher', /* @this */ function() {
 
 								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
 								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
+								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
 
 								resolve();
 							});
@@ -59,6 +63,7 @@ describe('publisher', /* @this */ function() {
 
 								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
 								if (res.headers['content-type'] !== 'font/woff') return reject(new Error(res.headers['content-type']));
+								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
 								resolve();
 							});
 						})
@@ -87,7 +92,7 @@ describe('publisher', /* @this */ function() {
 });
 
 describe('cli', /* @this */ function() {
-	this.timeout(10000);
+	this.timeout(180000);
 
 	it('should publish successfully', function(done) {
 		const glob = './test/test-files/**';
