@@ -37,7 +37,7 @@
   "devDependencies": {
     "chai": "^4",
     "coveralls": "^3",
-    "eslint": "^5",
+    "eslint": "^6.2.0",
     "eslint-config-brightspace": "^0.6",
     "gulp": "^4",
     "mocha": "^6",
