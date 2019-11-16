@@ -58,6 +58,6 @@
     "semver": "^6",
     "through2-concurrent": "^2",
     "vinyl-fs": "^3",
-    "yargs": "^14"
+    "yargs": "^15.0.1"
   }
 }
