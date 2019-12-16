@@ -55,7 +55,7 @@
     "mime-types": "^2",
     "promised-method": "^1",
     "pump": "^3",
-    "semver": "^6",
+    "semver": "^7",
     "through2-concurrent": "^2",
     "vinyl-fs": "^3",
     "yargs": "^15"
