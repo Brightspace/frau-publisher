@@ -41,7 +41,7 @@
     "eslint-config-brightspace": "^0.6",
     "gulp": "^4",
     "mocha": "^6",
-    "nyc": "^14",
+    "nyc": "^15.0.0",
     "proxyquire": "^2",
     "request": "^2",
     "sinon": "^7",
