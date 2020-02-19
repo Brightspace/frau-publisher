@@ -44,7 +44,7 @@
     "nyc": "^15",
     "proxyquire": "^2",
     "request": "^2",
-    "sinon": "^9.0.0",
+    "sinon": "^9",
     "sinon-chai": "^3",
     "source-map-support": "^0.5",
     "through2": "^3"
