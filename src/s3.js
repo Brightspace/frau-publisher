@@ -25,12 +25,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 
 	opt.headers = opt.headers || {};
 
-	const client = new AWS.S3({
-		accessKeyId: knoxOpt.key,
-		apiVersion: '2006-03-01',
-		secretAccessKey: knoxOpt.secret,
-		sessionToken: knoxOpt.sessionToken
-	});
+	const client = new AWS.S3(knoxOpt);
 
 	return promised(function s3Uploader(file) {
 		if (!file.isBuffer()) {
@@ -57,7 +52,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 		const params = {
 			ACL: 'public-read',
 			Body: file.contents,
-			Bucket: knoxOpt.bucket,
+			Bucket: 'd2lprodcdn',
 			CacheControl: 'public,max-age=31536000,immutable',
 			ContentEncoding: headers['content-encoding'],
 			ContentLength: file.contents.length,

@@ -97,35 +97,10 @@ describe('options validator', function() {
 
 	describe('creds', function() {
 
-		it('should throw with no credentials', function() {
-			var options = optionsValidator({ targetDirectory: 'myTargetDirectory', devTag: 'tag' });
-			expect(function() {
-				options.getCreds();
-			}).to.throw('Missing credentials');
-		});
-
-		it('should throw with no credentials key', function() {
-			var options = optionsValidator(
-				{ targetDirectory: 'myTargetDirectory', devTag: 'tag', creds: {} }
-			);
-			expect(function() {
-				options.getCreds();
-			}).to.throw('Missing credential key');
-		});
-
-		it('should throw with no credentials secret', function() {
-			var options = optionsValidator(
-				{ targetDirectory: 'myTargetDirectory', devTag: 'devTag', creds: { key: 'key' } }
-			);
-			expect(function() {
-				options.getCreds();
-			}).to.throw('Missing credential secret');
-		});
-
 		it('should return specified creds', function() {
 
-			expect(validOptions.getCreds().key).to.equal('myKey');
-			expect(validOptions.getCreds().secret).to.equal('mySecret');
+			expect(validOptions.getCreds().accessKeyId).to.equal('myKey');
+			expect(validOptions.getCreds().secretAccessKey).to.equal('mySecret');
 		});
 
 	});
