@@ -109,6 +109,27 @@ describe('publisher', function() {
 
 		});
 
+		it('should stream files to s3 with no credentials', function(done) {
+			var options = {
+				targetDirectory: 'myTargetDirectory',
+				devTag: 'myDevTag'
+			};
+			const stream = publisher._helper(options, 'path/').getStream();
+
+			vfs.src('./test/support/file.html')
+				.pipe(stream)
+				.on('end', () => {
+					try {
+						expect(s3).to.be.calledWith(sinon.match({ _isVinyl: true }));
+						done();
+					} catch (e) {
+						done(e);
+					}
+				})
+				.on('error', done);
+
+		});
+
 	});
 
 });
