@@ -65,6 +65,7 @@ module.exports = function(opts) {
 			return {
 				key: opts.creds.key,
 				secret: opts.creds.secret,
+				sessionToken: opts.creds.sessionToken,
 				bucket: 'd2lprodcdn'
 			};
 		},

@@ -16,6 +16,7 @@ const argv = yargs
 	.alias('k', 'key')
 	.alias('s', 'secret')
 	.alias('v', 'version')
+	.alias('st', 'sessiontoken')
 	.argv;
 
 const opts = optionsProvider.getOptions(argv);
@@ -36,6 +37,7 @@ console.log(chalk.green('Publish options:\n\n') + chalk.grey(
 		'   Files: ' + opts.files + '\n' +
 		'   Publish key: ' + opts.creds.key + '\n' +
 		'   Publish secret: ' + (opts.creds.secret ? '[secret]' : 'undefined') + '\n' +
+		'   Publish session token: ' + (opts.creds.sessionToken ? '[sessiontoken]' : 'undefined') + '\n' +
 		'   Dev tag: ' + opts.devTag + '\n' +
 		'   Version: ' + opts.version + '\n'
 	));
