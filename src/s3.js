@@ -28,7 +28,8 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 	const client = new AWS.S3({
 		accessKeyId: knoxOpt.key,
 		apiVersion: '2006-03-01',
-		secretAccessKey: knoxOpt.secret
+		secretAccessKey: knoxOpt.secret,
+		sessionToken: knoxOpt.sessionToken
 	});
 
 	return promised(function s3Uploader(file) {

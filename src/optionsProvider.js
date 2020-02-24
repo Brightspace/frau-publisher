@@ -13,6 +13,7 @@ module.exports = {
 	},
 	getKey: function(argv) {
 		return argv.key ||
+			process.env[argv.accesskeyvar] ||
 			process.env.npm_package_config_frauPublisher_creds_key;
 	},
 	getSecret: function(argv) {
@@ -20,6 +21,10 @@ module.exports = {
 			process.env[argv.secretvar] ||
 			process.env.npm_package_config_frauPublisher_creds_secret ||
 			process.env[process.env.npm_package_config_frauPublisher_creds_secretVar];
+	},
+	getSessionToken: function(argv) {
+		return argv.sessiontoken ||
+			process.env[argv.sessiontokenvar];
 	},
 	getModuleType: function(argv) {
 		return argv.moduletype  ||
@@ -29,7 +34,8 @@ module.exports = {
 		return {
 			creds: {
 				key: this.getKey(argv),
-				secret: this.getSecret(argv)
+				secret: this.getSecret(argv),
+				sessionToken: this.getSessionToken(argv)
 			},
 			devTag: this.getDevTag(argv),
 			files: this.getFiles(argv),
