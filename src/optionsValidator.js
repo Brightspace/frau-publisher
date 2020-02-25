@@ -52,22 +52,23 @@ module.exports = function(opts) {
 		},
 
 		getCreds: function() {
-			validateOpts(opts);
-			if (!opts.creds) {
-				throw new Error('Missing credentials');
-			}
-			if (!opts.creds.key) {
-				throw new Error('Missing credential key');
-			}
-			if (!opts.creds.secret) {
-				throw new Error('Missing credential secret');
-			}
-			return {
-				key: opts.creds.key,
-				secret: opts.creds.secret,
-				sessionToken: opts.creds.sessionToken,
-				bucket: 'd2lprodcdn'
+			var creds = {
+				apiVersion: '2006-03-01'
 			};
+			if (!opts.creds) {
+				return creds;
+			}
+			if (opts.creds.key) {
+				creds.accessKeyId = opts.creds.key;
+			}
+			if (opts.creds.secret) {
+				creds.secretAccessKey = opts.creds.secret;
+			}
+			if (opts.creds.sessionToken) {
+				creds.sessionToken = opts.creds.sessionToken;
+			}
+
+			return creds;
 		},
 
 		getUploadPath: function() {

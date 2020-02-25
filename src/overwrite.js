@@ -15,14 +15,10 @@ module.exports = function overwriteCheckFactory(options) {
 function checkFilesExist(options) {
 
 	const creds = options.getCreds();
-	const client = new AWS.S3({
-		accessKeyId: creds.key,
-		apiVersion: '2006-03-01',
-		secretAccessKey: creds.secret
-	});
+	const client = new AWS.S3(creds);
 
 	const params = {
-		Bucket: creds.bucket,
+		Bucket: 'd2lprodcdn',
 		MaxKeys: 1,
 		Prefix: options.getUploadPath()
 	};
