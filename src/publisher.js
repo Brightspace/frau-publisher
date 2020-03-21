@@ -3,6 +3,7 @@
 const throughConcurrent = require('through2-concurrent');
 
 const compress = require('./compression/gzip');
+const isCompressibleFile = require('./compression/is-compressible');
 const optionsProvider = require('./optionsProvider');
 const optionsValidator = require('./optionsValidator');
 const overwrite = require('./overwrite');
@@ -35,7 +36,7 @@ function helper(opts, initialPath) {
 						cb();
 					};
 
-					if (compress._isCompressibleFile(file)) {
+					if (isCompressibleFile(file)) {
 						return compressionTransform(file).then(push, cb);
 					}
 

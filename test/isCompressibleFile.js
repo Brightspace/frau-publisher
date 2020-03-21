@@ -1,8 +1,7 @@
 'use strict';
 
 var fs = require('fs'),
-	isCompressibleFile = require('../src/compression/gzip')
-		._isCompressibleFile,
+	isCompressibleFile = require('../src/compression/is-compressible'),
 	path = require('path');
 
 var compressibleFiles = [
