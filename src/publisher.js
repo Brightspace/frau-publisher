@@ -25,23 +25,24 @@ function helper(opts, initialPath) {
 			const otherTransform = getOtherTransform();
 
 			const overwriteCheck = overwrite(options);
-			return throughConcurrent.obj(/* @this */ function(file, _, cb) {
-				overwriteCheck().then(() => {
+			return throughConcurrent.obj(/* @this */ async function(file, _, cb) {
+				try {
+					await overwriteCheck();
+
 					if (file.base[file.base.length - 1] === '/') {
 						file.base = file.base.substring(0, file.base.length - 1);
 					}
 
-					const push = file => {
-						this.push(file);
-						cb();
-					};
-
 					if (isCompressibleFile(file)) {
-						return gzipTransform(file).then(push, cb);
+						this.push(await gzipTransform(file));
+					} else {
+						this.push(await otherTransform(file));
 					}
 
-					otherTransform(file).then(push, cb);
-				}, cb);
+					cb();
+				} catch (err) {
+					cb(err);
+				}
 			}).resume();
 
 			function getGzipTransform() {
