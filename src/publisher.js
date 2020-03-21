@@ -2,7 +2,7 @@
 
 const throughConcurrent = require('through2-concurrent');
 
-const compress = require('./compression/gzip');
+const gzip = require('./compression/gzip');
 const isCompressibleFile = require('./compression/is-compressible');
 const optionsProvider = require('./optionsProvider');
 const optionsValidator = require('./optionsValidator');
@@ -21,7 +21,7 @@ function helper(opts, initialPath) {
 				uploadPath: options.getUploadPath()
 			};
 
-			const compressionTransform = getCompressionTransform();
+			const gzipTransform = getGzipTransform();
 			const otherTransform = getOtherTransform();
 
 			const overwriteCheck = overwrite(options);
@@ -37,21 +37,21 @@ function helper(opts, initialPath) {
 					};
 
 					if (isCompressibleFile(file)) {
-						return compressionTransform(file).then(push, cb);
+						return gzipTransform(file).then(push, cb);
 					}
 
 					otherTransform(file).then(push, cb);
 				}, cb);
 			}).resume();
 
-			function getCompressionTransform() {
+			function getGzipTransform() {
 				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
 				s3Options.headers['content-encoding'] = 'gzip';
 
 				const upload = s3(options.getCreds(), s3Options);
 
-				return function compressionTransform(file) {
-					return compress(file).then(upload);
+				return function gzipTransform(file) {
+					return gzip(file).then(upload);
 				};
 			}
 
