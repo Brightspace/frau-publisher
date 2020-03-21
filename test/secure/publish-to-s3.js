@@ -43,12 +43,36 @@ describe('publisher', /* @this */ function() {
 							});
 						}),
 						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.html.br', function(err, res) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+
+								if (res.headers['content-encoding'] !== 'br') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
+								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
+
+								resolve();
+							});
+						}),
+						new Promise(function(resolve, reject) {
 							request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
 								if (err) return reject(err);
 								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
 								if (body !== fs.readFileSync('./test/test-files/test.svg', 'utf8')) return reject(new Error(body));
 
 								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
+								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
+
+								resolve();
+							});
+						}),
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'test.svg.br', function(err, res) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+
+								if (res.headers['content-encoding'] !== 'br') return reject(new Error(res.headers['content-encoding']));
 								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
 								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
 

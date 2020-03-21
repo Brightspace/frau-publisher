@@ -34,7 +34,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 
 		const base = replaceWindowsSlash(file.base);
 		const path = replaceWindowsSlash(file.path);
-		const uploadPath = path.replace(base, opt.uploadPath);
+		let uploadPath = path.replace(base, opt.uploadPath);
 
 		const headers = JSON.parse(JSON.stringify(opt.headers));
 
@@ -47,6 +47,10 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			if (charset) {
 				headers['Content-Type'] += `; charset=${charset.toLowerCase()}`;
 			}
+		}
+
+		if (headers['content-encoding'] === 'br') {
+			uploadPath += '.br';
 		}
 
 		const params = {

@@ -2,6 +2,7 @@
 
 const throughConcurrent = require('through2-concurrent');
 
+const brotli = require('./compression/brotli');
 const gzip = require('./compression/gzip');
 const isCompressibleFile = require('./compression/is-compressible');
 const optionsProvider = require('./optionsProvider');
@@ -21,6 +22,7 @@ function helper(opts, initialPath) {
 				uploadPath: options.getUploadPath()
 			};
 
+			const brotliTransform = getBrotliTransform();
 			const gzipTransform = getGzipTransform();
 			const otherTransform = getOtherTransform();
 
@@ -34,6 +36,7 @@ function helper(opts, initialPath) {
 					}
 
 					if (isCompressibleFile(file)) {
+						this.push(await brotliTransform(file));
 						this.push(await gzipTransform(file));
 					} else {
 						this.push(await otherTransform(file));
@@ -44,6 +47,17 @@ function helper(opts, initialPath) {
 					cb(err);
 				}
 			}).resume();
+
+			function getBrotliTransform() {
+				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+				s3Options.headers['content-encoding'] = 'br';
+
+				const upload = s3(options.getCreds(), s3Options);
+
+				return async function brotliTransform(file) {
+					return upload(await brotli(file));
+				};
+			}
 
 			function getGzipTransform() {
 				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));

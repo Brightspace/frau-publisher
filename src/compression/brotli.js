@@ -1,12 +1,10 @@
 'use strict';
 
-const zlib = require('zlib');
+const { brotliCompress, constants } = require('zlib');
 
 const promised = require('promised-method');
 
 const isCompressibleFile = require('./is-compressible');
-
-const COMPRESSION_LEVEL = (zlib.constants || zlib).Z_BEST_COMPRESSION;
 
 module.exports = promised(function compressor(file) {
 	if (!isCompressibleFile(file)) {
@@ -14,8 +12,12 @@ module.exports = promised(function compressor(file) {
 	}
 
 	return new Promise((resolve, reject) => {
-		zlib.gzip(file.contents, {
-			level: COMPRESSION_LEVEL
+		brotliCompress(file.contents, {
+			params: {
+				[constants.BROTLI_PARAM_MODE]: constants.BROTLI_MODE_TEXT,
+				[constants.BROTLI_PARAM_QUALITY]: constants.BROTLI_MAX_QUALITY,
+				[constants.BROTLI_PARAM_SIZE_HINT]: Buffer.byteLength(file.contents),
+			},
 		}, (err, result) => {
 			if (err) {
 				return reject(err);
