@@ -2,7 +2,7 @@
 
 const throughConcurrent = require('through2-concurrent');
 
-const compress = require('./compressor');
+const compress = require('./compression/gzip');
 const optionsProvider = require('./optionsProvider');
 const optionsValidator = require('./optionsValidator');
 const overwrite = require('./overwrite');

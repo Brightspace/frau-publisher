@@ -6,9 +6,9 @@ var fs = require('fs'),
 var through = require('through2'),
 	vfs = require('vinyl-fs');
 
-var compressor = require('../src/compressor');
+var compressor = require('../src/compression/gzip');
 
-describe('compressor', function() {
+describe('gzip', function() {
 
 	function compressionStream() {
 		return through.obj(/* @this */function(file, _, cb) {
