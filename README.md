@@ -20,6 +20,8 @@ npm install frau-publisher
 
 The FRAU publisher can be run either directly on the console CLI (assuming dependencies are installed), or specified as a script in `package.json`.  Arguments may be passed directly on the CLI, or may be configured in `package.json`.  In addition, the publish key secret, dev tag, and version can either be explicitly specified, or can be read from the build environmnt.
 
+To get credentials for your CI job, use [iam-build-tokens](https://github.com/Brightspace/iam-build-tokens/blob/master/README.md).
+
 Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
 
 ```javascript
