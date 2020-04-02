@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2",
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "mime-types": "^2",
     "promised-method": "^1",
     "pump": "^3",
