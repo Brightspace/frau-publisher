@@ -20,13 +20,13 @@ npm install frau-publisher
 
 The FRAU publisher can be run either directly on the console CLI (assuming dependencies are installed), or specified as a script in `package.json`.  Arguments may be passed directly on the CLI, or may be configured in `package.json`.  In addition, the publish key secret, dev tag, and version can either be explicitly specified, or can be read from the build environmnt.
 
+To get credentials for your CI job, use [iam-build-tokens](https://github.com/Brightspace/iam-build-tokens/blob/master/README.md).
+
 Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
 
 ```javascript
 frau-publisher --moduletype|-m app|lib 
                --targetdir|-t 'cdn directory' 
-               --key|-k yourkey 
-               --secretvar S3_SECRET 
                --devtagvar TRAVIS_COMMIT 
                --versionvar TRAVIS_TAG 
                --files|-f './dist/**'
@@ -41,10 +41,6 @@ frau-publisher --moduletype|-m app|lib
     "files": "./dist/**",
     "moduleType": "app|lib",
     "targetDirectory": "cdn directory",
-    "creds": {
-      "key": "your key",
-      "secretVar": "S3_SECRET"
-    },
     "devTagVar": "TRAVIS_COMMIT",
     "versionVar": "TRAVIS_TAG"
   }
@@ -93,10 +89,6 @@ var publisher = require('frau-publisher');
 
 var options = {
 	targetDirectory: 'cdn directory',
-	creds: {
-		"key": "your key",
-		"secret": "your secret"
-	},
 	devTag: 'your tag'
 };
 
@@ -125,10 +117,6 @@ In your `options` variable, set the `version` tag with a valid version:
 ```javascript
 var options = {
 	targetDirectory: 'cdn directory',
-	creds: {
-		"key": "your key",
-		"secret": "your secret"
-	},
 	version: '0.0.1'
 };
 ```
@@ -138,7 +126,7 @@ var options = {
 | Property | Description |
 | --------------- | ----------- |
 | targetDirectory | Unique target directory where the app or library will be published. |
-| creds           | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. |
+| creds           | Credentials key/secret for the specified app. Do **not** commit the secret to source control. Either load it from a file (which is excluded from source control) or use an environment or command-line variable. Prefer to get these from the standard environment variables. |
 | devTag          | The development version of the app or library. |
 | version         | The released/production version of the app or library. Unlike devTag, this property must follow the guidelines in [Semantic Versioning](http://semver.org). |
 
