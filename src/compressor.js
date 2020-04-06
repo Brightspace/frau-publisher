@@ -10,6 +10,7 @@ const compressibles = [
 	'.json',
 	'.css',
 	'.html',
+	'.xml',
 	'.svg',
 	'.ttf',
 	'.ico'
