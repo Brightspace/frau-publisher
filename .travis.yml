@@ -18,7 +18,3 @@ deploy:
     tags: true
     repo: Brightspace/frau-publisher
     node: 10
-env:
-  global:
-    - CREDS_KEY=***REMOVED***
-    - secure: eAmYMiNQEr4UStxhMcdRwodlXM21eHd2itBx3hTRVqbDwnbbcjN3dcz94bc2L9Vvi6Bbo21nhTZh5NIgkyGvZQe6JuPer7tPO4AondWyxqCmAOF0r2fz7fOvQvnF3HPgMmDLEPfZUe6TL0xXChXHjgPZ+EN3SfUHdU+f1FzxyIE=

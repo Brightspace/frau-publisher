@@ -102,8 +102,9 @@ describe('cli', /* @this */ function() {
 			'--moduletype', 'app',
 			'--targetdir', 'frau-publisher-test',
 			'--files', glob,
-			'--key', process.env.CREDS_KEY,
-			'--secretvar', 'CREDS_SECRET',
+			'--accesskeyvar', 'AWS_ACCESS_KEY_ID',
+			'--secretvar', 'AWS_SECRET_ACCESS_KEY',
+			'--sessiontokenvar', 'AWS_SESSION_TOKEN',
 			'--devtag', devtag
 		])
 			.on('error', done)
@@ -125,8 +126,9 @@ function createPublisher(devTag) {
 	return frauPublisher.app({
 		targetDirectory: 'frau-publisher-test',
 		creds: {
-			key: process.env.CREDS_KEY,
-			secret: process.env.CREDS_SECRET
+			key: process.env.AWS_ACCESS_KEY_ID,
+			secret: process.env.AWS_SECRET_ACCESS_KEY,
+			sessionToken: process.env.AWS_SESSION_TOKEN
 		},
 		devTag: devTag
 	});
