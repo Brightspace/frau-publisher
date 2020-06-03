@@ -66,18 +66,6 @@ describe('publisher', /* @this */ function() {
 								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
 								resolve();
 							});
-						}),
-						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'frau-publisher-digest.json', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-
-
-								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'application/json') return reject(new Error(res.headers['content-type']));
-								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
-								resolve();
-							});
 						})
 					])
 						.then(function() { cb(); }, cb);
@@ -152,7 +140,7 @@ function assertUploaded(glob, tag) {
 	return new Promise((resolve, reject) => {
 
 		const digestLocation = uploadBase + 'frau-publisher-digest.json';
-		request.get(digestLocation, { gzip: true }, function (err, res, body) {
+		request.get(digestLocation, { gzip: true }, function(err, res, body) {
 			if (err) return reject(err);
 			if (res.statusCode !== 200) return reject(new Error(`failed to fetch digest: ${digestLocation}, ${{ statusCode: res.statusCode }}`));
 
@@ -173,8 +161,9 @@ function assertUploaded(glob, tag) {
 							return cb(new Error(`${res.statusCode}: ${location}`));
 						}
 
-						if (digest[location] === undefined) {
-							return cb(new Error(`file missing from digest: ${location}, ${{ digest }}`));
+						const digestKey = file.path.replace(file.base + '/', '');
+						if (digest[digestKey] === undefined) {
+							return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
 						}
 
 						cb();
