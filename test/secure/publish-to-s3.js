@@ -1,6 +1,7 @@
 'use strict';
 
 var child_process = require('child_process'),
+	crypto = require('crypto'),
 	fs = require('fs');
 
 const throughConcurrent = require('through2-concurrent');
@@ -138,26 +139,46 @@ function assertUploaded(glob, tag) {
 	const uploadBase = createPublisher(tag).getLocation();
 
 	return new Promise((resolve, reject) => {
-		pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
-			if (file.isDirectory()) { return cb(); }
 
-			const location = file.path.replace(file.base + '/', uploadBase);
+		const digestLocation = uploadBase + 'frau-publisher-digest.json';
+		request.get(digestLocation, { gzip: true }, function(err, res, body) {
+			if (err) return reject(err);
+			if (res.statusCode !== 200) return reject(new Error(`failed to fetch digest: ${digestLocation}, ${{ statusCode: res.statusCode }}`));
 
-			request
-				.get(location, (err, res) => {
-					if (err) {
-						return cb(err);
-					}
+			const digest = JSON.parse(body);
 
-					if (res.statusCode !== 200) {
-						return cb(new Error(`${res.statusCode}: ${location}`));
-					}
+			pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
+				if (file.isDirectory()) { return cb(); }
 
-					cb();
-				});
-		}), err => {
-			if (err) { return reject(err); }
-			resolve();
-		}).resume();
+				const location = file.path.replace(file.base + '/', uploadBase);
+
+				request
+					.get(location, { encoding: null }, (err, res, body) => {
+						if (err) {
+							return cb(err);
+						}
+
+						if (res.statusCode !== 200) {
+							return cb(new Error(`${res.statusCode}: ${location}`));
+						}
+
+						const digestKey = file.path.replace(file.base + '/', '');
+						const digestEntry = digest[digestKey];
+						if (digestEntry === undefined) {
+							return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
+						}
+
+						const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
+						if (bodyHash !== digestEntry) {
+							return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+						}
+
+						cb();
+					});
+			}), err => {
+				if (err) { return reject(err); }
+				resolve();
+			}).resume();
+		});
 	});
 }

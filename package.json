@@ -57,6 +57,7 @@
     "pump": "^3",
     "semver": "^7",
     "through2-concurrent": "^2",
+    "vinyl": "^2.2.0",
     "vinyl-fs": "^3",
     "yargs": "^15"
   }

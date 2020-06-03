@@ -1,5 +1,7 @@
 'use strict';
 
+const crypto = require('crypto');
+
 const AWS = require('aws-sdk');
 const chalk = require('chalk');
 const mime = require('mime-types');
@@ -27,7 +29,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 
 	const client = new AWS.S3(knoxOpt);
 
-	return promised(function s3Uploader(file) {
+	const uploader = promised(function s3Uploader(file) {
 		if (!file.isBuffer()) {
 			return Promise.resolve(file);
 		}
@@ -35,6 +37,9 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 		const base = replaceWindowsSlash(file.base);
 		const path = replaceWindowsSlash(file.path);
 		const uploadPath = path.replace(base, opt.uploadPath);
+		const digestKey = path.substring(base.length + 1);
+
+		uploader.digest[digestKey] = crypto.createHash('sha256').update(file.contents).digest('hex');
 
 		const headers = JSON.parse(JSON.stringify(opt.headers));
 
@@ -65,6 +70,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			.promise()
 			.then(() => {
 				console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`)); // eslint-disable-line no-console
+
 				return file;
 			}, err => {
 				let message = chalk.red(`[FAILED] ${file.path} -> ${uploadPath}`);
@@ -72,4 +78,8 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 				throw new Error(message);
 			});
 	});
+
+	uploader.digest = {};
+
+	return uploader;
 };
