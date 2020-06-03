@@ -47,8 +47,8 @@ function helper(opts, initialPath) {
 				const digestJson = JSON.stringify(mergedDigest);
 
 				const file = new Vinyl({
-					base: '/',
-					path: '/frau-publisher-digest.json',
+					base: '/some-dir',
+					path: '/some-dir/frau-publisher-digest.json',
 					contents: Buffer.from(digestJson, 'utf8')
 				});
 
