@@ -153,7 +153,7 @@ function assertUploaded(glob, tag) {
 				const location = file.path.replace(file.base + '/', uploadBase);
 
 				request
-					.get(location, (err, res, body) => {
+					.get(location, { gzip: false }, (err, res, body) => {
 						if (err) {
 							return cb(err);
 						}
