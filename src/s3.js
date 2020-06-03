@@ -38,6 +38,8 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 		const path = replaceWindowsSlash(file.path);
 		const uploadPath = path.replace(base, opt.uploadPath);
 
+		console.log(base, path, uploadPath);
+
 		const headers = JSON.parse(JSON.stringify(opt.headers));
 
 		if (!headers['Content-Type']) {
