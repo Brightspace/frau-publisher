@@ -151,9 +151,10 @@ function assertUploaded(glob, tag) {
 
 	return new Promise((resolve, reject) => {
 
-		request.get(uploadBase + 'frau-publisher-digest.json', { gzip: true }, function (err, res, body) {
+		const digestLocation = uploadBase + 'frau-publisher-digest.json';
+		request.get(digestLocation, { gzip: true }, function (err, res, body) {
 			if (err) return reject(err);
-			if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+			if (res.statusCode !== 200) return reject(new Error(`failed to fetch digest: ${digestLocation}, ${{ statusCode: res.statusCode }}`));
 
 			const digest = JSON.parse(body);
 
