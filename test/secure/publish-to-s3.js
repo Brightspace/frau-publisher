@@ -1,6 +1,7 @@
 'use strict';
 
 var child_process = require('child_process'),
+	crypto = require('crypto'),
 	fs = require('fs');
 
 const throughConcurrent = require('through2-concurrent');
@@ -152,7 +153,7 @@ function assertUploaded(glob, tag) {
 				const location = file.path.replace(file.base + '/', uploadBase);
 
 				request
-					.get(location, (err, res) => {
+					.get(location, (err, res, body) => {
 						if (err) {
 							return cb(err);
 						}
@@ -162,8 +163,14 @@ function assertUploaded(glob, tag) {
 						}
 
 						const digestKey = file.path.replace(file.base + '/', '');
-						if (digest[digestKey] === undefined) {
+						const digestEntry = digest[digestKey];
+						if (digestEntry === undefined) {
 							return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
+						}
+
+						const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
+						if (bodyHash !== digestEntry) {
+							return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
 						}
 
 						cb();
