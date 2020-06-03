@@ -1,6 +1,7 @@
 'use strict';
 
 const throughConcurrent = require('through2-concurrent');
+const Vinyl = require('vinyl');
 
 const compress = require('./compressor');
 const optionsProvider = require('./optionsProvider');
@@ -41,6 +42,26 @@ function helper(opts, initialPath) {
 
 					otherTransform(file).then(push, cb);
 				}, cb);
+			}, /* @this */ function(cb) {
+				const mergedDigest = Object.assign({}, compressionTransform.digest, otherTransform.digest);
+				const digestJson = JSON.stringify(mergedDigest);
+
+				const file = new Vinyl({
+					base: '/',
+					path: '/frau-publisher-digest.json',
+					contents: Buffer.from(digestJson, 'utf8')
+				});
+
+				const push = file => {
+					this.push(file);
+					cb();
+				};
+
+				if (compress._isCompressibleFile(file)) {
+					return compressionTransform(file).then(push, cb);
+				}
+
+				otherTransform(file).then(push, cb);
 			}).resume();
 
 			function getCompressionTransform() {
@@ -49,9 +70,13 @@ function helper(opts, initialPath) {
 
 				const upload = s3(options.getCreds(), s3Options);
 
-				return function compressionTransform(file) {
+				const compressor = function compressionTransform(file) {
 					return compress(file).then(upload);
 				};
+
+				compressor.digest = upload.digest;
+
+				return compressor;
 			}
 
 			function getOtherTransform() {

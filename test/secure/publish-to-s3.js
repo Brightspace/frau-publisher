@@ -66,6 +66,18 @@ describe('publisher', /* @this */ function() {
 								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
 								resolve();
 							});
+						}),
+						new Promise(function(resolve, reject) {
+							request.get(publisher.getLocation() + 'frau-publisher-digest.json', { gzip: true }, function(err, res, body) {
+								if (err) return reject(err);
+								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
+
+
+								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
+								if (res.headers['content-type'] !== 'application/json') return reject(new Error(res.headers['content-type']));
+								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
+								resolve();
+							});
 						})
 					])
 						.then(function() { cb(); }, cb);
@@ -138,26 +150,38 @@ function assertUploaded(glob, tag) {
 	const uploadBase = createPublisher(tag).getLocation();
 
 	return new Promise((resolve, reject) => {
-		pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
-			if (file.isDirectory()) { return cb(); }
 
-			const location = file.path.replace(file.base + '/', uploadBase);
+		request.get(uploadBase + 'frau-publisher-digest.json', { gzip: true }, function (err, res, body) {
+			if (err) return reject(err);
+			if (res.statusCode !== 200) return reject(new Error(res.statusCode));
 
-			request
-				.get(location, (err, res) => {
-					if (err) {
-						return cb(err);
-					}
+			const digest = JSON.parse(body);
 
-					if (res.statusCode !== 200) {
-						return cb(new Error(`${res.statusCode}: ${location}`));
-					}
+			pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
+				if (file.isDirectory()) { return cb(); }
 
-					cb();
-				});
-		}), err => {
-			if (err) { return reject(err); }
-			resolve();
-		}).resume();
+				const location = file.path.replace(file.base + '/', uploadBase);
+
+				request
+					.get(location, (err, res) => {
+						if (err) {
+							return cb(err);
+						}
+
+						if (res.statusCode !== 200) {
+							return cb(new Error(`${res.statusCode}: ${location}`));
+						}
+
+						if (digest[location] === undefined) {
+							return cb(new Error(`file missing from digest: ${location}, ${{ digest }}`));
+						}
+
+						cb();
+					});
+			}), err => {
+				if (err) { return reject(err); }
+				resolve();
+			}).resume();
+		});
 	});
 }
