@@ -47,7 +47,7 @@
     "sinon": "^9",
     "sinon-chai": "^3",
     "source-map-support": "^0.5",
-    "through2": "^3"
+    "through2": "^4"
   },
   "dependencies": {
     "aws-sdk": "^2",
