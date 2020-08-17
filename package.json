@@ -38,7 +38,7 @@
     "chai": "^4",
     "coveralls": "^3",
     "eslint": "^6",
-    "eslint-config-brightspace": "^0.9",
+    "eslint-config-brightspace": "^0.10",
     "gulp": "^4",
     "mocha": "^7",
     "nyc": "^15",
