@@ -10,6 +10,7 @@ const vfs = require('vinyl-fs');
 const optionsProvider = require('../src/optionsProvider');
 
 const argv = yargs
+	.version(false)
 	.alias('m', 'moduletype')
 	.alias('t', 'targetdir')
 	.alias('f', 'files')
