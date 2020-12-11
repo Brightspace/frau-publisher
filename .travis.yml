@@ -15,4 +15,4 @@ deploy:
   on:
     tags: true
     repo: Brightspace/frau-publisher
-    node: 10
+    node: 11
