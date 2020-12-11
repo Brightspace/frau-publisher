@@ -151,8 +151,8 @@ This repository is configured with [EditorConfig](http://editorconfig.org) rules
 
 [npm-url]: https://npmjs.org/package/frau-publisher
 [npm-image]: https://img.shields.io/npm/v/frau-publisher.svg
-[ci-image]: https://travis-ci.org/Brightspace/frau-publisher.svg?branch=master
-[ci-url]: https://travis-ci.org/Brightspace/frau-publisher
+[ci-image]: https://api.travis-ci.com/Brightspace/frau-publisher.svg?branch=master
+[ci-url]: https://travis-ci.com/Brightspace/frau-publisher
 [coverage-image]: https://img.shields.io/coveralls/Brightspace/frau-publisher.svg
 [coverage-url]: https://coveralls.io/r/Brightspace/frau-publisher?branch=master
 [dependencies-url]: https://david-dm.org/brightspace/frau-publisher
