@@ -11,6 +11,8 @@ jobs:
         run: npm install
       - name: Lint and Test
         run: npm run test
+        env:
+          FORCE_COLOR: 3
       - name: Assume Role
         uses: Brightspace/third-party-actions@aws-actions/configure-aws-credentials
         with:
@@ -25,5 +27,6 @@ jobs:
         env:
           # cred variables set in the "Assume role" step
           AWS_DEFAULT_REGION: us-east-1
+          FORCE_COLOR: 3
       - name: Report Coverage
         run: npm run report-coverage
