@@ -1,0 +1,23 @@
+name: Release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    name: Release
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: Brightspace/third-party-actions@actions/checkout
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: Brightspace/third-party-actions@actions/setup-node
+      - name: Semantic Release
+        uses: BrightspaceUI/actions/semantic-release@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.D2L_GITHUB_TOKEN }}
+          NPM: true
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

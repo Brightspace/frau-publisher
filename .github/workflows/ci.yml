@@ -1,0 +1,29 @@
+name: CI
+on: pull_request
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Brightspace/third-party-actions@actions/checkout
+      - uses: Brightspace/third-party-actions@actions/setup-node
+      - name: Install dependencies
+        run: npm install
+      - name: Lint and Test
+        run: npm run test
+      - name: Assume Role
+        uses: Brightspace/third-party-actions@aws-actions/configure-aws-credentials
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          role-to-assume: "arn:aws:iam::771734770799:role/cdn-infrastructure-frau-publisher-test"
+          role-duration-seconds: 3600
+          aws-region: us-east-1
+      - name: Publish Tests
+        run: npm run test-secure
+        env:
+          # cred variables set in the "Assume role" step
+          AWS_DEFAULT_REGION: us-east-1
+      - name: Report Coverage
+        run: npm run report-coverage
