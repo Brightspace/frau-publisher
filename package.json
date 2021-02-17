@@ -17,7 +17,7 @@
     "test": "nyc -i source-map-support --produce-source-map mocha",
     "test-secure": "nyc --no-clean -i source-map-support --produce-source-map mocha test/secure/*.js",
     "lint": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov | coveralls"
+    "report-coverage": "nyc report --reporter=lcovonly"
   },
   "repository": {
     "type": "git",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2",
-    "chalk": "^3.0.0",
+    "chalk": "^4",
     "mime-types": "^2",
     "promised-method": "^1",
     "pump": "^3",
