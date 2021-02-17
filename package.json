@@ -17,7 +17,7 @@
     "test": "nyc -i source-map-support --produce-source-map mocha",
     "test-secure": "nyc --no-clean -i source-map-support --produce-source-map mocha test/secure/*.js",
     "lint": "eslint .",
-    "report-coverage": "nyc report --reporter=text-lcov | coveralls"
+    "report-coverage": "nyc report --reporter=lcovonly"
   },
   "repository": {
     "type": "git",

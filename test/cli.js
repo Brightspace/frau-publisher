@@ -2,7 +2,8 @@
 
 var child_process = require('child_process');
 
-describe('cli', function() {
+describe('cli', /* @this */ function() {
+	this.timeout(3000);
 	['app', 'lib'].forEach(function(moduleType) {
 		it('should fail with exit code 1 when an error occurs', function(done) {
 			var p = child_process.execFile('./bin/publishercli', [
