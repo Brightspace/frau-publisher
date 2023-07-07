@@ -27,7 +27,7 @@ module.exports = {
 			process.env[argv.sessiontokenvar];
 	},
 	getModuleType: function(argv) {
-		return argv.moduletype  ||
+		return argv.moduletype ||
 			process.env.npm_package_config_frauPublisher_moduleType;
 	},
 	getOptions: function(argv) {
