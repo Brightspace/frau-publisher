@@ -5,7 +5,7 @@ const fs = require('fs'),
 		._isCompressibleFile,
 	path = require('path');
 
-	const compressibleFiles = [
+const compressibleFiles = [
 	'file.js',
 	'file.css',
 	'file.html',
