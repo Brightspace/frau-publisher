@@ -1,12 +1,12 @@
 'use strict';
 
-var child_process = require('child_process');
+const child_process = require('child_process');
 
 describe('cli', /* @this */ function() {
 	this.timeout(3000);
 	['app', 'lib'].forEach(function(moduleType) {
 		it('should fail with exit code 1 when an error occurs', function(done) {
-			var p = child_process.execFile('./bin/publishercli', [
+			const p = child_process.execFile('./bin/publishercli', [
 				'-m', moduleType,
 				'-t', '/frau-publisher-failing-test',
 				'-f', './test/test-files/*',

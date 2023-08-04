@@ -1,12 +1,12 @@
 'use strict';
 
-var child_process = require('child_process'),
+const child_process = require('child_process'),
 	crypto = require('crypto'),
 	fs = require('fs');
 
 const throughConcurrent = require('through2-concurrent');
 
-var frauPublisher = require('../../src/publisher'),
+const frauPublisher = require('../../src/publisher'),
 	request = require('request'),
 	vfs = require('vinyl-fs'),
 	gulp = require('gulp'),
@@ -79,7 +79,7 @@ describe('publisher', /* @this */ function() {
 		//  devTag.  We could remove this dependency by publishing a file and
 		//  then trying again.  We should do this if necessary, but it didn't
 		//  start that way because it seems unnecessarily wasteful.
-		var publisher = createPublisher('overwrite-test');
+		const publisher = createPublisher('overwrite-test');
 
 		pump(vfs.src('./test/test-files/test.txt'), publisher.getStream(), err => {
 			try {
@@ -99,7 +99,7 @@ describe('cli', /* @this */ function() {
 		const glob = './test/test-files/**';
 		const devtag = Math.random().toString(16).slice(2);
 
-		var p = child_process.execFile('./bin/publishercli', [
+		const p = child_process.execFile('./bin/publishercli', [
 			'--moduletype', 'app',
 			'--targetdir', 'frau-publisher-test',
 			'--files', glob,

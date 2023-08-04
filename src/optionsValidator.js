@@ -52,7 +52,7 @@ module.exports = function(opts) {
 		},
 
 		getCreds: function() {
-			var creds = {
+			const creds = {
 				apiVersion: '2006-03-01'
 			};
 			if (!opts.creds) {

@@ -1,8 +1,8 @@
 'use strict';
 
-var optionsValidator = require('../src/optionsValidator');
+const optionsValidator = require('../src/optionsValidator');
 
-var validOptions = optionsValidator(
+const validOptions = optionsValidator(
 	{
 		targetDirectory: 'myTargetDirectory',
 		devTag: 'myDevTag',
@@ -11,7 +11,7 @@ var validOptions = optionsValidator(
 	}
 );
 
-var obsoleteValidOptions = optionsValidator(
+const obsoleteValidOptions = optionsValidator(
 	{
 		id: 'myTargetDirectory',
 		devTag: 'myDevTag',
@@ -25,12 +25,12 @@ describe('options validator', function() {
 	describe('arguments', function() {
 
 		it('should throw with undefined options', function() {
-			var options = optionsValidator();
+			const options = optionsValidator();
 			expect(function() { options.getTargetDirectory(); }).to.throw('Missing options');
 		});
 
 		it('should throw with null options', function() {
-			var options = optionsValidator(null);
+			const options = optionsValidator(null);
 			expect(function() { options.getTargetDirectory(); }).to.throw('Missing options');
 		});
 
@@ -39,7 +39,7 @@ describe('options validator', function() {
 	describe('targetDirectory', function() {
 
 		it('should throw with no targetDirectory', function() {
-			var options = optionsValidator({});
+			const options = optionsValidator({});
 			expect(function() { options.getTargetDirectory(); }).to.throw('Missing targetDirectory');
 		});
 
@@ -56,21 +56,21 @@ describe('options validator', function() {
 	describe('version', function() {
 
 		it('should throw with no devTag and no version', function() {
-			var options = optionsValidator({ targetDirectory: 'myTargetDirectory' });
+			const options = optionsValidator({ targetDirectory: 'myTargetDirectory' });
 			expect(function() {
 				options.getVersion();
 			}).to.throw('Missing version');
 		});
 
 		it('should throw with wrong semantic version', function() {
-			var options = optionsValidator({ targetDirectory: 'myTargetDirectory', version: '1.2.3.4' });
+			const options = optionsValidator({ targetDirectory: 'myTargetDirectory', version: '1.2.3.4' });
 			expect(function() {
 				options.getVersion();
 			}).to.throw('"1.2.3.4" is not a valid version number. See semver.org for more details.');
 		});
 
 		it('should return specified devTag', function() {
-			var releaseOptions = optionsValidator(
+			const releaseOptions = optionsValidator(
 				{
 					targetDirectory: 'myTargetDirectory',
 					devTag: 'some-tag',
@@ -82,7 +82,7 @@ describe('options validator', function() {
 		});
 
 		it('should return specified version', function() {
-			var releaseOptions = optionsValidator(
+			const releaseOptions = optionsValidator(
 				{
 					targetDirectory: 'myTargetDirectory',
 					version: '1.2.0',
@@ -113,7 +113,7 @@ describe('options validator', function() {
 		});
 
 		it('should return valid release upload path', function() {
-			var releaseOptions = optionsValidator(
+			const releaseOptions = optionsValidator(
 				{
 					targetDirectory: 'myTargetDirectory',
 					version: '1.2.0',
@@ -126,7 +126,7 @@ describe('options validator', function() {
 		});
 
 		it('should prioritize release version over devTag', function() {
-			var options = optionsValidator(
+			const options = optionsValidator(
 				{
 					targetDirectory: 'myTargetDirectory',
 					devTag: 'tag',

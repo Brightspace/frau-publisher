@@ -4,7 +4,7 @@ const proxyquire = require('proxyquire');
 
 describe('overwrite', function() {
 
-	var overwrite,
+	let overwrite,
 		createClient,
 		optsValidator,
 		client;
@@ -19,7 +19,7 @@ describe('overwrite', function() {
 		setUpNonEmptyFolder();
 
 		optsValidator.getUploadPath.returns('some-folder');
-		var expectedErrorMsg = 'No files transferred because files already exists in some-folder';
+		const expectedErrorMsg = 'No files transferred because files already exists in some-folder';
 
 		return overwrite(optsValidator)().then(
 			() => { throw new Error('Should reject'); },
@@ -31,7 +31,7 @@ describe('overwrite', function() {
 	});
 
 	it('should handle err from S3', function() {
-		var error = new Error('some-message');
+		const error = new Error('some-message');
 		setUpList(error);
 
 		return overwrite(optsValidator)().then(
