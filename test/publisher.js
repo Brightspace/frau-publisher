@@ -1,16 +1,16 @@
 'use strict';
 
-var proxyquire = require('proxyquire');
-var vfs = require('vinyl-fs');
+const proxyquire = require('proxyquire');
+const vfs = require('vinyl-fs');
 
-var options = {
+const options = {
 	targetDirectory: 'myTargetDirectory',
 	creds: { key: 'myKey', secret: 'mySecret' },
 	devTag: 'myDevTag'
 };
 
 describe('publisher', function() {
-	var publisher, s3Factory, s3;
+	let publisher, s3Factory, s3;
 
 	beforeEach(function() {
 		s3 = sinon.stub().returns(Promise.resolve());
@@ -27,8 +27,8 @@ describe('publisher', function() {
 		describe(val + '.getLocation', function() {
 
 			it('should return the proper address', function() {
-				var location = publisher[val](options).getLocation();
-				var urlVal = (val === 'app') ? 'apps' : val;
+				const location = publisher[val](options).getLocation();
+				const urlVal = (val === 'app') ? 'apps' : val;
 				expect(location).to.equal(
 					'https://s.brightspace.com/' + urlVal + '/myTargetDirectory/dev/myDevTag/'
 				);
@@ -40,7 +40,7 @@ describe('publisher', function() {
 		describe(val + '.getStream', function() {
 
 			it('should return a valid stream', function() {
-				var stream = publisher[val](options).getStream();
+				const stream = publisher[val](options).getStream();
 				expect(stream).to.not.be.null;
 			});
 
@@ -50,7 +50,7 @@ describe('publisher', function() {
 	describe('_helper', function() {
 
 		it('should call s3Factory with correct options', function() {
-			var expectedOptions = {
+			const expectedOptions = {
 				headers: {},
 				uploadPath: 'path/myTargetDirectory/dev/myDevTag'
 			};
@@ -59,7 +59,7 @@ describe('publisher', function() {
 		});
 
 		it('should stream files to s3', function(done) {
-			var options = {
+			const options = {
 				targetDirectory: 'myTargetDirectory',
 				devTag: 'myDevTag',
 				creds: {
@@ -84,7 +84,7 @@ describe('publisher', function() {
 		});
 
 		it('should stream files to s3 with session token', function(done) {
-			var options = {
+			const options = {
 				targetDirectory: 'myTargetDirectory',
 				devTag: 'myDevTag',
 				creds: {
@@ -110,7 +110,7 @@ describe('publisher', function() {
 		});
 
 		it('should stream files to s3 with no credentials', function(done) {
-			var options = {
+			const options = {
 				targetDirectory: 'myTargetDirectory',
 				devTag: 'myDevTag'
 			};
