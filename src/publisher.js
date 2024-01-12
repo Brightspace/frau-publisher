@@ -85,8 +85,7 @@ function helper(opts, initialPath) {
 		},
 		getLocation: function() {
 			const options = optionsValidator(opts);
-			const appendAppconfigJson = opts.moduleType === 'app' ? 'appconfig.json' : '';
-			return 'https://s.brightspace.com/' + options.getUploadPath() + '/' + appendAppconfigJson;
+			return 'https://s.brightspace.com/' + options.getUploadPath() + '/';
 		}
 	};
 }
