@@ -30,9 +30,3 @@ jobs:
           # cred variables set in the "Assume role" step
           AWS_DEFAULT_REGION: us-east-1
           FORCE_COLOR: 3
-      - name: Report Coverage
-        run: npm run report-coverage
-      - name: Coveralls
-        uses: Brightspace/third-party-actions@coverallsapp/github-action
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}

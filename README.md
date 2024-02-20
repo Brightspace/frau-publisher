@@ -1,6 +1,5 @@
 # frau-publisher
 [![NPM version][npm-image]][npm-url]
-[![Coverage Status][coverage-image]][coverage-url]
 [![Dependency Status][dependencies-image]][dependencies-url]
 
 A free-range-app utility for publishing to our CDN.
@@ -156,7 +155,5 @@ This repository is configured with [EditorConfig](http://editorconfig.org) rules
 
 [npm-url]: https://npmjs.org/package/frau-publisher
 [npm-image]: https://img.shields.io/npm/v/frau-publisher.svg
-[coverage-image]: https://img.shields.io/coveralls/Brightspace/frau-publisher.svg
-[coverage-url]: https://coveralls.io/r/Brightspace/frau-publisher?branch=master
 [dependencies-url]: https://david-dm.org/brightspace/frau-publisher
 [dependencies-image]: https://img.shields.io/david/Brightspace/frau-publisher.svg
