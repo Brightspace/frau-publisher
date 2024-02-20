@@ -1,6 +1,5 @@
 # frau-publisher
 [![NPM version][npm-image]][npm-url]
-[![Dependency Status][dependencies-image]][dependencies-url]
 
 A free-range-app utility for publishing to our CDN.
 
@@ -18,15 +17,15 @@ npm install frau-publisher
 
 The FRAU publisher can be run either directly on the console CLI (assuming dependencies are installed), or specified as a script in `package.json`.  Arguments may be passed directly on the CLI, or may be configured in `package.json`.  In addition, the publish key secret, dev tag, and version can either be explicitly specified, or can be read from the build environment.
 
-To get credentials for your CI job, use [iam-build-tokens](https://github.com/Brightspace/iam-build-tokens/blob/master/README.md).
+To get credentials for your CI job, use [`repo-settings`'s `cdn` functionality](https://github.com/Brightspace/repo-settings/blob/main/docs/cdn.md).
 
-Typical configuration for running in [TRAVIS](https://magnum.travis-ci.com/):
+Typical configuration for running in GitHub Actions:
 
 ```javascript
 frau-publisher --moduletype|-m app|lib 
                --targetdir|-t 'cdn directory' 
-               --devtagvar TRAVIS_COMMIT 
-               --versionvar TRAVIS_TAG 
+               --devtagvar GIT_COMMIT 
+               --versionvar GIT_TAG 
                --files|-f './dist/**'
 ```
 
@@ -39,8 +38,8 @@ frau-publisher --moduletype|-m app|lib
     "files": "./dist/**",
     "moduleType": "app|lib",
     "targetDirectory": "cdn directory",
-    "devTagVar": "TRAVIS_COMMIT",
-    "versionVar": "TRAVIS_TAG"
+    "devTagVar": "GIT_COMMIT",
+    "versionVar": "GIT_TAG"
   }
 }
 ```
@@ -155,5 +154,3 @@ This repository is configured with [EditorConfig](http://editorconfig.org) rules
 
 [npm-url]: https://npmjs.org/package/frau-publisher
 [npm-image]: https://img.shields.io/npm/v/frau-publisher.svg
-[dependencies-url]: https://david-dm.org/brightspace/frau-publisher
-[dependencies-image]: https://img.shields.io/david/Brightspace/frau-publisher.svg
