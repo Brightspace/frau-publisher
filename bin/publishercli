@@ -57,6 +57,6 @@ pump(vfs.src(opts.files), publisher.getStream(), function(err) {
 	}
 
 	console.log(chalk.green('Published to:\n\n') + chalk.grey(
-		'   ' + publisher.getLocation() + '\n'
+		'   ' + publisher.getLocation(true) + '\n'
 	));
 });
