@@ -1,6 +1,6 @@
 {
   "name": "frau-publisher",
-  "version": "2.10.2",
+  "version": "2.11.0",
   "description": "A free-range-app utility for publishing to our CDN.",
   "main": "src/publisher.js",
   "bin": {
