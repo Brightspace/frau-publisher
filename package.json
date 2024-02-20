@@ -14,10 +14,9 @@
   ],
   "scripts": {
     "pretest": "npm run lint",
-    "test": "nyc -i source-map-support --produce-source-map mocha --require ./test/support/node.js",
-    "test-secure": "nyc --no-clean -i source-map-support --produce-source-map mocha test/secure/*.js --require ./test/support/node.js",
-    "lint": "eslint .",
-    "report-coverage": "nyc report --reporter=lcovonly"
+    "test": "mocha --require ./test/support/node.js",
+    "test-secure": "mocha test/secure/*.js --require ./test/support/node.js",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -36,17 +35,14 @@
   "homepage": "https://github.com/Brightspace/frau-publisher",
   "devDependencies": {
     "chai": "^4",
-    "coveralls": "^3",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.25",
     "gulp": "^4",
     "mocha": "^10",
-    "nyc": "^15",
     "proxyquire": "^2",
     "request": "^2",
     "sinon": "^17",
     "sinon-chai": "^3",
-    "source-map-support": "^0.5",
     "through2": "^4"
   },
   "dependencies": {
