@@ -83,9 +83,9 @@ function helper(opts, initialPath) {
 				return s3(options.getCreds(), s3BaseOptions);
 			}
 		},
-		getLocation: function() {
+		getLocation: function(shouldAppend = false) {
 			const options = optionsValidator(opts);
-			const appendAppconfigJson = opts.moduleType === 'app' ? 'appconfig.json' : '';
+			const appendAppconfigJson = (shouldAppend && opts.moduleType === 'app') ? 'appconfig.json' : '';
 			return 'https://s.brightspace.com/' + options.getUploadPath() + '/' + appendAppconfigJson;
 		}
 	};
