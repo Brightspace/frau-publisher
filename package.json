@@ -37,7 +37,7 @@
     "chai": "^4",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.25",
-    "gulp": "^4",
+    "gulp": "^5",
     "mocha": "^10",
     "proxyquire": "^2",
     "request": "^2",
