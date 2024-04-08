@@ -35,7 +35,7 @@
   "homepage": "https://github.com/Brightspace/frau-publisher",
   "devDependencies": {
     "chai": "^4",
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-config-brightspace": "^0.25",
     "gulp": "^4",
     "mocha": "^10",
