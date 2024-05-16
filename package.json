@@ -41,7 +41,7 @@
     "mocha": "^10",
     "proxyquire": "^2",
     "request": "^2",
-    "sinon": "^17",
+    "sinon": "^18",
     "sinon-chai": "^3",
     "through2": "^4"
   },
