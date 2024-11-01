@@ -69,7 +69,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			.upload(params)
 			.promise()
 			.then(() => {
-				console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`)); // eslint-disable-line no-console
+				console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`));
 
 				return file;
 			}, err => {

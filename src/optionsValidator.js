@@ -28,7 +28,7 @@ module.exports = function(opts) {
 				throw new Error('Missing targetDirectory');
 			}
 			if (opts.id) {
-				console.log(chalk.red('The targetDirectory should be specified on options rather than id.  Specifying targetDirectory via id will not be supported in a future release.')); // eslint-disable-line no-console
+				console.log(chalk.red('The targetDirectory should be specified on options rather than id.  Specifying targetDirectory via id will not be supported in a future release.'));
 			}
 			if (!opts.targetDirectory && opts.id) {
 				opts.targetDirectory = opts.id;
