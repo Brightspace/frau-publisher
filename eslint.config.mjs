@@ -1,6 +1,5 @@
 import globals from 'globals';
-import { nodeConfig } from 'eslint-config-brightspace'
-
+import { nodeConfig } from 'eslint-config-brightspace';
 
 export default [
 	...nodeConfig,
