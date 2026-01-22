@@ -27,7 +27,7 @@ function checkFilesExist(options) {
 	return client
 		.send(command)
 		.then(data => {
-			if (data.Contents.length !== 0) {
+			if (data.Contents && data.Contents.length !== 0) {
 				// files exist in s3 folder
 				const errorMsg = `No files transferred because files already exists in ${options.getUploadPath()}`;
 				throw new Error(errorMsg);
