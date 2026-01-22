@@ -53,7 +53,8 @@ module.exports = function(opts) {
 
 		getCreds: function() {
 			const creds = {
-				apiVersion: '2006-03-01'
+				apiVersion: '2006-03-01',
+				region: 'us-east-1'
 			};
 			if (!opts.creds) {
 				return creds;

@@ -52,7 +52,7 @@ describe('overwrite', function() {
 			});
 	});
 
-	it('should only call listObjectsV2 once for multiple files', function() {
+	it('should only call send once for multiple files', function() {
 		setUpEmptyFolder();
 
 		const overwriteCheck = overwrite(optsValidator);
@@ -60,13 +60,13 @@ describe('overwrite', function() {
 		return Promise
 			.all([overwriteCheck(), overwriteCheck()])
 			.then(() => {
-				expect(client.listObjectsV2).to.have.been.calledOnce;
+				expect(client.send).to.have.been.calledOnce;
 			});
 	});
 
 	beforeEach(function() {
 		client = {
-			listObjectsV2: function() {}
+			send: function() {}
 		};
 
 		createClient = sinon.spy(function() {
@@ -74,13 +74,16 @@ describe('overwrite', function() {
 		});
 
 		overwrite = proxyquire('../src/overwrite', {
-			'aws-sdk': {
-				S3: createClient
+			'@aws-sdk/client-s3': {
+				S3Client: createClient,
+				ListObjectsV2Command: function(params) {
+					this.input = params;
+				}
 			}
 		});
 
 		optsValidator = {
-			getCreds: sinon.stub().returns({}),
+			getCreds: sinon.stub().returns({ region: 'us-east-1' }),
 			getUploadPath: sinon.stub().returns({})
 		};
 	});
@@ -90,10 +93,8 @@ describe('overwrite', function() {
 			? Promise.reject(err)
 			: Promise.resolve(data);
 		sinon
-			.stub(client, 'listObjectsV2')
-			.returns({
-				promise: () => p
-			});
+			.stub(client, 'send')
+			.returns(p);
 	}
 
 	function setUpEmptyFolder() {
