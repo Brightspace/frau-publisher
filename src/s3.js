@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 
-const AWS = require('aws-sdk');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const chalk = require('chalk');
 const mime = require('mime-types');
 const promised = require('promised-method');
@@ -27,7 +27,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 
 	opt.headers = opt.headers || {};
 
-	const client = new AWS.S3(knoxOpt);
+	const client = new S3Client(knoxOpt);
 
 	const uploader = promised(function s3Uploader(file) {
 		if (!file.isBuffer()) {
@@ -65,9 +65,9 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 			Key: uploadPath
 		};
 
+		const command = new PutObjectCommand(params);
 		return client
-			.upload(params)
-			.promise()
+			.send(command)
 			.then(() => {
 				console.error(chalk.green(`[SUCCESS] ${file.path} -> ${uploadPath}`));
 

@@ -47,7 +47,7 @@
     "through2": "^4"
   },
   "dependencies": {
-    "aws-sdk": "^2",
+    "@aws-sdk/client-s3": "^3",
     "chalk": "^4",
     "mime-types": "^2",
     "promised-method": "^1",
