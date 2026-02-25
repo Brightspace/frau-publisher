@@ -59,6 +59,7 @@ describe('publisher', /* @this */ function() {
 							fetch(`${publisher.getLocation()}test.woff`, { headers: { 'Accept-Encoding': 'gzip' } })
 								.then(res => {
 									if (!res.ok) return reject(new Error(res.statusCode));
+									console.log('response.headers =', res.headers);
 									if (res.headers.get('content-encoding') !== 'gzip') return reject(new Error(res.headers.get('content-encoding')));
 									if (res.headers.get('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
 									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
@@ -143,9 +144,6 @@ function assertUploaded(glob, tag) {
 		fetch(digestLocation, { headers: { 'Accept-Encoding': 'gzip' } })
 			.then(res => {
 				if (!res.ok) return reject(new Error(`failed to fetch digest: ${digestLocation}, ${{ statusCode: res.statusCode }}`));
-				if (res.headers.get('content-encoding') !== 'gzip') return reject(new Error(res.headers.get('content-encoding')));
-				if (res.headers.get('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
-				if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
 				return res.json();
 			}).then(digest => {
 				pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
