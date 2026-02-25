@@ -153,7 +153,7 @@ function assertUploaded(glob, tag) {
 					fetch(location)
 						.then(res => {
 							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
-							return res.arrayBuffer();
+							return res.bytes();
 						}).then(body => {
 
 							const digestKey = file.path.replace(file.base + '/', '');
@@ -163,7 +163,7 @@ function assertUploaded(glob, tag) {
 							}
 
 							try {
-								const bodyHash = crypto.createHash('sha256').update(Buffer.from(body)).digest('hex');
+								const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
 								if (bodyHash !== digestEntry) {
 									return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
 								} else {
