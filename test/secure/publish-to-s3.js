@@ -61,7 +61,7 @@ describe('publisher', /* @this */ function() {
 									if (!res.ok) return reject(new Error(res.statusCode));
 									console.log('response.headers =', res.headers);
 									if (res.headers.has('content-encoding')) return reject(new Error(res.headers.get('content-encoding')));
-									if (res.headers.has('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
+									if (res.headers.get('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
 									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
 									return res.text();
 								}).then(body => {
@@ -154,7 +154,7 @@ function assertUploaded(glob, tag) {
 					fetch(location)
 						.then(res => {
 							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
-							return res.text();
+							return res.bytes();
 						}).then(body => {
 
 							const digestKey = file.path.replace(file.base + '/', '');
