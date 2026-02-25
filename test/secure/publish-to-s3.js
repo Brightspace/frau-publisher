@@ -59,7 +59,6 @@ describe('publisher', /* @this */ function() {
 							fetch(`${publisher.getLocation()}test.woff`, { headers: { 'Accept-Encoding': 'gzip' } })
 								.then(res => {
 									if (!res.ok) return reject(new Error(res.statusCode));
-									console.log('response.headers =', res.headers);
 									if (res.headers.has('content-encoding')) return reject(new Error(res.headers.get('content-encoding')));
 									if (res.headers.get('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
 									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
