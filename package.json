@@ -56,6 +56,6 @@
     "through2-concurrent": "^2",
     "vinyl": "^2",
     "vinyl-fs": "^3",
-    "yargs": "^16"
+    "yargs": "^18"
   }
 }
