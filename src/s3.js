@@ -39,7 +39,7 @@ module.exports = function s3UploadFactory(knoxOpt, opt) {
 		const uploadPath = path.replace(base, opt.uploadPath);
 		const digestKey = path.substring(base.length + 1);
 
-		console.log('contents', file.contents);
+		console.log('1', digestKey, file.contents);
 		uploader.digest[digestKey] = crypto.createHash('sha256').update(file.contents).digest('hex');
 
 		const headers = JSON.parse(JSON.stringify(opt.headers));
