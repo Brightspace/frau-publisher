@@ -22,6 +22,7 @@ jobs:
           AUTO_MERGE_METHOD: squash
           AUTO_MERGE_TOKEN: ${{ secrets.PR_GITHUB_TOKEN }}
           APPROVAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.PR_GITHUB_TOKEN }}
           SLACK_CHANNEL_FAILURE: '#gaudi-dev-alerts'
           SLACK_CHANNEL_STALE_PR: '#gaudi-dev-alerts'
