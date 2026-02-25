@@ -154,7 +154,7 @@ function assertUploaded(glob, tag) {
 					fetch(location)
 						.then(res => {
 							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
-							return res.bytes();
+							return res.blob();
 						}).then(body => {
 
 							const digestKey = file.path.replace(file.base + '/', '');
