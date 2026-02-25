@@ -41,7 +41,6 @@
     "gulp": "^5",
     "mocha": "^11",
     "proxyquire": "^2",
-    "request": "^2",
     "sinon": "^21",
     "sinon-chai": "^4",
     "through2": "^4"
