@@ -60,8 +60,8 @@ describe('publisher', /* @this */ function() {
 								.then(res => {
 									if (!res.ok) return reject(new Error(res.statusCode));
 									console.log('response.headers =', res.headers);
-									if (res.headers.get('content-encoding') !== 'gzip') return reject(new Error(res.headers.get('content-encoding')));
-									if (res.headers.get('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
+									if (res.headers.has('content-encoding')) return reject(new Error(res.headers.get('content-encoding')));
+									if (res.headers.has('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
 									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
 									return res.text();
 								}).then(body => {
@@ -165,7 +165,7 @@ function assertUploaded(glob, tag) {
 
 							const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
 							if (bodyHash !== digestEntry) {
-								return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+								return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry} ${body}`));
 							}
 
 							cb();
