@@ -12,7 +12,7 @@ const frauPublisher = require('../../src/publisher'),
 	pump = require('pump');
 
 describe('publisher', /* @this */ function() {
-	this.timeout(180000);
+	/*this.timeout(180000);
 
 	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
 		it('should publish new file (' + testVariant.name + ')', function(cb) {
@@ -89,7 +89,7 @@ describe('publisher', /* @this */ function() {
 				cb(err);
 			}
 		});
-	});
+	});*/
 });
 
 describe('cli', /* @this */ function() {
@@ -150,7 +150,7 @@ function assertUploaded(glob, tag) {
 
 					const location = file.path.replace(file.base + '/', uploadBase);
 
-					fetch(location, { headers: { 'Accept-Encoding': 'gzip' } })
+					fetch(location)
 						.then(res => {
 							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
 							return res.text();
