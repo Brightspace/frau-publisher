@@ -163,7 +163,7 @@ function assertUploaded(glob, tag) {
 							}
 
 							try {
-								const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
+								const bodyHash = crypto.createHash('sha256').update(Buffer.from(body)).digest('hex');
 								if (bodyHash !== digestEntry) {
 									return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
 								} else {
