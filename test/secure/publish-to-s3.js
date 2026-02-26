@@ -6,7 +6,7 @@ const child_process = require('child_process'),
 
 const throughConcurrent = require('through2-concurrent');
 
-const compress = require('./compressor'),
+const compress = require('../../src/compressor'),
 	frauPublisher = require('../../src/publisher'),
 	vfs = require('vinyl-fs'),
 	gulp = require('gulp'),
