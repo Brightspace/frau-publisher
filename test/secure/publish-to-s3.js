@@ -164,23 +164,32 @@ function assertUploaded(glob, tag) {
 							}
 
 							try {
-								// <Buffer 1f 8b 08 00 00 00 00 00 02 03 53 ce 4c 51 a8 e6 e2 4c ce cf c9 2f b2 52 28 4a 4d b1 e6 aa e5 02 00 79 26 2c 6e 15 00 00 00>
-								// <Buffer 23 69 64 20 7b 0a 09 63 6f 6c 6f 72 3a 20 72 65 64 3b 0a 7d 0a>
-								const buffer = Buffer.from(body);
-								compress(buffer).then((compressedFile) => {
-									try {
-										const bodyHash = crypto.createHash('sha256').update(compressedFile).digest('hex');
-										if (bodyHash !== digestEntry) {
-											console.log('2', digestKey, compressedFile, compressedFile.toString());
-											return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
-										} else {
-											console.log(`verified ${digestKey}`);
+								if (compress._isCompressibleFile(file)) {
+									compress(body).then((compressedFile) => {
+										try {
+											const bodyHash = crypto.createHash('sha256').update(compressedFile).digest('hex');
+											if (bodyHash !== digestEntry) {
+												console.log('2', digestKey, compressedFile, compressedFile.toString());
+												return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+											} else {
+												console.log(`verified ${digestKey}`);
+											}
+											cb();
+										} catch (e) {
+											return cb(e);
 										}
-										cb();
-									} catch (e) {
-										return cb(e);
+									});
+								} else {
+									const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
+									if (bodyHash !== digestEntry) {
+										console.log('2', digestKey, body, body.toString());
+										return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+									} else {
+										console.log(`verified ${digestKey}`);
 									}
-								});
+									cb();
+								}
+								//const buffer = Buffer.from(body);
 							} catch (e) {
 								return cb(e);
 							}
