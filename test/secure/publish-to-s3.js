@@ -150,7 +150,7 @@ function assertUploaded(glob, tag) {
 
 					const location = file.path.replace(file.base + '/', uploadBase);
 
-					fetch(location)
+					fetch(location, { headers: { 'Accept-Encoding': 'identity' } })
 						.then(res => {
 							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
 							return res.arrayBuffer();
