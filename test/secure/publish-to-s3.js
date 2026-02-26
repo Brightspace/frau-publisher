@@ -14,7 +14,7 @@ const compress = require('../../src/compressor'),
 	zlib = require('zlib');
 
 describe('publisher', /* @this */ function() {
-	/*this.timeout(180000);
+	this.timeout(180000);
 
 	[{ name: 'vinyl-fs', fn: vfs.src }, { name: 'gulp3', fn: gulp.src }].forEach(function(testVariant) {
 		it('should publish new file (' + testVariant.name + ')', function(cb) {
@@ -91,7 +91,7 @@ describe('publisher', /* @this */ function() {
 				cb(err);
 			}
 		});
-	});*/
+	});
 });
 
 describe('cli', /* @this */ function() {
@@ -152,7 +152,7 @@ function assertUploaded(glob, tag) {
 
 					const location = file.path.replace(file.base + '/', uploadBase);
 
-					fetch(location, { headers: { 'Accept-Encoding': 'identity' } })
+					fetch(location)
 						.then(res => {
 							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
 							return res.arrayBuffer();
@@ -165,43 +165,21 @@ function assertUploaded(glob, tag) {
 							}
 							const buffer = Buffer.from(body);
 
-							try {
-								if (compress._isCompressibleFile(file)) {
-									try {
-										zlib.gzip(buffer, {
-											level: compress._compressionLevel
-										}, (err, result) => {
-											if (err) {
-												return cb(err);
-											}
-											try {
-												const bodyHash = crypto.createHash('sha256').update(result).digest('hex');
-												if (bodyHash !== digestEntry) {
-													console.log('2', digestKey, result, result.toString());
-													return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
-												} else {
-													console.log(`verified ${digestKey}`);
-												}
-												cb();
-											} catch (e) {
-												return cb(e);
-											}
-										});
-									} catch (e) {
-										return cb(e);
-									}
-								} else {
-									const bodyHash = crypto.createHash('sha256').update(buffer).digest('hex');
+							if (compress._isCompressibleFile(file)) {
+								zlib.gzip(buffer, { level: compress._compressionLevel }, (err, result) => {
+									if (err) return cb(err);
+									const bodyHash = crypto.createHash('sha256').update(result).digest('hex');
 									if (bodyHash !== digestEntry) {
-										console.log('2', digestKey, buffer, buffer.toString());
 										return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
-									} else {
-										console.log(`verified ${digestKey}`);
 									}
 									cb();
+								});
+							} else {
+								const bodyHash = crypto.createHash('sha256').update(buffer).digest('hex');
+								if (bodyHash !== digestEntry) {
+									return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
 								}
-							} catch (e) {
-								return cb(e);
+								cb();
 							}
 						});
 				}), err => {
