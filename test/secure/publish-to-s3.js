@@ -6,11 +6,12 @@ const child_process = require('child_process'),
 
 const throughConcurrent = require('through2-concurrent');
 
-const frauPublisher = require('../../src/publisher'),
-	request = require('request'),
+const compress = require('../../src/compressor'),
+	frauPublisher = require('../../src/publisher'),
 	vfs = require('vinyl-fs'),
 	gulp = require('gulp'),
-	pump = require('pump');
+	pump = require('pump'),
+	zlib = require('zlib');
 
 describe('publisher', /* @this */ function() {
 	this.timeout(180000);
@@ -31,42 +32,43 @@ describe('publisher', /* @this */ function() {
 					Promise.all([
 						assertUploaded(glob, devtag),
 						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'test.html', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-								if (body !== fs.readFileSync('./test/test-files/test.html', 'utf8')) return reject(new Error(body));
-
-								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'text/html; charset=utf-8') return reject(new Error(res.headers['content-type']));
-								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
-
-								resolve();
-							});
+							fetch(`${publisher.getLocation()}test.html`, { headers: { 'Accept-Encoding': 'gzip' } })
+								.then(res => {
+									if (!res.ok) return reject(new Error(res.statusCode));
+									if (res.headers.get('content-encoding') !== 'gzip') return reject(new Error(res.headers.get('content-encoding')));
+									if (res.headers.get('content-type') !== 'text/html; charset=utf-8') return reject(new Error(res.headers.get('content-type')));
+									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
+									return res.text();
+								}).then(body => {
+									if (body !== fs.readFileSync('./test/test-files/test.html', 'utf8')) return reject(new Error(body));
+									resolve();
+								});
 						}),
 						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'test.svg', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-								if (body !== fs.readFileSync('./test/test-files/test.svg', 'utf8')) return reject(new Error(body));
-
-								if (res.headers['content-encoding'] !== 'gzip') return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'image/svg+xml') return reject(new Error(res.headers['content-type']));
-								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
-
-								resolve();
-							});
+							fetch(`${publisher.getLocation()}test.svg`, { headers: { 'Accept-Encoding': 'gzip' } })
+								.then(res => {
+									if (!res.ok) return reject(new Error(res.statusCode));
+									if (res.headers.get('content-encoding') !== 'gzip') return reject(new Error(res.headers.get('content-encoding')));
+									if (res.headers.get('content-type') !== 'image/svg+xml') return reject(new Error(res.headers.get('content-type')));
+									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
+									return res.text();
+								}).then(body => {
+									if (body !== fs.readFileSync('./test/test-files/test.svg', 'utf8')) return reject(new Error(body));
+									resolve();
+								});
 						}),
 						new Promise(function(resolve, reject) {
-							request.get(publisher.getLocation() + 'test.woff', { gzip: true }, function(err, res, body) {
-								if (err) return reject(err);
-								if (res.statusCode !== 200) return reject(new Error(res.statusCode));
-								if (body !== fs.readFileSync('./test/test-files/test.woff', 'utf8')) return reject(new Error(body));
-
-								if (res.headers['content-encoding']) return reject(new Error(res.headers['content-encoding']));
-								if (res.headers['content-type'] !== 'font/woff') return reject(new Error(res.headers['content-type']));
-								if (res.headers['cache-control'] !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers['cache-control']));
-								resolve();
-							});
+							fetch(`${publisher.getLocation()}test.woff`, { headers: { 'Accept-Encoding': 'gzip' } })
+								.then(res => {
+									if (!res.ok) return reject(new Error(res.statusCode));
+									if (res.headers.has('content-encoding')) return reject(new Error(res.headers.get('content-encoding')));
+									if (res.headers.get('content-type') !== 'font/woff') return reject(new Error(res.headers.get('content-type')));
+									if (res.headers.get('cache-control') !== 'public,max-age=31536000,immutable') return reject(new Error(res.headers.get('cache-control')));
+									return res.text();
+								}).then(body => {
+									if (body !== fs.readFileSync('./test/test-files/test.woff', 'utf8')) return reject(new Error(body));
+									resolve();
+								});
 						})
 					])
 						.then(function() { cb(); }, cb);
@@ -139,46 +141,51 @@ function assertUploaded(glob, tag) {
 	const uploadBase = createPublisher(tag).getLocation();
 
 	return new Promise((resolve, reject) => {
-
 		const digestLocation = uploadBase + 'frau-publisher-digest.json';
-		request.get(digestLocation, { gzip: true }, function(err, res, body) {
-			if (err) return reject(err);
-			if (res.statusCode !== 200) return reject(new Error(`failed to fetch digest: ${digestLocation}, ${{ statusCode: res.statusCode }}`));
+		fetch(digestLocation, { headers: { 'Accept-Encoding': 'gzip' } })
+			.then(res => {
+				if (!res.ok) return reject(new Error(`failed to fetch digest: ${digestLocation}, ${{ statusCode: res.statusCode }}`));
+				return res.json();
+			}).then(digest => {
+				pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
+					if (file.isDirectory()) { return cb(); }
 
-			const digest = JSON.parse(body);
+					const location = file.path.replace(file.base + '/', uploadBase);
 
-			pump(vfs.src(glob), throughConcurrent.obj(/* @this */ function(file, _, cb) {
-				if (file.isDirectory()) { return cb(); }
+					fetch(location)
+						.then(res => {
+							if (!res.ok) return cb(new Error(`${res.statusCode}: ${location}`));
+							return res.arrayBuffer();
+						}).then(body => {
 
-				const location = file.path.replace(file.base + '/', uploadBase);
+							const digestKey = file.path.replace(file.base + '/', '');
+							const digestEntry = digest[digestKey];
+							if (digestEntry === undefined) {
+								return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
+							}
+							const buffer = Buffer.from(body);
 
-				request
-					.get(location, { encoding: null }, (err, res, body) => {
-						if (err) {
-							return cb(err);
-						}
-
-						if (res.statusCode !== 200) {
-							return cb(new Error(`${res.statusCode}: ${location}`));
-						}
-
-						const digestKey = file.path.replace(file.base + '/', '');
-						const digestEntry = digest[digestKey];
-						if (digestEntry === undefined) {
-							return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
-						}
-
-						const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
-						if (bodyHash !== digestEntry) {
-							return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
-						}
-
-						cb();
-					});
-			}), err => {
-				if (err) { return reject(err); }
-				resolve();
-			}).resume();
-		});
+							if (compress._isCompressibleFile(file)) {
+								zlib.gzip(buffer, { level: compress._compressionLevel }, (err, result) => {
+									if (err) return cb(err);
+									const bodyHash = crypto.createHash('sha256').update(result).digest('hex');
+									if (bodyHash !== digestEntry) {
+										return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+									}
+									cb();
+								});
+							} else {
+								const bodyHash = crypto.createHash('sha256').update(buffer).digest('hex');
+								if (bodyHash !== digestEntry) {
+									return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+								}
+								cb();
+							}
+						});
+				}), err => {
+					if (err) { return reject(err); }
+					resolve();
+				}).resume();
+			});
 	});
 }
