@@ -10,7 +10,8 @@ const compress = require('../../src/compressor'),
 	frauPublisher = require('../../src/publisher'),
 	vfs = require('vinyl-fs'),
 	gulp = require('gulp'),
-	pump = require('pump');
+	pump = require('pump'),
+	zlib = require('zlib');
 
 describe('publisher', /* @this */ function() {
 	/*this.timeout(180000);
@@ -167,11 +168,16 @@ function assertUploaded(glob, tag) {
 							try {
 								if (compress._isCompressibleFile(file)) {
 									try {
-										compress(buffer).then((compressedFile) => {
+										zlib.gzip(buffer, {
+											level: compress._compressionLevel
+										}, (err, result) => {
+											if (err) {
+												return cb(err);
+											}
 											try {
-												const bodyHash = crypto.createHash('sha256').update(compressedFile).digest('hex');
+												const bodyHash = crypto.createHash('sha256').update(result).digest('hex');
 												if (bodyHash !== digestEntry) {
-													console.log('2', digestKey, compressedFile, compressedFile.toString());
+													console.log('2', digestKey, result, result.toString());
 													return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
 												} else {
 													console.log(`verified ${digestKey}`);

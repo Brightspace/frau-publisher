@@ -42,4 +42,5 @@ module.exports = promised(function compressor(file) {
 	});
 });
 
+module.exports._compressionLevel = COMPRESSION_LEVEL;
 module.exports._isCompressibleFile = isCompressibleFile;
