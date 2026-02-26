@@ -166,20 +166,24 @@ function assertUploaded(glob, tag) {
 
 							try {
 								if (compress._isCompressibleFile(file)) {
-									compress(buffer).then((compressedFile) => {
-										try {
-											const bodyHash = crypto.createHash('sha256').update(compressedFile).digest('hex');
-											if (bodyHash !== digestEntry) {
-												console.log('2', digestKey, compressedFile, compressedFile.toString());
-												return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
-											} else {
-												console.log(`verified ${digestKey}`);
+									try {
+										compress(buffer).then((compressedFile) => {
+											try {
+												const bodyHash = crypto.createHash('sha256').update(compressedFile).digest('hex');
+												if (bodyHash !== digestEntry) {
+													console.log('2', digestKey, compressedFile, compressedFile.toString());
+													return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
+												} else {
+													console.log(`verified ${digestKey}`);
+												}
+												cb();
+											} catch (e) {
+												return cb(e);
 											}
-											cb();
-										} catch (e) {
-											return cb(e);
-										}
-									});
+										});
+									} catch (e) {
+										return cb(e);
+									}
 								} else {
 									const bodyHash = crypto.createHash('sha256').update(buffer).digest('hex');
 									if (bodyHash !== digestEntry) {
@@ -190,7 +194,6 @@ function assertUploaded(glob, tag) {
 									}
 									cb();
 								}
-								//const buffer = Buffer.from(body);
 							} catch (e) {
 								return cb(e);
 							}
