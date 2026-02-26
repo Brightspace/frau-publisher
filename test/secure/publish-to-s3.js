@@ -175,12 +175,11 @@ function assertUploaded(glob, tag) {
 									} else {
 										console.log(`verified ${digestKey}`);
 									}
+									cb();
 								});
 							} catch (e) {
 								return cb(e);
 							}
-
-							cb();
 						});
 				}), err => {
 					if (err) { return reject(err); }
