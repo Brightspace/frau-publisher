@@ -168,6 +168,7 @@ function assertUploaded(glob, tag) {
 							return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
 						}
 
+						console.log('test', digestKey, body, body.toString());
 						const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
 						if (bodyHash !== digestEntry) {
 							return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
