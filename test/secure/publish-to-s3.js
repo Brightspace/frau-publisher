@@ -162,10 +162,11 @@ function assertUploaded(glob, tag) {
 							if (digestEntry === undefined) {
 								return cb(new Error(`file missing from digest: ${digestKey}, ${{ digest }}`));
 							}
+							const buffer = Buffer.from(body);
 
 							try {
 								if (compress._isCompressibleFile(file)) {
-									compress(body).then((compressedFile) => {
+									compress(buffer).then((compressedFile) => {
 										try {
 											const bodyHash = crypto.createHash('sha256').update(compressedFile).digest('hex');
 											if (bodyHash !== digestEntry) {
@@ -180,9 +181,9 @@ function assertUploaded(glob, tag) {
 										}
 									});
 								} else {
-									const bodyHash = crypto.createHash('sha256').update(body).digest('hex');
+									const bodyHash = crypto.createHash('sha256').update(buffer).digest('hex');
 									if (bodyHash !== digestEntry) {
-										console.log('2', digestKey, body, body.toString());
+										console.log('2', digestKey, buffer, buffer.toString());
 										return cb(new Error(`file hash didnt match digest: ${digestKey}, ${bodyHash} !== ${digestEntry}`));
 									} else {
 										console.log(`verified ${digestKey}`);
