@@ -36,7 +36,7 @@
   "devDependencies": {
     "chai": "^6",
     "eslint": "^9",
-    "eslint-config-brightspace": "^2",
+    "eslint-config-brightspace": "^3",
     "globals": "^17",
     "gulp": "^5",
     "mocha": "^11",
