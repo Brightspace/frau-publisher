@@ -43,7 +43,7 @@
     "proxyquire": "^2",
     "sinon": "^22",
     "sinon-chai": "^4",
-    "through2": "^4"
+    "through2": "^5"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3",
