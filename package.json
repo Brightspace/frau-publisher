@@ -33,6 +33,9 @@
     "url": "https://github.com/Brightspace/frau-publisher/issues"
   },
   "homepage": "https://github.com/Brightspace/frau-publisher",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "devDependencies": {
     "chai": "^6",
     "eslint": "^9",
